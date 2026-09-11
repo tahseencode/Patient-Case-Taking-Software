@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="hi" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MediKiosk AI & AyurKiosk - AI-Powered Digital Clinical Intake Platform</title>
+  
+  <!-- Modern Typography (Outfit & Inter) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div class="app-container">
+  
+  <!-- Top Navigation & Header -->
+  <header class="header-bar">
+    <div class="brand-section">
+      <div class="brand-logo-badge">🩺</div>
+      <div class="brand-info">
+        <h1 data-i18n="appTitle">MediKiosk AI & AyurKiosk</h1>
+        <div class="sub-tag">
+          <span data-i18n="appSub">SIH26047: Digital Clinical Intake & AYUSH EMR</span>
+          <span class="abdm-badge">🏥 ABDM: IN-AIIMS-DELHI-0012</span>
+          <span class="dpdp-badge">🛡️ DPDP 2023 Compliant</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Role Nav Tabs -->
+    <nav class="nav-tabs-wrapper">
+      <button type="button" class="nav-tab-btn active" data-target="kiosk">
+        <span>🩺</span> <span data-i18n="tabKiosk">Patient Intake Kiosk</span>
+      </button>
+      <button type="button" class="nav-tab-btn" data-target="doctor">
+        <span>👨‍⚕️</span> <span data-i18n="tabDoctor">Doctor OPD Desk</span>
+      </button>
+      <button type="button" class="nav-tab-btn" data-target="analytics">
+        <span>📊</span> <span data-i18n="tabAnalytics">OPD Analytics</span>
+      </button>
+      <button type="button" class="nav-tab-btn" data-target="fhir">
+        <span>📄</span> <span data-i18n="tabFhir">ABDM FHIR Hub</span>
+      </button>
+    </nav>
+
+    <!-- Header Actions -->
+    <div class="header-actions">
+      <select id="globalLangSelect" class="lang-selector" aria-label="Select Language">
+        <option value="en">English</option>
+        <option value="hi" selected>हिन्दी (Hindi)</option>
+        <option value="mr">मराठी (Marathi)</option>
+        <option value="ta">தமிழ் (Tamil)</option>
+        <option value="te">తెలుగు (Telugu)</option>
+        <option value="bn">বাংলা (Bengali)</option>
+        <option value="gu">ગુજરાતી (Gujarati)</option>
+        <option value="kn">ಕನ್ನಡ (Kannada)</option>
+      </select>
+
+      <button type="button" id="themeToggleBtn" class="icon-btn" title="Toggle Dark/Light Mode">
+        <span>☀️</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Emergency Triage Red-Flag Alert Ticker -->
+  <div id="emergencyTicker" class="emergency-ticker">
+    <div class="content">
+      <span class="pulse-badge">CRITICAL TRIAGE</span>
+      <span id="emergencyTickerText">EMERGENCY RED-FLAG INTERCEPTED: Severe symptoms requiring immediate physician attention!</span>
+    </div>
+    <button type="button" class="btn btn-secondary btn-sm" onclick="window.app.switchRole('doctor')">View in OPD Desk →</button>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- VIEW 1: PATIENT INTAKE KIOSK -->
+  <!-- ========================================================================= -->
+  <main id="kioskSection" class="view-section active">
+    <div class="kiosk-container">
+      
+      <!-- Stepper Sidebar -->
+      <aside class="kiosk-stepper-card">
+        <div class="kiosk-stepper-title">
+          <span>📋</span> <span>Clinical Intake Flow</span>
+        </div>
+        
+        <div class="kiosk-step-item active" data-step="1">
+          <div class="step-num-badge">1</div>
+          <div>
+            <div style="font-weight:600;">Patient & ABHA</div>
+            <div style="font-size:0.75rem;">Identity & DPDP Consent</div>
+          </div>
+        </div>
+
+        <div class="kiosk-step-item" data-step="2">
+          <div class="step-num-badge">2</div>
+          <div>
+            <div style="font-weight:600;">Body Map & Complaint</div>
+            <div style="font-size:0.75rem;">Anatomy & Chief Concern</div>
+          </div>
+        </div>
+
+        <div class="kiosk-step-item" data-step="3">
+          <div class="step-num-badge">3</div>
+          <div>
+            <div style="font-weight:600;">SOCRATES Dialogue</div>
+            <div style="font-size:0.75rem;">Guided Symptom History</div>
+          </div>
+        </div>
+
+        <div class="kiosk-step-item" data-step="4" style="display:none;">
+          <div class="step-num-badge">4</div>
+          <div>
+            <div style="font-weight:600;">AYUSH Pariksha</div>
+            <div style="font-size:0.75rem;">Prakriti & Agni Assessment</div>
+          </div>
+        </div>
+
+        <div class="kiosk-step-item" data-step="5">
+          <div class="step-num-badge">5</div>
+          <div>
+            <div style="font-weight:600;">Document OCR</div>
+            <div style="font-size:0.75rem;">Prescriptions & Lab Reports</div>
+          </div>
+        </div>
+
+        <div class="kiosk-step-item" data-step="6">
+          <div class="step-num-badge">6</div>
+          <div>
+            <div style="font-weight:600;">OPD Token & Triage</div>
+            <div style="font-size:0.75rem;">Queue Routing & Summary</div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Kiosk Panel -->
+      <div class="kiosk-main-panel">
+        
+        <!-- STEP 1: Patient Identity, ABHA & DPDP Consent -->
+        <div id="kioskStep1" class="kiosk-step-content active">
+          <div class="step-header">
+            <h2><span>👤</span> <span>Patient Registration & ABHA Verification</span></h2>
+            <p>Enter your patient details or ABHA (Ayushman Bharat Health Account) credentials for automated KYC.</p>
+          </div>
+
+          <!-- Clinical Stream Selector -->
+          <div class="form-group" style="margin-bottom:18px;">
+            <label class="form-label">Select Medical System / Care Stream</label>
+            <div class="stream-toggle-box">
+              <button type="button" class="stream-option-btn active allopathy" data-stream="allopathy">
+                💊 Modern Medicine (Allopathy OPD)
+              </button>
+              <button type="button" class="stream-option-btn ayush" data-stream="ayush">
+                🌿 AYUSH (Ayurveda / Panchakarma OPD)
+              </button>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Patient Full Name</label>
+              <input type="text" id="patientNameInput" class="form-input" value="Ramesh Kumar" placeholder="e.g. Ramesh Kumar">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">ABHA ID / ABHA Number / Mobile</label>
+              <div class="input-with-action">
+                <input type="text" id="patientAbhaInput" class="form-input" value="ramesh.kumar58@abdm" placeholder="e.g. 91-4829-1029-4412">
+                <button type="button" id="verifyAbhaBtn" class="btn btn-secondary btn-sm">Verify ABHA</button>
+              </div>
+              <div id="abhaVerifyStatus" style="margin-top:4px;"></div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Age (Years)</label>
+              <input type="number" id="patientAgeInput" class="form-input" value="58" min="1" max="120">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Gender</label>
+              <select id="patientGenderSelect" class="form-select">
+                <option value="Male" selected>Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Mobile Number</label>
+              <input type="tel" id="patientPhoneInput" class="form-input" value="9876543210" placeholder="10-digit mobile number">
+            </div>
+          </div>
+
+          <!-- DPDP 2023 Granular Consent Box -->
+          <div class="dpdp-consent-box">
+            <div class="dpdp-consent-title">
+              <span>🛡️</span> <span>Digital Personal Data Protection (DPDP Act 2023) Consent Agreement</span>
+            </div>
+            <label class="consent-checkbox-item">
+              <input type="checkbox" id="consentVoiceCheck" checked>
+              <span>I consent to voice recording and clinical symptom transcription for intake history synthesis.</span>
+            </label>
+            <label class="consent-checkbox-item">
+              <input type="checkbox" id="consentOcrCheck" checked>
+              <span>I consent to OCR processing and digitizing of my previous medical records and lab reports.</span>
+            </label>
+            <label class="consent-checkbox-item">
+              <input type="checkbox" id="consentAbhaCheck" checked>
+              <span>I authorize secure encrypted transmission of this consultation to my ABDM Health Record.</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- STEP 2: Anatomical Body Map & Chief Complaints -->
+        <div id="kioskStep2" class="kiosk-step-content">
+          <div class="step-header">
+            <h2><span>🗺️</span> <span>Select Anatomical Region & Chief Concern</span></h2>
+            <p>Tap on the human body diagram or select from common complaints below.</p>
+          </div>
+
+          <div class="body-map-layout">
+            <!-- SVG Interactive Body Map -->
+            <div class="body-map-card">
+              <div class="body-svg-container">
+                <svg viewBox="0 0 200 320" style="width:100%;height:100%;">
+                  <!-- Head -->
+                  <circle cx="100" cy="35" r="22" class="body-region-target" data-region="head" />
+                  <text x="100" y="38" text-anchor="middle" fill="#cbd5e1" font-size="9" pointer-events="none">Head</text>
+                  
+                  <!-- Neck -->
+                  <rect x="94" y="58" width="12" height="12" class="body-region-target" data-region="throat" />
+                  
+                  <!-- Chest -->
+                  <path d="M72 72 L128 72 L120 135 L80 135 Z" class="body-region-target active" data-region="chest" />
+                  <text x="100" y="105" text-anchor="middle" fill="#cbd5e1" font-size="10" pointer-events="none">Chest</text>
+                  
+                  <!-- Abdomen -->
+                  <path d="M80 138 L120 138 L115 185 L85 185 Z" class="body-region-target" data-region="abdomen" />
+                  <text x="100" y="162" text-anchor="middle" fill="#cbd5e1" font-size="10" pointer-events="none">Abdomen</text>
+                  
+                  <!-- Arms -->
+                  <path d="M68 76 L45 155 L55 160 L72 90 Z" class="body-region-target" data-region="joints" />
+                  <path d="M132 76 L155 155 L145 160 L128 90 Z" class="body-region-target" data-region="joints" />
+                  
+                  <!-- Pelvis -->
+                  <path d="M85 188 L115 188 L118 215 L82 215 Z" class="body-region-target" data-region="pelvis" />
+                  
+                  <!-- Legs & Knees -->
+                  <path d="M82 218 L76 300 L90 300 L97 218 Z" class="body-region-target" data-region="joints" />
+                  <path d="M118 218 L124 300 L110 300 L103 218 Z" class="body-region-target" data-region="joints" />
+                  <text x="100" y="260" text-anchor="middle" fill="#cbd5e1" font-size="10" pointer-events="none">Joints</text>
+                </svg>
+              </div>
+
+              <div class="body-quick-pills">
+                <button type="button" class="body-pill-btn active" data-region="chest">Chest</button>
+                <button type="button" class="body-pill-btn" data-region="head">Head</button>
+                <button type="button" class="body-pill-btn" data-region="abdomen">Abdomen</button>
+                <button type="button" class="body-pill-btn" data-region="joints">Joints</button>
+                <button type="button" class="body-pill-btn" data-region="skin">Skin</button>
+                <button type="button" class="body-pill-btn" data-region="whole_body">Full Body</button>
+              </div>
+            </div>
+
+            <!-- Complaints Grid -->
+            <div>
+              <div id="complaintsGrid" class="complaints-grid">
+                <!-- Dynamically Populated -->
+              </div>
+
+              <!-- Voice Input Bar -->
+              <div class="voice-intake-bar">
+                <button type="button" id="voiceMicBtn" class="voice-mic-btn" title="Tap to Speak">
+                  🎤
+                </button>
+                <div class="voice-status-text">
+                  <div id="voiceStatusLabel" class="status-label" data-i18n="voicePrompt">Tap Mic to Speak in Your Language</div>
+                  <div id="voiceTranscriptPreview" class="transcript-preview">Hindi, English, Marathi, Tamil, Telugu, Bengali supported.</div>
+                </div>
+                <div class="audio-waveform">
+                  <div class="waveform-bar"></div>
+                  <div class="waveform-bar"></div>
+                  <div class="waveform-bar"></div>
+                  <div class="waveform-bar"></div>
+                  <div class="waveform-bar"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 3: SOCRATES Guided Dialogue -->
+        <div id="kioskStep3" class="kiosk-step-content">
+          <div class="step-header">
+            <h2><span>🩺</span> <span>Clinical Symptom Exploration (SOCRATES Engine)</span></h2>
+            <p>Our intelligent assistant asks targeted clinical questions to build your comprehensive case history.</p>
+          </div>
+
+          <div class="socrates-card">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <span id="socratesFieldBadge" class="socrates-field-badge">SOCRATES: CHARACTER</span>
+              <span id="socratesStepNum" style="font-size:0.8rem;color:var(--text-muted);">Step 1 of 8</span>
+            </div>
+            
+            <div id="socratesQuestionHeading" class="socrates-question-heading">
+              How would you describe the sensation or type of pain?
+            </div>
+            <div id="socratesQuestionVernacular" class="socrates-question-vernacular">
+              आप दर्द या परेशानी की प्रकृति को कैसा महसूस करते हैं?
+            </div>
+
+            <div id="socratesOptionsGrid" class="socrates-options-grid">
+              <!-- Dynamically Populated -->
+            </div>
+          </div>
+
+          <!-- Visual VAS Pain Severity Slider -->
+          <div class="severity-slider-box">
+            <div class="slider-labels-row">
+              <span>Mild Discomfort (1)</span>
+              <span data-i18n="severityLabel">Pain / Discomfort Intensity (1 to 10)</span>
+              <span>Severe / Unbearable (10)</span>
+            </div>
+            <input type="range" id="severitySlider" class="severity-slider" min="1" max="10" value="8">
+            <div class="severity-display-row">
+              <span id="severityEmoji" class="severity-emoji">😣</span>
+              <span id="severityScoreBadge" class="severity-score-badge">8/10</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 4: AYUSH Pariksha & Prakriti Calculation -->
+        <div id="kioskStep4" class="kiosk-step-content">
+          <div class="step-header">
+            <h2><span>🌿</span> <span>AYUSH Ashtavidha & Dashavidha Pariksha</span></h2>
+            <p>Ayurvedic constitutional Prakriti analysis, Agni (digestive capacity) and Koshtha assessment.</p>
+          </div>
+
+          <div id="ayushPrakritiResultBox" class="dpdp-consent-box" style="display:none;margin-bottom:20px;border-color:var(--ayush-primary);">
+            <!-- Populated on calculation -->
+          </div>
+
+          <div id="ayushQuestionsGrid" class="ayush-pariksha-grid">
+            <!-- Dynamically Populated -->
+          </div>
+
+          <div class="form-group" style="margin-top:16px;">
+            <label class="form-label">Ahara & Vihara (Dietary habits, routine and sleep patterns)</label>
+            <input type="text" id="ayushLifestyleNotes" class="form-input" value="Sour and fermented diet, tea 4x/day, sleeping after 12:30 AM.">
+          </div>
+        </div>
+
+        <!-- STEP 5: Medical Document Digitizer & OCR -->
+        <div id="kioskStep5" class="kiosk-step-content">
+          <div class="step-header">
+            <h2><span>📄</span> <span>Medical Record Digitizer & OCR Engine</span></h2>
+            <p>Upload previous doctor prescriptions or pathology lab reports for instant AI extraction.</p>
+          </div>
+
+          <div class="ocr-layout">
+            <div>
+              <div class="dropzone-box" onclick="document.getElementById('docFileInput').click()">
+                <div class="dropzone-icon">📤</div>
+                <div style="font-weight:600;">Drag & drop prescription/lab report</div>
+                <div style="font-size:0.8rem;color:var(--text-muted);">Supports PNG, JPG, PDF or Text files</div>
+                <input type="file" id="docFileInput" style="display:none;" onchange="window.kioskModule.handleCustomDocumentUpload()">
+              </div>
+
+              <!-- 1-Click Sample Medical Records -->
+              <div style="margin-top:16px;">
+                <div style="font-weight:700;font-size:0.9rem;margin-bottom:8px;color:var(--text-main);" data-i18n="sampleDocsTitle">
+                  Load Realistic Sample Records (1-Click)
+                </div>
+                <div id="sampleDocsList" class="sample-docs-list">
+                  <!-- Dynamically Populated -->
+                </div>
+              </div>
+            </div>
+
+            <!-- OCR Extracted Results Panel -->
+            <div class="ocr-results-panel">
+              <div style="font-weight:700;font-size:0.95rem;margin-bottom:12px;display:flex;align-items:center;gap:6px;">
+                <span>⚡</span> <span>Extracted Clinical Data (Medications & Labs)</span>
+              </div>
+              <div id="ocrExtractedResults">
+                <div style="font-size:0.85rem;color:var(--text-muted);text-align:center;padding:40px 0;">
+                  Click any sample document above or upload a prescription to extract structured medications and abnormal lab values.
+                </div>
+              </div>
+
+              <div class="form-group" style="margin-top:14px;">
+                <label class="form-label">Or Paste Prescription / Lab Text Directly</label>
+                <textarea id="customDocTextInput" class="form-textarea" rows="2" placeholder="e.g. Tab Telma 40mg 1-0-0, HbA1c 9.2%, Serum Creatinine 1.9 mg/dL"></textarea>
+                <button type="button" id="processCustomDocBtn" class="btn btn-secondary btn-sm" style="margin-top:6px;align-self:flex-end;">Digitize Text</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 6: OPD Token & Final Summary -->
+        <div id="kioskStep6" class="kiosk-step-content">
+          <div class="step-header" style="text-align:center;">
+            <h2><span>✅</span> <span>Clinical Intake Complete!</span></h2>
+            <p>Your structured clinical case summary has been sent directly to the attending OPD Physician.</p>
+          </div>
+
+          <div class="token-card">
+            <span id="kioskTokenTriageBadge" class="dpdp-badge">ROUTINE OPD QUEUE</span>
+            <div class="token-number-large" id="kioskTokenNumberDisplay">OPD-03</div>
+            <div id="kioskTokenPatientName" style="font-weight:700;font-size:1.1rem;">Ramesh Kumar (58 Y / Male)</div>
+            <div id="kioskTokenWaitTime" style="color:var(--cyan-accent);font-size:0.9rem;margin-top:4px;">Estimated Wait: ~8 Minutes (Room 104)</div>
+
+            <div class="token-qr-mock">
+              <svg viewBox="0 0 100 100">
+                <rect width="100" height="100" fill="white"/>
+                <rect x="10" y="10" width="25" height="25" fill="#0f172a"/>
+                <rect x="65" y="10" width="25" height="25" fill="#0f172a"/>
+                <rect x="10" y="65" width="25" height="25" fill="#0f172a"/>
+                <rect x="15" y="15" width="15" height="15" fill="white"/>
+                <rect x="70" y="15" width="15" height="15" fill="white"/>
+                <rect x="15" y="70" width="15" height="15" fill="white"/>
+                <rect x="18" y="18" width="9" height="9" fill="#0f172a"/>
+                <rect x="73" y="18" width="9" height="9" fill="#0f172a"/>
+                <rect x="18" y="73" width="9" height="9" fill="#0f172a"/>
+                <rect x="42" y="15" width="10" height="10" fill="#0f172a"/>
+                <rect x="42" y="40" width="16" height="16" fill="#0ea5e9"/>
+                <rect x="65" y="65" width="12" height="12" fill="#0f172a"/>
+                <rect x="80" y="80" width="10" height="10" fill="#0f172a"/>
+              </svg>
+            </div>
+
+            <div style="font-size:0.8rem;color:var(--text-muted);margin-top:10px;">
+              Scan QR at Doctor Desk for Instant Profile Loading | ABHA Verified
+            </div>
+          </div>
+
+          <div style="margin-top:24px;background:var(--bg-secondary);padding:18px;border-radius:var(--radius-md);border:1px solid var(--border-color);">
+            <div style="font-weight:700;font-size:0.95rem;margin-bottom:6px;color:var(--primary);">
+              AI Synthesized Clinical Intake Narrative
+            </div>
+            <div id="kioskSummaryNarrative" class="hpi-narrative-text">
+              Patient presenting with intermittent retrosternal chest heaviness for 3 days. Known hypertensive and diabetic.
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer Actions -->
+        <footer class="kiosk-footer-actions">
+          <button type="button" id="kioskPrevBtn" class="btn btn-secondary" style="display:none;" data-i18n="prevStep">
+            ← Previous
+          </button>
+          <div style="font-size:0.8rem;color:var(--text-dim);">
+            Powered by Offline Rule & Clinical NLP Engines
+          </div>
+          <button type="button" id="kioskNextBtn" class="btn btn-primary" data-i18n="nextStep">
+            Next Step →
+          </button>
+        </footer>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- VIEW 2: DOCTOR OPD CONSULTATION DESK -->
+  <!-- ========================================================================= -->
+  <main id="doctorSection" class="view-section">
+    <div class="doctor-desk-layout">
+      
+      <!-- OPD Live Queue Column -->
+      <aside class="opd-queue-card">
+        <div class="queue-header">
+          <div>
+            <div style="font-weight:700;font-size:1.05rem;">Live OPD Queue</div>
+            <div id="opdQueueCount" style="font-size:0.8rem;color:var(--text-muted);">2 Waiting</div>
+          </div>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="window.doctorModule.refreshQueue()">🔄 Refresh</button>
+        </div>
+
+        <div id="opdQueueItems" class="queue-items-scroll">
+          <!-- Dynamically Populated -->
+        </div>
+      </aside>
+
+      <!-- Deep Clinical Case Sheet Workspace -->
+      <div class="patient-case-workspace">
+        
+        <!-- Patient Banner -->
+        <div class="patient-header-banner">
+          <div style="display:flex;align-items:center;gap:16px;">
+            <div class="patient-avatar-box">RK</div>
+            <div>
+              <div style="display:flex;align-items:center;gap:10px;">
+                <h2 id="docPatientName" style="font-size:1.4rem;font-weight:700;">Ramesh Kumar</h2>
+                <span id="docTriageBadge" class="dpdp-badge">ROUTINE OPD</span>
+              </div>
+              <div id="docPatientMeta" style="font-size:0.85rem;color:var(--text-muted);margin-top:2px;">
+                58 Years / Male | Token: OPD-A04 | Phone: 9876543210
+              </div>
+            </div>
+          </div>
+          <div style="text-align:right;">
+            <span class="abdm-badge" id="docPatientAbha">ramesh.kumar58@abdm</span>
+            <div style="font-size:0.75rem;color:var(--triage-green);margin-top:4px;">✓ ABDM KYC Verified</div>
+          </div>
+        </div>
+
+        <!-- Case Sections Grid -->
+        <div class="case-section-box">
+          <div class="case-section-title">
+            <span>🩺</span> <span>Chief Complaint & AI Synthesized History of Present Illness (HPI)</span>
+          </div>
+          <div style="font-weight:700;font-size:0.95rem;color:var(--cyan-accent);margin-bottom:6px;">
+            Chief Complaint: <span id="docChiefComplaint">Chest Heaviness & Diabetes Routine Review</span>
+          </div>
+          <div id="docHpiNarrative" class="hpi-narrative-text">
+            58M presenting with intermittent dull chest pressure for 3 days on walking. Denies radiation, acute diaphoresis, or syncope. Known diabetic on oral hypoglycemic agents.
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <!-- Past History & Allergies -->
+          <div class="case-section-box">
+            <div class="case-section-title">
+              <span>📋</span> <span>Past History & Allergies</span>
+            </div>
+            <div style="margin-bottom:10px;">
+              <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:4px;">Past Medical History:</div>
+              <div id="docPastHistoryTags" class="tag-list">
+                <span class="tag-item">Type 2 Diabetes Mellitus</span>
+                <span class="tag-item">Essential Hypertension</span>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:4px;">Drug Allergies:</div>
+              <div id="docAllergiesTags" class="tag-list">
+                <span class="tag-item allergy">NKDA (No Known Drug Allergies)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Reconciled Medications & Labs -->
+          <div class="case-section-box">
+            <div class="case-section-title">
+              <span>💊</span> <span>Scanned Meds & Abnormal Lab Badges</span>
+            </div>
+            <div id="docReconciledMeds" style="margin-bottom:10px;">
+              <!-- Extracted Meds -->
+            </div>
+            <div id="docInvestigationBadges">
+              <!-- Abnormal Labs -->
+            </div>
+          </div>
+        </div>
+
+        <!-- AYUSH Assessment Card (Visible if AYUSH stream) -->
+        <div id="docAyushAssessmentPanel" class="case-section-box" style="display:none;border-color:var(--ayush-primary);">
+          <div class="case-section-title" style="color:var(--ayush-primary);">
+            <span>🌿</span> <span>AYUSH Prakriti & Nidana Assessment</span>
+          </div>
+          <div class="form-grid-2">
+            <div>
+              <div style="font-size:0.85rem;"><strong>Dominant Prakriti:</strong> <span id="docAyushPrakriti">Vata Dominant</span></div>
+              <div style="font-size:0.85rem;margin-top:4px;"><strong>Agni:</strong> <span id="docAyushAgni">Manda Agni</span></div>
+              <div style="font-size:0.85rem;margin-top:4px;"><strong>Koshtha:</strong> <span id="docAyushKoshtha">Krura Koshtha</span></div>
+            </div>
+            <div>
+              <div style="font-size:0.85rem;"><strong>Nidana (Causative factors):</strong></div>
+              <div id="docAyushNidana" style="font-size:0.8rem;color:var(--text-muted);">Vidahi Ahara Sevana</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Diagnostic Assistant: ICD-10 & NAMASTE AYUSH Suggestions -->
+        <div class="case-section-box">
+          <div class="case-section-title">
+            <span>🏷️</span> <span>Diagnostic Assistant & Suggested Codes (1-Click Apply)</span>
+          </div>
+          <div id="docIcdSuggestions" class="tag-list" style="margin-bottom:12px;">
+            <!-- ICD-10 & NAMASTE Chips -->
+          </div>
+          <div class="form-group">
+            <label class="form-label">Final Clinical Diagnosis</label>
+            <input type="text" id="docDiagnosisInput" class="form-input" value="E11.65 - Type 2 diabetes mellitus with hyperglycemia; I20.9 - Angina pectoris">
+          </div>
+        </div>
+
+        <!-- Physician Notes -->
+        <div class="case-section-box">
+          <div class="case-section-title">
+            <span>📝</span> <span>Physician Clinical Notes & Observations</span>
+          </div>
+          <textarea id="docClinicalNotesInput" class="form-textarea" rows="3" placeholder="Add doctor observations, examination notes or clinical advice..."></textarea>
+          <button type="button" id="saveDoctorNotesBtn" class="btn btn-secondary btn-sm" style="margin-top:8px;">Save Notes</button>
+        </div>
+
+        <!-- Smart E-Prescription Builder -->
+        <div class="case-section-box">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+            <div class="case-section-title" style="margin-bottom:0;border-bottom:none;">
+              <span>💊</span> <span>E-Prescription & Treatment Orders</span>
+            </div>
+            <button type="button" id="doctorAddRxBtn" class="btn btn-secondary btn-sm">+ Add Medicine</button>
+          </div>
+
+          <table class="prescription-table">
+            <thead>
+              <tr>
+                <th>Medicine / Formulation</th>
+                <th>Strength</th>
+                <th>Frequency</th>
+                <th>Duration</th>
+                <th>Instructions</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="doctorPrescriptionTbody">
+              <!-- Dynamically Populated -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Action Bar -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:24px;">
+          <div style="font-size:0.85rem;color:var(--text-muted);">
+            Completing consultation will sign the record, generate ABDM FHIR R4 Bundle, and notify patient PHR.
+          </div>
+          <button type="button" id="completeConsultBtn" class="btn btn-success" style="padding:14px 28px;font-size:1.05rem;" data-i18n="saveAndPrescribe">
+            ✓ Complete Consultation & ABDM Sync
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- VIEW 3: OPD QUEUE & HOSPITAL ANALYTICS -->
+  <!-- ========================================================================= -->
+  <main id="analyticsSection" class="view-section">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+      <div>
+        <h2 style="font-size:1.6rem;font-weight:700;">Hospital OPD Throughput & Clinical Analytics</h2>
+        <p style="color:var(--text-muted);font-size:0.95rem;">Real-time measurement of pre-consultation time savings, triage interceptions, and intake volume.</p>
+      </div>
+      <button type="button" id="refreshAnalyticsBtn" class="btn btn-secondary">🔄 Refresh Metrics</button>
+    </div>
+
+    <!-- Stat Metric Cards -->
+    <div class="stats-grid-4">
+      <div class="stat-metric-card">
+        <div class="stat-icon-wrapper green">⚡</div>
+        <div>
+          <div class="stat-val" id="statTimeSavedPct">82.5%</div>
+          <div class="stat-desc">Clinical Time Saved per Patient</div>
+        </div>
+      </div>
+
+      <div class="stat-metric-card">
+        <div class="stat-icon-wrapper blue">👥</div>
+        <div>
+          <div class="stat-val" id="statDailyIntakeVolume">4,252</div>
+          <div class="stat-desc">Daily OPD Patients Handled</div>
+        </div>
+      </div>
+
+      <div class="stat-metric-card">
+        <div class="stat-icon-wrapper red">🚨</div>
+        <div>
+          <div class="stat-val" id="statRedFlagsCount">15</div>
+          <div class="stat-desc">Emergency Triage Red Flags Intercepted</div>
+        </div>
+      </div>
+
+      <div class="stat-metric-card">
+        <div class="stat-icon-wrapper amber">📄</div>
+        <div>
+          <div class="stat-val" id="statDocsDigitized">1,842</div>
+          <div class="stat-desc">Prescriptions & Labs Digitized (OCR)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Time Comparison & Savings Breakdown -->
+    <div class="form-grid-2" style="margin-top:20px;">
+      <div class="case-section-box">
+        <div class="case-section-title">
+          <span>⏱️</span> <span>Pre-Consultation Intake Speed Comparison</span>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-around;padding:24px 0;">
+          <div style="text-align:center;">
+            <div style="font-size:2.4rem;font-weight:900;color:var(--primary);" id="statPreConsultTime">48s</div>
+            <div style="font-size:0.85rem;color:var(--text-muted);">MediKiosk AI Average</div>
+          </div>
+          <div style="font-size:2rem;color:var(--text-dim);">vs</div>
+          <div style="text-align:center;">
+            <div style="font-size:2.4rem;font-weight:900;color:var(--text-dim);" id="statBaselineTime">240s</div>
+            <div style="font-size:0.85rem;color:var(--text-muted);">Traditional Manual Intake</div>
+          </div>
+        </div>
+        <div style="font-size:0.85rem;color:var(--text-muted);text-align:center;">
+          Physicians receive fully structured SOCRATES narrative, saving over 3 minutes per consultation.
+        </div>
+      </div>
+
+      <div class="case-section-box">
+        <div class="case-section-title">
+          <span>🛡️</span> <span>Standards & Ecosystem Compliance</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:10px;">
+          <div class="extracted-item-pill">
+            <span>🏛️ ABDM Health Information Exchange (HIE-CM)</span>
+            <span class="dpdp-badge">VERIFIED 100%</span>
+          </div>
+          <div class="extracted-item-pill">
+            <span>📜 HL7 FHIR R4 Bundle Standard (NRCES Certified)</span>
+            <span class="dpdp-badge">COMPLIANT</span>
+          </div>
+          <div class="extracted-item-pill">
+            <span>🔒 Digital Personal Data Protection Act 2023 (DPDP)</span>
+            <span class="dpdp-badge">ENCRYPTED</span>
+          </div>
+          <div class="extracted-item-pill">
+            <span>🌿 National AYUSH Morbidity Electronic (NAMASTE)</span>
+            <span class="dpdp-badge">SUPPORTED</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- VIEW 4: ABDM FHIR R4 & DPDP COMPLIANCE HUB -->
+  <!-- ========================================================================= -->
+  <main id="fhirSection" class="view-section">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+      <div>
+        <h2 style="font-size:1.6rem;font-weight:700;">ABDM FHIR R4 Ecosystem & DPDP Compliance Hub</h2>
+        <p style="color:var(--text-muted);font-size:0.95rem;">Interactive HL7 FHIR R4 JSON Inspector and DPDP Act 2023 Cryptographic Audit Trail.</p>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button type="button" id="viewDpdpAuditBtn" class="btn btn-secondary">📜 DPDP Audit Certificate</button>
+        <button type="button" id="copyFhirJsonBtn" class="btn btn-secondary">📋 Copy JSON</button>
+        <button type="button" id="pushAbdmHieBtn" class="btn btn-primary">🚀 Push to ABDM HIE-CM</button>
+      </div>
+    </div>
+
+    <div class="form-grid-2">
+      <!-- FHIR Resource Explorer -->
+      <div class="case-section-box">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <div class="case-section-title" style="margin-bottom:0;border-bottom:none;">
+            <span>📦</span> <span>FHIR R4 Bundle Resources</span>
+          </div>
+          <span id="fhirTotalEntriesCount" class="abdm-badge">7 Resources</span>
+        </div>
+        <div id="fhirResourceList" style="max-height:450px;overflow-y:auto;">
+          <!-- Resource Cards -->
+        </div>
+      </div>
+
+      <!-- JSON Code Inspector -->
+      <div class="case-section-box">
+        <div class="case-section-title">
+          <span>💻</span> <span>Raw FHIR R4 JSON Schema (NRCES ABDM Validated)</span>
+        </div>
+        <pre id="fhirJsonViewerCode" class="json-viewer-box">Loading FHIR Bundle...</pre>
+      </div>
+    </div>
+  </main>
+
+</div>
+
+<!-- DPDP Cryptographic Audit Certificate Modal -->
+<div id="dpdpModal" class="modal-backdrop">
+  <div class="modal-dialog">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <h3 style="font-size:1.2rem;font-weight:700;color:var(--triage-green);">🛡️ DPDP Act 2023 Consent Audit Certificate</h3>
+      <button type="button" class="icon-btn" onclick="document.getElementById('dpdpModal').classList.remove('active')">✕</button>
+    </div>
+    <div style="font-size:0.9rem;line-height:1.6;color:var(--text-muted);">
+      <p id="dpdpCertPatient" style="font-weight:600;color:var(--text-main);margin-bottom:8px;">Patient ID: P-101</p>
+      <p style="margin-bottom:8px;">Compliance Standard: <strong>Digital Personal Data Protection Act 2023 (India)</strong></p>
+      <p style="margin-bottom:8px;">Consent Timestamp: <span id="dpdpCertTime">2026-09-11T22:42:00</span></p>
+      <p style="margin-bottom:8px;">Cryptographic Integrity Hash (SHA-256):</p>
+      <div id="dpdpCertHash" style="background:#050811;padding:10px;border-radius:6px;font-family:monospace;font-size:0.75rem;color:#38bdf8;word-break:break-all;margin-bottom:12px;">
+        9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08
+      </div>
+      <p style="font-size:0.8rem;color:var(--text-dim);">
+        Data retention policy: Session data purged from terminal post-HIS sync. Encrypted record retained in ABDM PHR.
+      </p>
+    </div>
+    <div style="text-align:right;margin-top:20px;">
+      <button type="button" class="btn btn-primary btn-sm" onclick="document.getElementById('dpdpModal').classList.remove('active')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script src="js/app.js"></script>
+<script src="js/kiosk.js"></script>
+<script src="js/doctor.js"></script>
+<script src="js/analytics.js"></script>
+<script src="js/fhir_viewer.js"></script>
+
+</body>
+</html>
