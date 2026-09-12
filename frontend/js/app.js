@@ -9,7 +9,7 @@ const API_BASE = "/api/v1";
 const appState = {
   currentRole: "kiosk",         // "kiosk" | "doctor" | "analytics" | "fhir"
   currentLanguage: "hi",        // "en" | "hi" | "mr" | "ta" | "te" | "bn" | "gu" | "kn"
-  theme: "dark",
+  theme: "light",
   currentSession: null,
   activeQueueItem: null,
   websocket: null,
@@ -20,8 +20,8 @@ const appState = {
 // Multilingual Localization Dictionary
 const I18N = {
   en: {
-    appTitle: "MediKiosk AI Intake",
-    appSub: "SIH26047: Digital Clinical Intake & AYUSH EMR",
+    appTitle: "Swasthya Sathi Care Desk",
+    appSub: "SIH26047: Digital Clinical Intake & AYUSH OPD Desk",
     tabKiosk: "Patient Intake Kiosk",
     tabDoctor: "Doctor OPD Desk",
     tabAnalytics: "OPD Analytics",
@@ -39,7 +39,7 @@ const I18N = {
     saveAndPrescribe: "Save & Generate ABDM FHIR Record"
   },
   hi: {
-    appTitle: "मेडीकियोस्क एआई - मरीज पर्चा प्रणाली",
+    appTitle: "स्वास्थ्य साथी - डिजिटल मरीज पर्चा प्रणाली",
     appSub: "डिजिटल क्लिनिकल इनटेक एवं आयुष ओपीडी मंच",
     tabKiosk: "मरीज इनटेक कियोस्क",
     tabDoctor: "चिकित्सक ओपीडी डेस्क",
@@ -180,7 +180,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initLanguage();
   initSpeechEngine();
   initWebSocket();
-  
+
   // Initialize Child Modules
   if (window.kioskModule) window.kioskModule.init();
   if (window.doctorModule) window.doctorModule.init();
@@ -193,8 +193,8 @@ document.addEventListener("DOMContentLoaded", () => {
 // Theme Management
 function initTheme() {
   const themeToggleBtn = document.getElementById("themeToggleBtn");
-  const savedTheme = localStorage.getItem("medikiosk_theme") || "dark";
-  setTheme(savedTheme);
+  // Always force light whitish theme by default
+  setTheme("light");
 
   if (themeToggleBtn) {
     themeToggleBtn.addEventListener("click", () => {
@@ -227,7 +227,7 @@ function initNavigation() {
 
 function switchRole(roleName) {
   appState.currentRole = roleName;
-  
+
   // Update Tab Buttons
   document.querySelectorAll(".nav-tab-btn").forEach(t => {
     t.classList.toggle("active", t.getAttribute("data-target") === roleName);
