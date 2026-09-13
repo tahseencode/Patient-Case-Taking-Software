@@ -193,8 +193,10 @@ document.addEventListener("DOMContentLoaded", () => {
 // Theme Management
 function initTheme() {
   const themeToggleBtn = document.getElementById("themeToggleBtn");
-  // Always force light whitish theme by default
-  setTheme("light");
+  const savedTheme = localStorage.getItem("medikiosk_theme");
+  const initialTheme = savedTheme === "dark" || savedTheme === "light" ? savedTheme : "light";
+
+  setTheme(initialTheme);
 
   if (themeToggleBtn) {
     themeToggleBtn.addEventListener("click", () => {
@@ -205,12 +207,23 @@ function initTheme() {
 }
 
 function setTheme(theme) {
-  appState.theme = theme;
-  document.documentElement.setAttribute("data-theme", theme);
-  localStorage.setItem("medikiosk_theme", theme);
-  const icon = document.querySelector("#themeToggleBtn i, #themeToggleBtn span");
+  const normalizedTheme = theme === "dark" ? "dark" : "light";
+  appState.theme = normalizedTheme;
+  document.documentElement.setAttribute("data-theme", normalizedTheme);
+  localStorage.setItem("medikiosk_theme", normalizedTheme);
+
+  const themeToggleBtn = document.getElementById("themeToggleBtn");
+  const icon = themeToggleBtn?.querySelector("i, span");
   if (icon) {
-    icon.textContent = theme === "dark" ? "☀️" : "🌙";
+    icon.textContent = normalizedTheme === "dark" ? "☀️" : "🌙";
+    icon.classList.add("theme-toggle-icon");
+  }
+
+  if (themeToggleBtn) {
+    const isDark = normalizedTheme === "dark";
+    themeToggleBtn.title = isDark ? "Switch to Light Mode" : "Switch to Dark Mode";
+    themeToggleBtn.setAttribute("aria-label", themeToggleBtn.title);
+    themeToggleBtn.setAttribute("aria-pressed", String(isDark));
   }
 }
 
