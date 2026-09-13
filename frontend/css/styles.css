@@ -86,8 +86,30 @@
   box-sizing: border-box;
 }
 
+/* Smooth theme transitions */
+html,
+body,
+.app-container,
+.header-bar,
+.nav-tabs-wrapper,
+.nav-tab-btn,
+.icon-btn,
+.lang-selector,
+.form-input,
+.form-select,
+.form-textarea,
+.card,
+.queue-item-card,
+.patient-case-workspace,
+.opd-queue-card,
+.modal-dialog,
+.stream-toggle-box,
+.json-viewer-box {
+  transition: background-color var(--transition-normal), color var(--transition-normal), border-color var(--transition-normal), box-shadow var(--transition-normal);
+}
+
 html, body {
-  background-color: #ffffff !important;
+  background-color: var(--bg-primary) !important;
   color: var(--text-main);
   font-family: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   line-height: 1.55;
@@ -103,7 +125,7 @@ html, body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #ffffff;
+  background: var(--bg-card);
 }
 
 ::-webkit-scrollbar-thumb {
@@ -123,12 +145,12 @@ html, body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: #ffffff;
+  background-color: var(--bg-primary);
 }
 
 /* Header & Top Navigation */
 .header-bar {
-  background: #ffffff;
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   padding: 12px 20px;
@@ -211,7 +233,7 @@ html, body {
 /* Nav Tabs */
 .nav-tabs-wrapper {
   display: flex;
-  background: #f1f5f9;
+  background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   padding: 4px;
   border-radius: var(--radius-md);
@@ -239,7 +261,7 @@ html, body {
 }
 
 .nav-tab-btn.active {
-  background: #ffffff;
+  background: var(--bg-card);
   color: var(--primary);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
   font-weight: 700;
@@ -253,7 +275,7 @@ html, body {
 }
 
 .lang-selector {
-  background: #ffffff;
+  background: var(--bg-card);
   color: var(--text-main);
   border: 1px solid var(--border-color);
   padding: 8px 12px;
@@ -271,7 +293,7 @@ html, body {
 }
 
 .icon-btn {
-  background: #ffffff;
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
   color: var(--text-main);
   width: 38px;
@@ -286,7 +308,7 @@ html, body {
 }
 
 .icon-btn:hover {
-  background: #f8fafc;
+  background: var(--bg-tertiary);
   border-color: var(--border-hover);
 }
 
@@ -375,7 +397,7 @@ html, body {
 
 /* Kiosk Sidebar Steps */
 .kiosk-stepper-card {
-  background: #ffffff;
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   padding: 22px 16px;
@@ -404,7 +426,7 @@ html, body {
   gap: 12px;
   padding: 10px 12px;
   border-radius: var(--radius-md);
-  background: #ffffff;
+  background: var(--bg-card);
   color: var(--text-muted);
   cursor: pointer;
   transition: var(--transition-normal);
@@ -412,7 +434,7 @@ html, body {
 }
 
 .kiosk-step-item:hover {
-  background: #f8fafc;
+  background: var(--bg-tertiary);
   color: var(--text-main);
 }
 
@@ -431,7 +453,7 @@ html, body {
   width: 32px;
   height: 32px;
   border-radius: var(--radius-full);
-  background: #f1f5f9;
+  background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   display: flex;
   align-items: center;
@@ -458,7 +480,7 @@ html, body {
 
 /* Kiosk Main Content Panel */
 .kiosk-main-panel {
-  background: #ffffff;
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   padding: 32px;
@@ -528,7 +550,7 @@ html, body {
 .form-input,
 .form-select,
 .form-textarea {
-  background: #ffffff;
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
   color: var(--text-main);
   padding: 11px 15px;
@@ -559,7 +581,7 @@ html, body {
 .stream-toggle-box {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  background: #f1f5f9;
+  background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   padding: 4px;
   border-radius: var(--radius-md);
@@ -582,14 +604,14 @@ html, body {
 }
 
 .stream-option-btn.active.allopathy {
-  background: #ffffff;
+  background: var(--bg-card);
   color: var(--primary);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
   font-weight: 700;
 }
 
 .stream-option-btn.active.ayush {
-  background: #ffffff;
+  background: var(--bg-card);
   color: var(--ayush-primary);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
   font-weight: 700;
@@ -646,7 +668,7 @@ html, body {
 }
 
 .body-map-card {
-  background: #ffffff;
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   padding: 20px;
@@ -694,7 +716,7 @@ html, body {
 }
 
 .body-pill-btn {
-  background: #f1f5f9;
+  background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   color: var(--text-muted);
   padding: 4px 12px;
@@ -724,7 +746,7 @@ html, body {
 }
 
 .complaint-card {
-  background: #ffffff;
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   padding: 16px;
@@ -783,7 +805,7 @@ html, body {
 
 /* Voice Input Card */
 .voice-intake-bar {
-  background: #ffffff;
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   padding: 16px 20px;
@@ -887,7 +909,7 @@ html, body {
 
 /* Step 3: SOCRATES Dialogue Question Box */
 .socrates-card {
-  background: #ffffff;
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   padding: 24px;
@@ -931,7 +953,7 @@ html, body {
 }
 
 .socrates-option-btn {
-  background: #ffffff;
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
   padding: 14px 16px;
   border-radius: var(--radius-md);
@@ -968,7 +990,7 @@ html, body {
 /* Pain Severity Slider (VAS 1-10) */
 .severity-slider-box {
   margin: 24px 0;
-  background: #ffffff;
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   padding: 20px;
@@ -1036,7 +1058,7 @@ html, body {
 }
 
 .ayush-question-card {
-  background: #ffffff;
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   padding: 18px;
@@ -1074,7 +1096,7 @@ html, body {
 }
 
 .ayush-radio-label:hover {
-  background: #f8fafc;
+  background: var(--bg-tertiary);
   color: var(--text-main);
 }
 
@@ -1092,7 +1114,7 @@ html, body {
 }
 
 .dropzone-box {
-  background: #ffffff;
+  background: var(--bg-card);
   border: 2px dashed var(--border-color);
   border-radius: var(--radius-lg);
   padding: 30px 20px;
@@ -1124,7 +1146,7 @@ html, body {
 }
 
 .sample-doc-item {
-  background: #ffffff;
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   padding: 12px 16px;
@@ -1154,7 +1176,7 @@ html, body {
 
 /* OCR Results Extracted View */
 .ocr-results-panel {
-  background: #ffffff;
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   padding: 20px;
@@ -1164,7 +1186,7 @@ html, body {
 }
 
 .extracted-item-pill {
-  background: #f8fafc;
+  background: var(--bg-tertiary);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
   padding: 8px 12px;
@@ -1201,7 +1223,7 @@ html, body {
 
 /* Step 6: Token & Intake Complete */
 .token-card {
-  background: #ffffff;
+  background: var(--bg-card);
   border: 2px solid var(--primary);
   border-radius: var(--radius-xl);
   padding: 36px 28px;
@@ -1275,14 +1297,14 @@ html, body {
 }
 
 .btn-secondary {
-  background: #ffffff;
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
   color: var(--text-main);
   box-shadow: var(--shadow-sm);
 }
 
 .btn-secondary:hover {
-  background: #f8fafc;
+  background: var(--bg-tertiary);
   border-color: var(--border-hover);
 }
 
@@ -1325,7 +1347,7 @@ html, body {
 
 /* OPD Queue Column */
 .opd-queue-card {
-  background: #ffffff;
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   padding: 20px;
@@ -1354,7 +1376,7 @@ html, body {
 }
 
 .queue-item-card {
-  background: #ffffff;
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   padding: 14px;
@@ -1423,7 +1445,7 @@ html, body {
 
 /* Patient Case View Workspace */
 .patient-case-workspace {
-  background: #ffffff;
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   padding: 24px;
@@ -1433,7 +1455,7 @@ html, body {
 }
 
 .patient-header-banner {
-  background: #f8fafc;
+  background: var(--bg-tertiary);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   padding: 16px 20px;
@@ -1459,7 +1481,7 @@ html, body {
 
 /* Case Sections */
 .case-section-box {
-  background: #ffffff;
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   padding: 18px 20px;
@@ -1497,7 +1519,7 @@ html, body {
 }
 
 .tag-item {
-  background: #f1f5f9;
+  background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   color: var(--text-main);
   padding: 4px 10px;
@@ -1557,7 +1579,7 @@ html, body {
 .prescription-table th {
   text-align: left;
   padding: 10px;
-  background: #f8fafc;
+  background: var(--bg-tertiary);
   color: var(--text-muted);
   font-weight: 600;
   border-bottom: 1px solid var(--border-color);
@@ -1579,7 +1601,7 @@ html, body {
 }
 
 .stat-metric-card {
-  background: #ffffff;
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-lg);
   padding: 22px;
@@ -1633,7 +1655,7 @@ html, body {
 
 /* JSON Code Viewer */
 .json-viewer-box {
-  background: #f8fafc;
+  background: var(--bg-tertiary);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   padding: 18px;
@@ -1663,7 +1685,7 @@ html, body {
 }
 
 .modal-dialog {
-  background: #ffffff;
+  background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-xl);
   max-width: 600px;
@@ -1694,5 +1716,124 @@ html, body {
     border: 1px solid #e2e8f0 !important;
     box-shadow: none !important;
     max-width: 100% !important;
+  }
+}
+
+/* ==========================================================================
+   DARK MODE
+   ========================================================================== */
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg-primary: #0b1120;
+  --bg-secondary: #111827;
+  --bg-tertiary: #172033;
+  --bg-card: #111827;
+  --bg-card-hover: #1b2638;
+  --bg-glass: #111827;
+
+  --border-color: #263244;
+  --border-hover: #3a4a61;
+  --border-focus: #38bdf8;
+
+  --text-main: #f8fafc;
+  --text-muted: #cbd5e1;
+  --text-dim: #94a3b8;
+  --text-inverse: #0b1120;
+
+  --primary: #38bdf8;
+  --primary-hover: #7dd3fc;
+  --primary-light: #0c2a3b;
+  --primary-subtle: #10283a;
+  --primary-glow: rgba(56, 189, 248, 0.2);
+  --cyan-accent: #38bdf8;
+
+  --ayush-primary: #f59e0b;
+  --ayush-secondary: #34d399;
+  --ayush-light: #2a2110;
+  --ayush-glow: rgba(245, 158, 11, 0.2);
+  --ayush-herb: #4ade80;
+
+  --triage-red-bg: #35131b;
+  --triage-red-border: #6b2330;
+  --triage-yellow-bg: #342711;
+  --triage-yellow-border: #6b531c;
+  --triage-green-bg: #0d3025;
+  --triage-green-border: #1f604c;
+
+  --badge-abdm-bg: #1d1b4b;
+  --badge-abdm-border: #37317c;
+  --badge-dpdp-bg: #0d3025;
+  --badge-dpdp-border: #1f604c;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.28), 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.28);
+  --shadow-lg: 0 14px 35px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+[data-theme="dark"] .nav-tab-btn:hover,
+[data-theme="dark"] .icon-btn:hover {
+  background: var(--bg-card-hover);
+}
+
+[data-theme="dark"] .nav-tab-btn.active {
+  background: var(--bg-card);
+  color: var(--primary);
+}
+
+[data-theme="dark"] .icon-btn {
+  background: var(--bg-card);
+  border-color: var(--border-color);
+}
+
+[data-theme="dark"] .lang-selector,
+[data-theme="dark"] .form-input,
+[data-theme="dark"] .form-select,
+[data-theme="dark"] .form-textarea {
+  background: var(--bg-card);
+  color: var(--text-main);
+}
+
+[data-theme="dark"] .json-viewer-box {
+  background: #0a101c;
+  color: #7dd3fc;
+}
+
+[data-theme="dark"] .modal-backdrop {
+  background: rgba(2, 6, 23, 0.72);
+}
+
+[data-theme="dark"] .modal-dialog {
+  background: var(--bg-card);
+}
+
+[data-theme="dark"] .theme-toggle-icon {
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.35));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html,
+  body,
+  .app-container,
+  .header-bar,
+  .nav-tabs-wrapper,
+  .nav-tab-btn,
+  .icon-btn,
+  .lang-selector,
+  .form-input,
+  .form-select,
+  .form-textarea,
+  .card,
+  .queue-item-card,
+  .patient-case-workspace,
+  .opd-queue-card,
+  .modal-dialog,
+  .stream-toggle-box,
+  .json-viewer-box {
+    transition: none;
   }
 }
