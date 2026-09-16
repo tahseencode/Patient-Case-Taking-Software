@@ -6,11 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Swasthya Sathi | Caring Digital Clinical Intake & AYUSH Care Desk</title>
 
-  <!-- Modern Typography (Outfit & Inter) -->
+  <!-- Modern Typography (Plus Jakarta Sans & Fira Code) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap"
     rel="stylesheet">
 
   <!-- Stylesheet -->
@@ -24,7 +24,7 @@
     <!-- Top Navigation & Header -->
     <header class="header-bar">
       <div class="brand-section">
-        <div class="brand-logo-badge">🩺</div>
+        <a href="index.html" class="logo-link">MEDIFY.AI</a>
         <div class="brand-info">
           <h1 data-i18n="appTitle">Swasthya Sathi Care Desk</h1>
           <div class="sub-tag">
@@ -64,8 +64,11 @@
           <option value="kn">ಕನ್ನಡ (Kannada)</option>
         </select>
 
-        <a href="index.html" class="btn btn-secondary btn-sm" style="display:inline-flex; align-items:center; gap:6px; text-decoration:none; padding: 6px 12px; font-weight:600; border-radius:8px;" title="Back to Landing Page">
-          <span>🏠</span> <span>Home</span>
+        <a href="index.html" class="btn btn-home-cta" title="Back to Landing Page">
+          <span>Home</span>
+          <span class="home-arrow" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+          </span>
         </a>
 
         <button type="button" id="themeToggleBtn" class="icon-btn" title="Switch to Dark Mode" aria-label="Switch to Dark Mode" aria-pressed="false">
@@ -242,7 +245,7 @@
                   <svg viewBox="0 0 200 320" style="width:100%;height:100%;">
                     <!-- Head -->
                     <circle cx="100" cy="35" r="22" class="body-region-target" data-region="head" />
-                    <text x="100" y="38" text-anchor="middle" fill="#334155" font-size="9" font-weight="600"
+                    <text x="100" y="38" text-anchor="middle" font-size="9" font-weight="700"
                       pointer-events="none">Head</text>
 
                     <!-- Neck -->
@@ -250,12 +253,12 @@
 
                     <!-- Chest -->
                     <path d="M72 72 L128 72 L120 135 L80 135 Z" class="body-region-target active" data-region="chest" />
-                    <text x="100" y="105" text-anchor="middle" fill="#334155" font-size="10" font-weight="600"
+                    <text x="100" y="105" text-anchor="middle" font-size="10" font-weight="700"
                       pointer-events="none">Chest</text>
 
                     <!-- Abdomen -->
                     <path d="M80 138 L120 138 L115 185 L85 185 Z" class="body-region-target" data-region="abdomen" />
-                    <text x="100" y="162" text-anchor="middle" fill="#334155" font-size="10" font-weight="600"
+                    <text x="100" y="162" text-anchor="middle" font-size="10" font-weight="700"
                       pointer-events="none">Abdomen</text>
 
                     <!-- Arms -->
@@ -268,7 +271,7 @@
                     <!-- Legs & Knees -->
                     <path d="M82 218 L76 300 L90 300 L97 218 Z" class="body-region-target" data-region="joints" />
                     <path d="M118 218 L124 300 L110 300 L103 218 Z" class="body-region-target" data-region="joints" />
-                    <text x="100" y="260" text-anchor="middle" fill="#334155" font-size="10" font-weight="600"
+                    <text x="100" y="260" text-anchor="middle" font-size="10" font-weight="700"
                       pointer-events="none">Joints</text>
                   </svg>
                 </div>
@@ -456,7 +459,7 @@
                   <rect x="73" y="18" width="9" height="9" fill="#0f172a" />
                   <rect x="18" y="73" width="9" height="9" fill="#0f172a" />
                   <rect x="42" y="15" width="10" height="10" fill="#0f172a" />
-                  <rect x="42" y="40" width="16" height="16" fill="#0ea5e9" />
+                  <rect x="42" y="40" width="16" height="16" fill="#164234" />
                   <rect x="65" y="65" width="12" height="12" fill="#0f172a" />
                   <rect x="80" y="80" width="10" height="10" fill="#0f172a" />
                 </svg>
