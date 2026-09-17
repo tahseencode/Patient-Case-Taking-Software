@@ -187,6 +187,21 @@ document.addEventListener("DOMContentLoaded", () => {
   if (window.analyticsModule) window.analyticsModule.init();
   if (window.fhirModule) window.fhirModule.init();
 
+  // Check URL query parameters or hash to activate requested role/portal
+  const urlParams = new URLSearchParams(window.location.search);
+  const targetRole = urlParams.get("role") || urlParams.get("tab") || window.location.hash.replace("#", "");
+  if (targetRole && ["kiosk", "doctor", "analytics", "fhir"].includes(targetRole.toLowerCase())) {
+    switchRole(targetRole.toLowerCase());
+  }
+
+  // Listen for hash changes
+  window.addEventListener("hashchange", () => {
+    const hashRole = window.location.hash.replace("#", "").toLowerCase();
+    if (hashRole && ["kiosk", "doctor", "analytics", "fhir"].includes(hashRole)) {
+      switchRole(hashRole);
+    }
+  });
+
   showToast("MediKiosk AI Ready. ABDM Facility ID: IN-AIIMS-DELHI-0012", "info");
 });
 
