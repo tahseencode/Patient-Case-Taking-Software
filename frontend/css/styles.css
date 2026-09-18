@@ -86,6 +86,111 @@
   --container-max: 1440px;
 }
 
+[data-theme="dark"] {
+  /* Dark Mode Palette - Sleek Deep Slate & Radiant Mint/Emerald Glow */
+  --bg-primary: #0b1411;
+  --bg-secondary: #12211c;
+  --bg-tertiary: #182e27;
+  --bg-card: #14241f;
+  --bg-card-hover: #1c332b;
+  --bg-glass: rgba(18, 33, 28, 0.92);
+  --border-color: #244439;
+  --border-hover: #356252;
+  --border-focus: #4ade80;
+
+  /* Typography Colors */
+  --text-main: #f3f9f6;
+  --text-muted: #a3c4b7;
+  --text-dim: #719b8c;
+  --text-inverse: #0b1411;
+
+  /* Mint & Primary Accent in Dark Mode */
+  --primary: #22c55e;
+  --primary-hover: #16a34a;
+  --primary-light: #182e27;
+  --primary-subtle: #142620;
+  --primary-glow: rgba(34, 197, 94, 0.28);
+  --cyan-accent: #38bdf8;
+
+  --mint-accent: #2dd4bf;
+  --mint-hover: #14b8a6;
+  --mint-subtle: #132b24;
+  --mint-dark: #ecfdf5;
+
+  /* AYUSH Brand Accents */
+  --ayush-primary: #4ade80;
+  --ayush-secondary: #22c55e;
+  --ayush-light: #142b22;
+  --ayush-glow: rgba(74, 222, 128, 0.22);
+  --ayush-herb: #4ade80;
+
+  /* Triage Colors */
+  --triage-red: #fb7185;
+  --triage-red-bg: #38121a;
+  --triage-red-border: #881337;
+  --triage-red-glow: rgba(251, 113, 133, 0.3);
+
+  --triage-yellow: #fbbf24;
+  --triage-yellow-bg: #352107;
+  --triage-yellow-border: #78350f;
+
+  --triage-green: #4ade80;
+  --triage-green-bg: #142b22;
+  --triage-green-border: #166534;
+
+  /* Status Badges */
+  --badge-abdm: #4ade80;
+  --badge-abdm-bg: #142b22;
+  --badge-abdm-border: #22c55e;
+
+  --badge-dpdp: #2dd4bf;
+  --badge-dpdp-bg: #132b24;
+  --badge-dpdp-border: #14b8a6;
+
+  /* Elevation */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 12px 35px rgba(0, 0, 0, 0.65);
+  --shadow-glow: 0 0 24px rgba(34, 197, 94, 0.3);
+}
+
+[data-theme="dark"] .socrates-card,
+[data-theme="dark"] .case-section-box,
+[data-theme="dark"] .kiosk-stepper-card,
+[data-theme="dark"] .opd-queue-card,
+[data-theme="dark"] .stat-metric-card,
+[data-theme="dark"] .body-map-card,
+[data-theme="dark"] .ocr-results-panel,
+[data-theme="dark"] .dropzone-box,
+[data-theme="dark"] .token-card {
+  background: var(--bg-card);
+  border-color: var(--border-color);
+  color: var(--text-main);
+}
+
+[data-theme="dark"] .socrates-option-btn,
+[data-theme="dark"] .complaint-card,
+[data-theme="dark"] .sample-doc-item,
+[data-theme="dark"] .ayush-question-card {
+  background: var(--bg-secondary);
+  border-color: var(--border-color);
+  color: var(--text-main);
+}
+
+[data-theme="dark"] .form-input,
+[data-theme="dark"] .form-select,
+[data-theme="dark"] .form-textarea {
+  background: var(--bg-tertiary);
+  color: var(--text-main);
+  border-color: var(--border-color);
+}
+
+[data-theme="dark"] .json-viewer-box {
+  background: #060e0b;
+  color: #a7f3d0;
+  border-color: var(--border-color);
+}
+
 /* Base Styles */
 * {
   margin: 0;

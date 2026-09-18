@@ -329,13 +329,9 @@ class DialogueEngine:
         result = []
         for c in CHIEF_COMPLAINTS:
             lang_key = f"name_{language}" if f"name_{language}" in c else "name_en"
-            result.append({
-                "id": c["id"],
-                "name": c.get(lang_key, c["name_en"]),
-                "body_part": c["body_part"],
-                "specialty": c["specialty"],
-                "is_high_risk": c["is_high_risk"]
-            })
+            item = dict(c)
+            item["name"] = c.get(lang_key, c["name_en"])
+            result.append(item)
         return result
 
     @staticmethod
@@ -344,21 +340,21 @@ class DialogueEngine:
             step = SOCRATES_STEPS[step_index]
             q_text = step["question"].get(language, step["question"]["en"])
             
-            # Formatted options for the requested language
+            # Formatted options for the requested language with full multilingual labels preserved
             formatted_options = []
             for opt in step["options"]:
                 label_key = f"label_{language}" if f"label_{language}" in opt else "label_en"
-                formatted_options.append({
-                    "value": opt["value"],
-                    "label": opt.get(label_key, opt["label_en"])
-                })
+                opt_dict = dict(opt)
+                opt_dict["label"] = opt.get(label_key, opt["label_en"])
+                formatted_options.append(opt_dict)
 
             return {
                 "step_index": step_index,
                 "total_steps": len(SOCRATES_STEPS),
                 "step_id": step["step_id"],
                 "clinical_field": step["clinical_field"],
-                "question": q_text,
+                "question": step["question"],
+                "question_text": q_text,
                 "options": formatted_options
             }
         return None
@@ -437,6 +433,10 @@ class DialogueEngine:
             extracted["socrates_updates"]["severity_score"] = 6
         elif re.search(r"(हल्का|mild|thoda|1|2|3)", text):
             extracted["socrates_updates"]["severity_score"] = 3
+
+        # Promote socrates_updates to top-level extracted keys for easy access
+        for k, v in extracted["socrates_updates"].items():
+            extracted[k] = v
 
         return extracted
 

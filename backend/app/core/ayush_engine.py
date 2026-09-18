@@ -95,16 +95,22 @@ class AyushEngine:
         result = []
         for q in AYUSH_QUESTIONS:
             q_text = q["question"].get(language, q["question"]["en"])
+            q_vernacular = q["question"].get("hi", q["question"]["en"])
             options = []
-            for opt in q["options"]:
+            for idx, opt in enumerate(q["options"]):
                 label_key = f"label_{language}" if f"label_{language}" in opt else "label_en"
                 options.append({
                     "value": opt["value"],
                     "label": opt.get(label_key, opt["label_en"]),
+                    "label_en": opt.get("label_en", ""),
+                    "label_hi": opt.get("label_hi", ""),
+                    "is_default": (idx == 0),
                     "score": opt["score"]
                 })
             result.append({
                 "id": q["id"],
+                "title": q_text,
+                "title_vernacular": q_vernacular if language != "hi" else q["question"].get("en", ""),
                 "question": q_text,
                 "options": options
             })
@@ -120,16 +126,60 @@ class AyushEngine:
         agni_val = "Sama Agni (Balanced)"
         koshtha_val = "Madhyama Koshtha (Regular)"
 
+        # Alias mappings for flexible input (supporting test fixtures and natural language descriptors)
+        key_aliases = {
+            "skin_texture": "skin_nature",
+            "appetite_level": "appetite_agni",
+            "bowel_habit": "bowel_koshtha",
+            "sleep_quality": "sleep_pattern",
+            "weather_response": "climate_response",
+            "mind_temperament": "temperament_mind"
+        }
+
+        value_aliases = {
+            "lean_thin": "vata",
+            "medium_muscular": "pitta",
+            "broad_heavy": "kapha",
+            "dry_rough": "vata",
+            "warm_sensitive": "pitta",
+            "thick_smooth": "kapha",
+            "irregular": "vishama",
+            "intense_sharp": "tikshna",
+            "slow_sluggish": "manda",
+            "balanced": "sama",
+            "hard_dry": "krura",
+            "soft_loose": "mridu",
+            "regular_normal": "madhyama",
+            "interrupted": "vata",
+            "light_broken": "vata",
+            "sound_moderate": "pitta",
+            "deep_long": "kapha",
+            "cold_weather": "vata",
+            "hot_summer": "pitta",
+            "damp_rainy": "kapha",
+            "creative_anxious": "vata",
+            "sharp_quick": "pitta",
+            "calm_patient": "kapha"
+        }
+
+        normalized_answers = {}
+        for k, v in answers.items():
+            norm_k = key_aliases.get(k, k)
+            norm_v = value_aliases.get(str(v).lower(), str(v).lower())
+            normalized_answers[norm_k] = norm_v
+
         for q in AYUSH_QUESTIONS:
             qid = q["id"]
-            selected_val = answers.get(qid)
+            selected_val = normalized_answers.get(qid)
             if selected_val:
+                matched = False
                 for opt in q["options"]:
                     if opt["value"] == selected_val:
                         vata_score += opt["score"]["vata"]
                         pitta_score += opt["score"]["pitta"]
                         kapha_score += opt["score"]["kapha"]
                         total_q += 1
+                        matched = True
                         
                         if qid == "appetite_agni":
                             if selected_val == "vishama": agni_val = "Vishama Agni (Irregular - Vata)"
@@ -141,6 +191,19 @@ class AyushEngine:
                             if selected_val == "krura": koshtha_val = "Krura Koshtha (Hard/Costive - Vata)"
                             elif selected_val == "mridu": koshtha_val = "Mridu Koshtha (Soft/Lax - Pitta)"
                             elif selected_val == "madhyama": koshtha_val = "Madhyama Koshtha (Balanced)"
+                        break
+
+                if not matched:
+                    # Fallback dosha keyword matching
+                    if "vata" in selected_val or "thin" in selected_val or "dry" in selected_val or "irregular" in selected_val:
+                        vata_score += 1.0
+                        total_q += 1
+                    elif "pitta" in selected_val or "sharp" in selected_val or "warm" in selected_val:
+                        pitta_score += 1.0
+                        total_q += 1
+                    elif "kapha" in selected_val or "heavy" in selected_val or "slow" in selected_val:
+                        kapha_score += 1.0
+                        total_q += 1
 
         if total_q > 0:
             sum_scores = vata_score + pitta_score + kapha_score
@@ -165,14 +228,16 @@ class AyushEngine:
         nidana = []
         if lifestyle_notes:
             ls = lifestyle_notes.lower()
-            if "spicy" in ls or "fried" in ls or "तिखा" in ls or "तले" in ls:
-                nidana.append("Vidahi & Katu Ahara Sevana (Excess spicy/pungent food)")
+            if "spicy" in ls or "fried" in ls or "तिखा" in ls or "तले" in ls or "fermented" in ls:
+                nidana.append("Vidahi & Katu Ahara Sevana (Excess spicy/pungent/fermented food)")
             if "late night" in ls or "देर रात" in ls or "जागना" in ls:
                 nidana.append("Ratri Jagarana (Late night awakening aggravating Vata/Pitta)")
             if "stress" in ls or "तनाव" in ls or "चिंता" in ls:
                 nidana.append("Manasika Nidana - Chinta/Shoka (Mental stress)")
             if "irregular" in ls or "अनियमित" in ls:
                 nidana.append("Vishamashana (Irregular meal timing causing Agnimandya)")
+            if "cold" in ls or "ठंडा" in ls:
+                nidana.append("Sheeta Ahara Sevana (Excess cold water/food aggravating Vata)")
 
         if not nidana:
             nidana.append("Asatmya Ahara-Vihara (Dietary irregularities)")

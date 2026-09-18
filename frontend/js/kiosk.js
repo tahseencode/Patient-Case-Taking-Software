@@ -129,6 +129,12 @@ const kioskModule = (() => {
     if (processCustomDocBtn) {
       processCustomDocBtn.addEventListener("click", handleCustomDocumentUpload);
     }
+
+    // File Input change listener
+    const docFileInput = document.getElementById("docFileInput");
+    if (docFileInput) {
+      docFileInput.addEventListener("change", handleFileInputChange);
+    }
   }
 
   function updateSeverityUI(val) {
@@ -250,21 +256,25 @@ const kioskModule = (() => {
     grid.innerHTML = "";
 
     complaints.forEach(item => {
+      const nameEn = item.name_en || item.name || "Chief Complaint";
+      const nameVernacular = item[`name_${window.app.appState.currentLanguage}`] || item.name_hi || item.name || "";
+      const isSelected = currentSessionData.chiefComplaintId === item.id;
+
       const card = document.createElement("div");
-      card.className = `complaint-card ${currentSessionData.chiefComplaintId === item.id ? 'active' : ''}`;
+      card.className = `complaint-card ${isSelected ? 'active' : ''}`;
       card.innerHTML = `
         <div class="title-row">
-          <span>${item.name_en}</span>
+          <span>${nameEn}</span>
           ${item.is_high_risk ? '<span class="high-risk-indicator" title="Red-Flag Triage Monitored"></span>' : ''}
         </div>
-        <div class="vernacular-name">${item[`name_${window.app.appState.currentLanguage}`] || item.name_hi || ''}</div>
+        <div class="vernacular-name">${nameVernacular}</div>
         <div class="specialty-tag">🏥 ${item.specialty}</div>
       `;
       card.addEventListener("click", () => {
         document.querySelectorAll(".complaint-card").forEach(c => c.classList.remove("active"));
         card.classList.add("active");
         currentSessionData.chiefComplaintId = item.id;
-        currentSessionData.chiefComplaintTitle = item.name_en;
+        currentSessionData.chiefComplaintTitle = nameEn;
         currentSessionData.affectedBodyPart = item.body_part;
       });
       grid.appendChild(card);
@@ -286,20 +296,25 @@ const kioskModule = (() => {
       const data = await res.json();
       if (data.success && data.extracted) {
         const ext = data.extracted;
-        if (ext.onset) currentSessionData.socrates.onset = ext.onset;
-        if (ext.character) currentSessionData.socrates.character = ext.character;
-        if (ext.radiation) currentSessionData.socrates.radiation = ext.radiation;
-        if (ext.associations && ext.associations.length > 0) {
-          currentSessionData.socrates.associations = ext.associations;
+        const updates = ext.socrates_updates || ext;
+
+        if (updates.onset) currentSessionData.socrates.onset = updates.onset;
+        if (updates.character) currentSessionData.socrates.character = updates.character;
+        if (updates.radiation) currentSessionData.socrates.radiation = updates.radiation;
+        if (updates.associations && updates.associations.length > 0) {
+          currentSessionData.socrates.associations = updates.associations;
         }
-        if (ext.severity_score) {
-          currentSessionData.socrates.severity_score = ext.severity_score;
+        if (updates.timing) currentSessionData.socrates.timing = updates.timing;
+        if (updates.severity_score) {
+          currentSessionData.socrates.severity_score = updates.severity_score;
           const slider = document.getElementById("severitySlider");
-          if (slider) slider.value = ext.severity_score;
-          updateSeverityUI(ext.severity_score);
+          if (slider) slider.value = updates.severity_score;
+          updateSeverityUI(updates.severity_score);
         }
         window.app.showToast("Voice symptoms processed & matched to SOCRATES profile!", "success");
-        renderSocratesInteractiveStep();
+        if (currentStep === 3) {
+          renderSocratesInteractiveStep();
+        }
       }
     } catch (err) {
       console.error(err);
@@ -309,39 +324,71 @@ const kioskModule = (() => {
   // Step 3: SOCRATES Guided Questioning
   async function renderSocratesInteractiveStep() {
     try {
-      const res = await fetch(`${API_BASE}/kiosk/socrates-step?step=${socratesStepIndex}&language=${window.app.appState.currentLanguage}`);
+      const lang = window.app.appState.currentLanguage;
+      const res = await fetch(`${API_BASE}/kiosk/socrates-step?step=${socratesStepIndex}&language=${lang}`);
       const data = await res.json();
       if (data.success && data.data) {
         const step = data.data;
-        document.getElementById("socratesStepNum").textContent = `Step ${socratesStepIndex + 1} of ${socratesStepsTotal}`;
-        document.getElementById("socratesFieldBadge").textContent = `SOCRATES: ${step.clinical_field.toUpperCase()}`;
-        document.getElementById("socratesQuestionHeading").textContent = step.question.en;
-        document.getElementById("socratesQuestionVernacular").textContent = step.question[window.app.appState.currentLanguage] || step.question.hi;
+        const stepNumElem = document.getElementById("socratesStepNum");
+        const badgeElem = document.getElementById("socratesFieldBadge");
+        const headingElem = document.getElementById("socratesQuestionHeading");
+        const vernacularElem = document.getElementById("socratesQuestionVernacular");
+
+        if (stepNumElem) stepNumElem.textContent = `Step ${socratesStepIndex + 1} of ${socratesStepsTotal}`;
+        if (badgeElem) badgeElem.textContent = `SOCRATES: ${(step.clinical_field || 'SYMPTOM').toUpperCase()}`;
+
+        // Heading texts
+        const headingEn = (typeof step.question === 'object' && step.question?.en) 
+          ? step.question.en 
+          : (step.question_text || step.question || "Please describe your symptom");
+
+        const headingVernacular = (typeof step.question === 'object') 
+          ? (step.question[lang] || step.question.hi || step.question.en || "")
+          : (step.question_text || "");
+
+        if (headingElem) headingElem.textContent = headingEn;
+        if (vernacularElem) vernacularElem.textContent = headingVernacular;
 
         // Render Options Grid
         const grid = document.getElementById("socratesOptionsGrid");
-        grid.innerHTML = "";
-        step.options.forEach(opt => {
-          const btn = document.createElement("button");
-          btn.type = "button";
-          btn.className = "socrates-option-btn";
-          btn.innerHTML = `
-            <span class="label-primary">${opt.label_en}</span>
-            <span class="label-secondary">${opt[`label_${window.app.appState.currentLanguage}`] || opt.label_hi || ''}</span>
-          `;
-          btn.addEventListener("click", () => {
-            document.querySelectorAll(".socrates-option-btn").forEach(b => b.classList.remove("selected"));
-            btn.classList.add("selected");
-            saveSocratesOption(step.clinical_field, opt.label_en);
+        if (grid) {
+          grid.innerHTML = "";
+          const currentValue = currentSessionData.socrates[step.clinical_field];
+
+          step.options.forEach(opt => {
+            const labelEn = opt.label_en || opt.label || "";
+            const labelVernacular = opt[`label_${lang}`] || opt.label_hi || opt.label || "";
+            const isOptionSelected = currentValue === labelEn || (Array.isArray(currentValue) && currentValue.includes(labelEn));
+
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = `socrates-option-btn ${isOptionSelected ? 'selected' : ''}`;
+            btn.innerHTML = `
+              <span class="label-primary">${labelEn}</span>
+              <span class="label-secondary">${labelVernacular}</span>
+            `;
+            btn.addEventListener("click", () => {
+              grid.querySelectorAll(".socrates-option-btn").forEach(b => b.classList.remove("selected"));
+              btn.classList.add("selected");
+              saveSocratesOption(step.clinical_field, labelEn);
+
+              // Auto-advance to next SOCRATES question after short pause
+              setTimeout(() => {
+                if (socratesStepIndex < socratesStepsTotal - 1) {
+                  socratesStepIndex++;
+                  renderSocratesInteractiveStep();
+                }
+              }, 320);
+            });
+            grid.appendChild(btn);
           });
-          grid.appendChild(btn);
-        });
+        }
 
         // Speak question in Indian vernacular
-        window.app.speakText(step.question[window.app.appState.currentLanguage] || step.question.hi, window.app.appState.currentLanguage);
+        window.app.speakText(headingVernacular, lang);
       }
     } catch (err) {
-      console.error(err);
+      console.error("Failed to render SOCRATES step:", err);
     }
   }
 
@@ -356,8 +403,15 @@ const kioskModule = (() => {
       }
     }
     else if (field === "timing") currentSessionData.socrates.timing = value;
-    else if (field === "exacerbating_factors") {
+    else if (field === "exacerbating_relieving" || field === "exacerbating_factors") {
       currentSessionData.socrates.exacerbating_factors = [value];
+    }
+    else if (field === "severity_score" || field === "severity") {
+      const score = parseInt(value) || 5;
+      currentSessionData.socrates.severity_score = score;
+      const slider = document.getElementById("severitySlider");
+      if (slider) slider.value = score;
+      updateSeverityUI(score);
     }
   }
 
@@ -379,7 +433,7 @@ const kioskModule = (() => {
         currentSessionData.triageResult = data.triage;
         if (data.triage && data.triage.is_red_flag) {
           window.app.showEmergencyBanner(
-            document.getElementById("patientNameInput").value || "Patient",
+            document.getElementById("patientNameInput")?.value || "Patient",
             data.triage.clinical_rationale
           );
         }
@@ -410,13 +464,16 @@ const kioskModule = (() => {
     questions.forEach(q => {
       const card = document.createElement("div");
       card.className = "ayush-question-card";
+      const titleMain = q.title || q.question || "Assessment Question";
+      const titleVern = q.title_vernacular ? ` (${q.title_vernacular})` : "";
+
       card.innerHTML = `
-        <div class="ayush-question-title">🌿 ${q.title} (${q.title_vernacular || ''})</div>
+        <div class="ayush-question-title">🌿 ${titleMain}${titleVern}</div>
         <div class="ayush-radio-group">
           ${q.options.map(opt => `
             <label class="ayush-radio-label">
               <input type="radio" name="${q.id}" value="${opt.value}" ${opt.is_default ? 'checked' : ''}>
-              <span>${opt.label}</span>
+              <span>${opt.label || opt.label_en}</span>
             </label>
           `).join('')}
         </div>
@@ -528,12 +585,61 @@ const kioskModule = (() => {
     }
   }
 
+  async function handleFileInputChange(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!currentSessionData.sessionId) {
+      await startIntakeSession();
+    }
+
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      const content = event.target.result;
+      const textToProcess = (typeof content === 'string') ? content : `Scanned Medical Record: ${file.name}`;
+      
+      const formData = new FormData();
+      formData.append("session_id", currentSessionData.sessionId);
+      formData.append("doc_type", "prescription");
+      formData.append("filename", file.name);
+      formData.append("raw_text", textToProcess);
+
+      try {
+        const res = await fetch(`${API_BASE}/documents/upload-ocr`, {
+          method: "POST",
+          body: formData
+        });
+        const data = await res.json();
+        if (data.success) {
+          currentSessionData.uploadedDocuments.push(data.document);
+          renderOcrResults(currentSessionData.uploadedDocuments);
+          window.app.showToast(`Uploaded & Digitized: ${file.name}`, "success");
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    if (file.type.includes("text") || file.name.endsWith(".txt") || file.name.endsWith(".csv")) {
+      reader.readAsText(file);
+    } else {
+      reader.readAsDataURL(file);
+    }
+  }
+
   async function handleCustomDocumentUpload() {
     const rawText = document.getElementById("customDocTextInput")?.value.trim();
     if (!rawText) {
+      // Check if file is selected
+      const fileInput = document.getElementById("docFileInput");
+      if (fileInput && fileInput.files && fileInput.files.length > 0) {
+        handleFileInputChange({ target: fileInput });
+        return;
+      }
       window.app.showToast("Please enter prescription or lab text to digitize", "error");
       return;
     }
+
     if (!currentSessionData.sessionId) {
       await startIntakeSession();
     }
@@ -554,6 +660,8 @@ const kioskModule = (() => {
         currentSessionData.uploadedDocuments.push(data.document);
         renderOcrResults(currentSessionData.uploadedDocuments);
         window.app.showToast("Medical document text digitized successfully!", "success");
+        const txtArea = document.getElementById("customDocTextInput");
+        if (txtArea) txtArea.value = "";
       }
     } catch (err) {
       console.error(err);
@@ -570,7 +678,7 @@ const kioskModule = (() => {
       block.style.marginBottom = "14px";
       block.innerHTML = `
         <div style="font-weight:700;font-size:0.9rem;margin-bottom:6px;color:var(--primary);">
-          ${doc.document_type.toUpperCase()}: ${doc.original_filename}
+          ${(doc.document_type || 'DOCUMENT').toUpperCase()}: ${doc.original_filename}
         </div>
       `;
 
@@ -589,7 +697,7 @@ const kioskModule = (() => {
       // Investigations
       if (doc.extracted_investigations && doc.extracted_investigations.length > 0) {
         doc.extracted_investigations.forEach(inv => {
-          const flagClass = inv.flag === "CRITICAL" ? "critical" : inv.flag === "HIGH" ? "high" : "normal";
+          const flagClass = inv.flag === "CRITICAL" || inv.flag === "CRITICAL HIGH" ? "critical" : inv.flag === "HIGH" ? "high" : "normal";
           block.innerHTML += `
             <div class="extracted-item-pill">
               <span>🧪 ${inv.test_name}: <strong>${inv.measured_value} ${inv.unit}</strong></span>
@@ -631,12 +739,16 @@ const kioskModule = (() => {
     const triageBadge = document.getElementById("kioskTokenTriageBadge");
     const summaryNarrative = document.getElementById("kioskSummaryNarrative");
 
+    const patientName = document.getElementById("patientNameInput")?.value || 'Ramesh Kumar';
+    const patientAge = document.getElementById("patientAgeInput")?.value || '58';
+    const patientGender = document.getElementById("patientGenderSelect")?.value || 'Male';
+
     if (tokenDisplay) tokenDisplay.textContent = data.token_number;
-    if (tokenPatient) tokenPatient.textContent = `${document.getElementById("patientNameInput").value || 'Ramesh Kumar'} (${document.getElementById("patientAgeInput").value || '58'} Y / ${document.getElementById("patientGenderSelect").value || 'Male'})`;
-    if (tokenTime) tokenTime.textContent = data.triage.is_red_flag ? "IMMEDIATE ATTENTION (Emergency Desk 01)" : "Estimated Wait: ~8 Minutes (Room 104)";
+    if (tokenPatient) tokenPatient.textContent = `${patientName} (${patientAge} Y / ${patientGender})`;
+    if (tokenTime) tokenTime.textContent = data.triage?.is_red_flag ? "IMMEDIATE ATTENTION (Emergency Desk 01)" : "Estimated Wait: ~8 Minutes (Room 104)";
 
     if (triageBadge) {
-      if (data.triage.is_red_flag) {
+      if (data.triage?.is_red_flag) {
         triageBadge.className = "pulse-badge";
         triageBadge.textContent = "EMERGENCY TRIAGE RED-FLAG";
       } else {
@@ -652,6 +764,13 @@ const kioskModule = (() => {
 
   // Navigation Orchestrator
   async function goToNextStep() {
+    if (currentStep === totalSteps) {
+      // Clean restart flow
+      resetKioskSession();
+      navigateToStep(1);
+      return;
+    }
+
     if (currentStep === 1) {
       if (!currentSessionData.sessionId) {
         const ok = await startIntakeSession();
@@ -660,37 +779,91 @@ const kioskModule = (() => {
           return;
         }
       }
+      navigateToStep(2);
     } else if (currentStep === 2) {
       socratesStepIndex = 0;
+      navigateToStep(3);
       await renderSocratesInteractiveStep();
     } else if (currentStep === 3) {
+      // In SOCRATES step: advance question index if not at the end
+      if (socratesStepIndex < socratesStepsTotal - 1) {
+        socratesStepIndex++;
+        await renderSocratesInteractiveStep();
+        return;
+      }
+      // When all 8 questions are answered, submit SOCRATES
       await submitSocratesData();
       if (currentSessionData.stream === "ayush") {
+        navigateToStep(4);
         await loadAyushQuestions();
       } else {
         // Skip step 4 for Allopathy stream
         navigateToStep(5);
-        return;
       }
     } else if (currentStep === 4) {
       await calculateAyushPariksha();
+      navigateToStep(5);
     } else if (currentStep === 5) {
       await finalizeIntake();
-    }
-
-    if (currentStep < totalSteps) {
-      navigateToStep(currentStep + 1);
+      navigateToStep(6);
     }
   }
 
   function goToPrevStep() {
+    if (currentStep === 3) {
+      if (socratesStepIndex > 0) {
+        socratesStepIndex--;
+        renderSocratesInteractiveStep();
+        return;
+      }
+      navigateToStep(2);
+      return;
+    }
+
     if (currentStep > 1) {
       if (currentStep === 5 && currentSessionData.stream !== "ayush") {
+        socratesStepIndex = socratesStepsTotal - 1;
         navigateToStep(3);
+        renderSocratesInteractiveStep();
       } else {
         navigateToStep(currentStep - 1);
       }
     }
+  }
+
+  function resetKioskSession() {
+    currentSessionData = {
+      sessionId: null,
+      patientId: null,
+      tokenNumber: null,
+      stream: "allopathy",
+      language: window.app.appState.currentLanguage || "hi",
+      chiefComplaintId: "chest_pain",
+      chiefComplaintTitle: "Chest Pain / Discomfort",
+      affectedBodyPart: "chest",
+      socrates: {
+        site: "Left Side of Chest",
+        onset: "2 to 5 days ago",
+        character: "Heavy Pressure / Squeezing / Tightness",
+        radiation: "Spreads to Left Arm, Shoulder or Jaw",
+        associations: ["Profuse Cold Sweating", "Breathlessness / Dyspnea"],
+        timing: "Continuous / Constant",
+        exacerbating_factors: ["Physical Exertion (Walking/Stairs)"],
+        relieving_factors: ["Sublingual Nitrate / Rest"],
+        severity_score: 8
+      },
+      ayushAnswers: {},
+      ayushResult: null,
+      uploadedDocuments: [],
+      triageResult: null,
+      summary: null
+    };
+    socratesStepIndex = 0;
+    const ocrResults = document.getElementById("ocrExtractedResults");
+    if (ocrResults) ocrResults.innerHTML = `<div style="font-size:0.85rem;color:var(--text-muted);text-align:center;padding:40px 0;">Click any sample document above or upload a prescription to extract structured medications and abnormal lab values.</div>`;
+    const abhaStatus = document.getElementById("abhaVerifyStatus");
+    if (abhaStatus) abhaStatus.innerHTML = "";
+    window.app.showToast("Intake session reset for new patient.", "info");
   }
 
   function navigateToStep(stepNumber) {
@@ -714,10 +887,11 @@ const kioskModule = (() => {
     if (prevBtn) prevBtn.style.display = currentStep === 1 ? "none" : "inline-flex";
     if (nextBtn) {
       if (currentStep === totalSteps) {
-        nextBtn.textContent = "Print Token / Restart";
-        nextBtn.onclick = () => window.location.reload();
+        nextBtn.textContent = "Print Token / New Patient Intake ↺";
       } else if (currentStep === 5) {
-        nextBtn.textContent = "Generate OPD Token";
+        nextBtn.textContent = "Generate OPD Token →";
+      } else if (currentStep === 3) {
+        nextBtn.textContent = (socratesStepIndex < socratesStepsTotal - 1) ? `Next Question (${socratesStepIndex + 1}/8) →` : "Complete SOCRATES →";
       } else {
         nextBtn.textContent = "Next Step →";
       }
@@ -733,6 +907,8 @@ const kioskModule = (() => {
     loadChiefComplaints();
     if (currentStep === 3) {
       renderSocratesInteractiveStep();
+    } else if (currentStep === 4) {
+      loadAyushQuestions();
     }
   }
 
@@ -740,6 +916,12 @@ const kioskModule = (() => {
     init,
     handleVoiceInput,
     updateLanguage,
+    handleCustomDocumentUpload,
+    handleFileInputChange,
+    goToNextStep,
+    goToPrevStep,
+    navigateToStep,
+    loadSampleDocOCR,
     currentSessionData
   };
 })();

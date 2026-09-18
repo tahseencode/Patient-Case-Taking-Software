@@ -97,13 +97,14 @@ const doctorModule = (() => {
       const card = document.createElement("div");
       const triageClass = item.triage_level === "emergency" ? "emergency-border" : item.triage_level === "priority" ? "priority-border" : "routine-border";
       card.className = `queue-item-card ${triageClass} ${activeSessionId === item.session_id ? 'active' : ''}`;
+      card.setAttribute("data-session-id", item.session_id);
       
       card.innerHTML = `
         <div class="queue-top-row">
           <span class="queue-token-badge">${item.token}</span>
           <span class="queue-wait-badge">⏱️ ~${item.waiting_minutes || 5} min</span>
         </div>
-        <div class="queue-patient-name">${item.patient_name}, ${item.age}y/${item.gender[0]}</div>
+        <div class="queue-patient-name">${item.patient_name}, ${item.age}y/${item.gender ? item.gender[0] : 'M'}</div>
         <div class="queue-complaint-preview">🩺 ${item.chief_complaint || 'General OPD Consultation'}</div>
         <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;">
           <span class="abdm-badge" style="font-size:0.65rem;">${item.stream === 'ayush' ? '🌿 AYUSH' : '💊 ALLOPATHY'}</span>
@@ -125,7 +126,7 @@ const doctorModule = (() => {
     
     // Highlight selected queue card
     document.querySelectorAll(".queue-item-card").forEach(c => {
-      c.classList.toggle("active", c.querySelector(".queue-token-badge")?.textContent === sessionId);
+      c.classList.toggle("active", c.getAttribute("data-session-id") === sessionId);
     });
 
     try {

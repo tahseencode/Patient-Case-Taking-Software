@@ -29,6 +29,11 @@ class TestMediKioskPlatform(unittest.TestCase):
             data = res.json()
             self.assertTrue(data["success"])
             self.assertGreater(len(data["complaints"]), 0)
+            # Verify name_en and name_hi are present
+            first_complaint = data["complaints"][0]
+            self.assertIn("name_en", first_complaint)
+            self.assertIn("name_hi", first_complaint)
+            self.assertIn("name", first_complaint)
         print("[OK] Multilingual Chief Complaints Passed (8 Indian Languages)")
 
     def test_03_socrates_guided_steps(self):
@@ -38,7 +43,14 @@ class TestMediKioskPlatform(unittest.TestCase):
             data = res.json()
             self.assertTrue(data["success"])
             self.assertIn("clinical_field", data["data"])
-        print("[OK] SOCRATES Step Navigation Passed")
+            self.assertIn("question", data["data"])
+            # Ensure question contains multilingual translations and options contain label_en / label_hi
+            self.assertIn("en", data["data"]["question"])
+            self.assertIn("hi", data["data"]["question"])
+            self.assertGreater(len(data["data"]["options"]), 0)
+            self.assertIn("label_en", data["data"]["options"][0])
+            self.assertIn("label_hi", data["data"]["options"][0])
+        print("[OK] SOCRATES Step Navigation Passed (8 Steps with full Multilingual Schema)")
 
     def test_04_voice_parsing_engine(self):
         res = client.post("/api/v1/kiosk/parse-voice", json={
@@ -50,8 +62,13 @@ class TestMediKioskPlatform(unittest.TestCase):
         data = res.json()
         self.assertTrue(data["success"])
         self.assertIn("extracted", data)
-        self.assertTrue("sweating" in str(data["extracted"]).lower())
-        print("[OK] Vernacular Voice Parsing Engine Passed")
+        ext = data["extracted"]
+        # Verify top-level extracted fields and socrates_updates
+        self.assertTrue("sweating" in str(ext).lower())
+        self.assertIn("character", ext)
+        self.assertIn("radiation", ext)
+        self.assertIn("associations", ext)
+        print("[OK] Vernacular Voice Parsing Engine Passed (Top-level & Nested fields)")
 
     def test_05_kiosk_full_intake_flow(self):
         # 1. Start Session
@@ -116,7 +133,18 @@ class TestMediKioskPlatform(unittest.TestCase):
         self.assertIn("OPD", fin_data["token_number"])
         print(f"[OK] Kiosk Full Intake & Red-Flag Triage Passed (Token: {fin_data['token_number']})")
 
-    def test_06_ayush_pariksha_scoring(self):
+    def test_06_ayush_pariksha_scoring_and_questions(self):
+        # 1. Test Questions Endpoint
+        q_res = client.get("/api/v1/ayush/questions?language=hi")
+        self.assertEqual(q_res.status_code, 200)
+        q_data = q_res.json()
+        self.assertTrue(q_data["success"])
+        self.assertGreater(len(q_data["questions"]), 0)
+        self.assertIn("title", q_data["questions"][0])
+        self.assertIn("title_vernacular", q_data["questions"][0])
+        self.assertTrue(q_data["questions"][0]["options"][0]["is_default"])
+
+        # 2. Test Calculation with Aliases
         res = client.post("/api/v1/ayush/calculate-pariksha", json={
             "answers": {
                 "body_frame": "lean_thin",
@@ -132,7 +160,8 @@ class TestMediKioskPlatform(unittest.TestCase):
         data = res.json()
         self.assertTrue(data["success"])
         self.assertIn("Vata", data["pariksha"]["dominant_prakriti"])
-        print("[OK] AYUSH Prakriti & Ashtavidha Pariksha Engine Passed")
+        self.assertGreater(data["pariksha"]["prakriti_scores"]["vata"], 40.0)
+        print("[OK] AYUSH Prakriti & Ashtavidha Pariksha Engine Passed (Questions & Scoring)")
 
     def test_07_doctor_queue_and_consultation(self):
         # Fetch queue
@@ -186,6 +215,30 @@ class TestMediKioskPlatform(unittest.TestCase):
         stats = stats_res.json()["metrics"]
         self.assertGreater(stats["clinical_time_saved_percentage"], 80)
         print("[OK] ABDM Ecosystem & Hospital Analytics Passed")
+
+    def test_09_custom_document_upload_ocr(self):
+        # Test Custom Document OCR upload endpoint
+        sess_res = client.post("/api/v1/kiosk/start-session", json={
+            "name": "Priya Patel",
+            "age": 42,
+            "gender": "Female",
+            "phone": "9823456789",
+            "stream": "allopathy"
+        })
+        sess_id = sess_res.json()["session_id"]
+
+        doc_res = client.post("/api/v1/documents/upload-ocr", data={
+            "session_id": sess_id,
+            "doc_type": "prescription",
+            "filename": "custom_prescription.txt",
+            "raw_text": "Rx: Tab Telma-H 40mg 1-0-0 x 30 days, Tab Glycomet-GP 2 500mg 1-0-1 before food. Fasting Blood Sugar: 188 mg/dL, HbA1c: 9.2%"
+        })
+        self.assertEqual(doc_res.status_code, 200)
+        doc_data = doc_res.json()
+        self.assertTrue(doc_data["success"])
+        self.assertGreater(len(doc_data["document"]["extracted_medications"]), 0)
+        self.assertGreater(len(doc_data["document"]["extracted_investigations"]), 0)
+        print("[OK] Custom Document Upload & OCR Extraction Passed")
 
 
 if __name__ == "__main__":
