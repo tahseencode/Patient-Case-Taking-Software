@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medify.AI - AI Powered Patient Medical History & Clinical Intake</title>
+  <meta name="description" content="One stop solution for all your medical history. AI powered patient medical history, prescriptions storage, ABDM FHIR records, and clinical analysis.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ========================================================================= -->
+  <!-- NAVBAR -->
+  <!-- ========================================================================= -->
+  <header class="navbar" id="siteNavbar">
+    <a href="index.html" class="logo" id="navLogo" aria-label="Medify.AI Home">MEDIFY.AI</a>
+    <nav class="nav-links" id="navLinks">
+      <a href="index.html" class="nav-link-item" id="navHome">Home</a>
+      <a href="app.html?role=doctor" class="nav-link-item" id="navHistory" title="View Patient Medical History & OPD Records">History</a>
+      <a href="#features" class="nav-link-item" id="navFeatures">Features</a>
+      <a href="#about" class="nav-link-item" id="navAbout">About</a>
+      <a href="app.html" class="nav-cta-btn" id="navLaunchAppBtn" title="Launch Medify.AI Clinical Platform">
+        <span>Launch App</span>
+        <span class="nav-arrow" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+        </span>
+      </a>
+    </nav>
+    <button class="menu-btn" id="menuToggleBtn" aria-label="Open mobile menu" aria-expanded="false" aria-controls="navLinks">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </header>
+
+  <!-- ========================================================================= -->
+  <!-- HERO SECTION -->
+  <!-- ========================================================================= -->
+  <section class="hero" id="hero">
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        <span>SIH26047 &bull; ABDM FHIR Compliant Care Desk</span>
+      </div>
+
+      <h1>One stop solution for all your<br>medical history</h1>
+      <p>All your medical needs in one go. AI-powered Patient medical history, multilingual clinical intake, and instant ABDM FHIR interoperability.<br>Click below to access the platform or jump directly to any portal.</p>
+      
+      <div class="hero-actions-wrapper">
+        <a href="app.html" class="hero-btn" id="heroCtaBtn" title="Launch Full Medify.AI Application">
+          <span>Explore MEDIFY.AI</span>
+          <span class="hero-arrow-circle" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+          </span>
+        </a>
+      </div>
+
+      <!-- Quick Access Portal Launchers -->
+      <div class="hero-portals">
+        <span class="portals-label">Instant Portal Access:</span>
+        <div class="portal-pills-grid">
+          <a href="app.html?role=kiosk" class="portal-pill" id="pillKiosk" title="Launch Patient Intake Kiosk">
+            <span class="pill-emoji">🩺</span>
+            <span class="pill-text">Patient Intake</span>
+          </a>
+          <a href="app.html?role=doctor" class="portal-pill" id="pillDoctor" title="Launch Doctor OPD Desk">
+            <span class="pill-emoji">👨‍⚕️</span>
+            <span class="pill-text">Doctor OPD Desk</span>
+          </a>
+          <a href="app.html?role=analytics" class="portal-pill" id="pillAnalytics" title="Launch OPD Analytics">
+            <span class="pill-emoji">📊</span>
+            <span class="pill-text">OPD Analytics</span>
+          </a>
+          <a href="app.html?role=fhir" class="portal-pill" id="pillFhir" title="Launch ABDM FHIR Hub">
+            <span class="pill-emoji">📄</span>
+            <span class="pill-text">ABDM FHIR Hub</span>
+          </a>
+          <button type="button" class="portal-pill pill-demo" id="pillLiveDemo" title="Try Live AI Symptom Simulator">
+            <span class="pill-emoji">⚡</span>
+            <span class="pill-text">Try Live AI Demo</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- FEATURES SECTION -->
+  <!-- ========================================================================= -->
+  <section class="features" id="features">
+    <div class="features-header">
+      <h2 class="section-title">Core Intelligence Modules</h2>
+      <p class="section-subtitle">Engineered for seamless clinical intake, standardized storage, and real-time AI diagnostic insights.</p>
+    </div>
+
+    <!-- Feature 1: Analyze -->
+    <div class="feature-row" id="featureAnalyze">
+      <div class="feature-icon" aria-hidden="true">
+        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8 30 L16 20 L22 26 L32 14" stroke="#ffffff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="30" cy="30" r="9" stroke="#ffffff" stroke-width="2.8"/>
+          <line x1="36.5" y1="36.5" x2="42" y2="42" stroke="#ffffff" stroke-width="2.8" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h2>Analyze</h2>
+      <p>Analyze all of the patient's medical history with AI powered mechanism, real-time emergency triage interception, and disease pattern tracking.</p>
+      
+      <div class="feature-buttons-group">
+        <a href="app.html?role=analytics" class="feature-action-btn" id="btnFeatureAnalyzeApp" title="Open OPD Analytics Portal">
+          <span>Launch AI Analytics</span>
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </a>
+        <button type="button" class="feature-demo-btn" id="btnFeatureAnalyzeDemo" data-feature="analyze" title="Preview AI Analytics & Triage Demo">
+          <span>Preview Analysis Demo</span>
+          <span class="btn-subicon">🔍</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Feature 2: Store -->
+    <div class="feature-row" id="featureStore">
+      <div class="feature-icon" aria-hidden="true">
+        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="8" y="12" width="32" height="7" rx="1.5" stroke="#ffffff" stroke-width="2.8" stroke-linejoin="round"/>
+          <path d="M10 19 L10 34 A2 2 0 0 0 12 36 L36 36 A2 2 0 0 0 38 34 L38 19" stroke="#ffffff" stroke-width="2.8" stroke-linejoin="round"/>
+          <line x1="20" y1="25" x2="28" y2="25" stroke="#ffffff" stroke-width="2.8" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h2>Store</h2>
+      <p>Store all prescriptions and medicines (ongoing/completed) in one place with ABDM FHIR R4 interoperability and cryptographic health vault encryption.</p>
+      
+      <div class="feature-buttons-group">
+        <a href="app.html?role=fhir" class="feature-action-btn" id="btnFeatureStoreApp" title="Open ABDM FHIR Records Hub">
+          <span>View ABDM Records</span>
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </a>
+        <button type="button" class="feature-demo-btn" id="btnFeatureStoreDemo" data-feature="store" title="Explore ABDM FHIR Payload Storage">
+          <span>Explore FHIR Vault</span>
+          <span class="btn-subicon">📁</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Feature 3: Summarize -->
+    <div class="feature-row" id="featureSummarize">
+      <div class="feature-icon" aria-hidden="true">
+        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M24 16 C21 13.5 15 12.5 10 13.5 L10 33 C15 32 21 33 24 35.5 C27 33 33 32 38 33 L38 13.5 C33 12.5 27 13.5 24 16 Z" stroke="#ffffff" stroke-width="2.8" stroke-linejoin="round"/>
+          <line x1="24" y1="16" x2="24" y2="35.5" stroke="#ffffff" stroke-width="2.8"/>
+        </svg>
+      </div>
+      <h2>Summarize</h2>
+      <p>Summarize all of the patient's medical history and diseases with integrated clinical AI chat support, SOCRATES pain mapping, and AYUSH Prakriti profiling.</p>
+      
+      <div class="feature-buttons-group">
+        <a href="app.html?role=doctor" class="feature-action-btn" id="btnFeatureSummarizeApp" title="Open Doctor OPD Clinical Desk">
+          <span>Open Doctor OPD Desk</span>
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        </a>
+        <button type="button" class="feature-demo-btn" id="btnFeatureSummarizeDemo" data-feature="summarize" title="Preview Doctor AI Summary & SOCRATES Chat">
+          <span>View AI Summary Demo</span>
+          <span class="btn-subicon">💬</span>
+        </button>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- FOOTER -->
+  <!-- ========================================================================= -->
+  <footer class="site-footer" id="about">
+    <div class="footer-links">
+      <div class="footer-col">
+        <h4 class="footer-col-title">Platform &amp; Portals</h4>
+        <a href="#features" id="footerServicesLink">Services</a>
+        <a href="app.html?role=kiosk" id="footerKioskLink">Patient Intake</a>
+        <a href="app.html?role=doctor" id="footerDoctorLink">Doctor OPD Desk</a>
+        <button type="button" class="footer-link-btn" id="footerPrivacyBtn" aria-label="Read Privacy Policy">Privacy Policy</button>
+        <button type="button" class="footer-link-btn" id="footerTermsBtn" aria-label="Read Terms and Conditions">Terms &amp; Conditions</button>
+      </div>
+      <div class="footer-col">
+        <h4 class="footer-col-title">Company &amp; Compliance</h4>
+        <button type="button" class="footer-link-btn" id="footerAboutBtn" aria-label="About Medify.AI">About us</button>
+        <button type="button" class="footer-link-btn" id="footerContactBtn" aria-label="Contact Medify.AI Team">Contact Us</button>
+        <a href="app.html?role=fhir" id="footerFhirLink">ABDM FHIR Hub</a>
+        <a href="app.html?role=analytics" id="footerAnalyticsLink">OPD Analytics</a>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span class="footer-credit">&copy; 2026 Tahseen Pvt Limited.Co &bull; All Rights Reserved.</span>
+      <span class="footer-logo">MEDIFY.AI</span>
+    </div>
+  </footer>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL 1: PRIVACY POLICY (DPDP ACT 2023) -->
+  <!-- ========================================================================= -->
+  <div class="modal-backdrop" id="privacyModal" role="dialog" aria-modal="true" aria-labelledby="privacyModalTitle" hidden>
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <span class="modal-icon">🛡️</span>
+          <h3 id="privacyModalTitle">Privacy Policy &amp; Data Protection</h3>
+        </div>
+        <button type="button" class="modal-close-btn" data-close-modal aria-label="Close modal">&times;</button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="modal-tags">
+          <span class="tag-badge">DPDP Act 2023 Compliant</span>
+          <span class="tag-badge">ABDM Milestone-M1/M2/M3</span>
+          <span class="tag-badge">AES-256 GCM Encrypted</span>
+        </div>
+
+        <h4>1. Patient Data Sovereignty &amp; Consent</h4>
+        <p>Medify.AI operates under strict patient-first consent models conforming to India's <strong>Digital Personal Data Protection (DPDP) Act 2023</strong> and the <strong>Ayushman Bharat Digital Mission (ABDM)</strong> framework. No protected health information (PHI) is shared without explicit digital authorization.</p>
+
+        <h4>2. Zero Unencrypted Storage</h4>
+        <p>All demographic data, chief complaints, SOCRATES symptom logs, and AYUSH Prakriti assessments are stored with client-side and server-side encryption. Clinical notes are accessible strictly by authorized OPD physicians.</p>
+
+        <h4>3. ABHA Identity &amp; Health Locker Interoperability</h4>
+        <p>When you link your 14-digit ABHA ID, records are encrypted using ABDM-compliant RSA public-key exchange protocols. Patients retain full rights to revoke consent, request record erasure, or transfer their clinical summaries to any ABDM-certified personal health record (PHR) app.</p>
+
+        <h4>4. Data Protection Officer (DPO) Contact</h4>
+        <p>For any queries regarding medical privacy, data rectification, or grievance redressal, contact our designated Data Protection Officer at: <a href="mailto:contact@tahseen.co" class="modal-inline-link">contact@tahseen.co</a>.</p>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-modal-primary" data-close-modal>I Understand &amp; Agree</button>
+        <button type="button" class="btn-modal-secondary" data-close-modal>Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL 2: TERMS & CONDITIONS -->
+  <!-- ========================================================================= -->
+  <div class="modal-backdrop" id="termsModal" role="dialog" aria-modal="true" aria-labelledby="termsModalTitle" hidden>
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <span class="modal-icon">⚖️</span>
+          <h3 id="termsModalTitle">Terms of Service &amp; Clinical Disclaimer</h3>
+        </div>
+        <button type="button" class="modal-close-btn" data-close-modal aria-label="Close modal">&times;</button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="modal-tags">
+          <span class="tag-badge">Clinical Decision Support (CDSS)</span>
+          <span class="tag-badge">Telemedicine Practice Guidelines 2020</span>
+        </div>
+
+        <h4>1. Clinical Decision Support Scope</h4>
+        <p>Medify.AI is an AI-powered digital intake, clinical history summarization, and AYUSH triage platform. <strong>It assists registered medical practitioners (RMPs) and does NOT replace licensed physician judgment.</strong> Final diagnoses, prescriptions, and treatment plans must always be validated by an attending doctor.</p>
+
+        <h4>2. Emergency Care &amp; Red-Flag Triage Protocol</h4>
+        <p>If a patient presents with severe emergency symptoms (e.g., crushing chest pain, sudden unilateral numbness, severe breathing difficulty, profuse hemorrhaging), our automated triage triggers a Red-Flag alert. In such cases, patients must immediately report to an in-person emergency department (ED/Casualty).</p>
+
+        <h4>3. Permitted Usage</h4>
+        <p>By accessing Medify.AI, healthcare providers agree to use the software in compliance with the NMC Act, Ayush Code of Ethics, and National Health Authority standards.</p>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-modal-primary" data-close-modal>Accept &amp; Acknowledge</button>
+        <button type="button" class="btn-modal-secondary" data-close-modal>Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL 3: ABOUT MEDIFY.AI -->
+  <!-- ========================================================================= -->
+  <div class="modal-backdrop" id="aboutModal" role="dialog" aria-modal="true" aria-labelledby="aboutModalTitle" hidden>
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <span class="modal-icon">🏥</span>
+          <h3 id="aboutModalTitle">About Medify.AI</h3>
+        </div>
+        <button type="button" class="modal-close-btn" data-close-modal aria-label="Close modal">&times;</button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="modal-tags">
+          <span class="tag-badge">SIH26047 Innovation</span>
+          <span class="tag-badge">Tahseen Pvt Limited.Co</span>
+          <span class="tag-badge">8 Indian Languages</span>
+        </div>
+
+        <h4>Revolutionizing Healthcare Case-Taking</h4>
+        <p><strong>Medify.AI</strong> was engineered to solve high OPD wait-times and fragmented patient case-taking across Indian clinical environments. By pairing multilingual speech recognition with clinical SOCRATES dialogue analysis and AYUSH Prakriti profiling, Medify.AI condenses 15-minute intake workflows into under 2 minutes.</p>
+
+        <h4>Key Platform Capabilities:</h4>
+        <ul class="modal-feature-list">
+          <li><strong>Multilingual Voice Intake:</strong> Real-time voice transcription in Hindi, Marathi, Tamil, Telugu, Bengali, Gujarati, Kannada, and English.</li>
+          <li><strong>Standardized SOCRATES History:</strong> Systematic mapping of Site, Onset, Character, Radiation, Associations, Time, Exacerbating factors, and Severity.</li>
+          <li><strong>Integrated AYUSH Pariksha:</strong> Deep dual assessment of Ayurvedic Prakriti (Vata, Pitta, Kapha) alongside allopathic clinical triage.</li>
+          <li><strong>Native ABDM FHIR R4 Bundle Generator:</strong> Automated creation of standard HL7/FHIR Encounter, Condition, and DiagnosticReport bundles.</li>
+        </ul>
+      </div>
+
+      <div class="modal-footer">
+        <a href="app.html" class="btn-modal-primary">Launch Full Platform &rarr;</a>
+        <button type="button" class="btn-modal-secondary" data-close-modal>Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL 4: CONTACT US & SUPPORT -->
+  <!-- ========================================================================= -->
+  <div class="modal-backdrop" id="contactModal" role="dialog" aria-modal="true" aria-labelledby="contactModalTitle" hidden>
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <span class="modal-icon">✉️</span>
+          <h3 id="contactModalTitle">Contact Medify.AI Support</h3>
+        </div>
+        <button type="button" class="modal-close-btn" data-close-modal aria-label="Close modal">&times;</button>
+      </div>
+      
+      <div class="modal-body">
+        <!-- 1-Click Copy Support Email -->
+        <div class="contact-email-card">
+          <div>
+            <div class="contact-label">Official Support &amp; Integration Email:</div>
+            <div class="contact-email-val" id="supportEmailText">contact@tahseen.co</div>
+          </div>
+          <button type="button" class="btn-copy-email" id="btnCopyEmail" title="Copy email to clipboard">
+            <span id="copyEmailIcon">📋</span>
+            <span id="copyEmailLabel">Copy Email</span>
+          </button>
+        </div>
+
+        <!-- Interactive Contact Form -->
+        <form class="contact-form" id="contactForm">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="contactName">Your Name <span class="req">*</span></label>
+              <input type="text" id="contactName" class="form-input" placeholder="e.g. Dr. Rajesh Sharma" required>
+            </div>
+            <div class="form-group">
+              <label for="contactEmail">Your Email <span class="req">*</span></label>
+              <input type="email" id="contactEmail" class="form-input" placeholder="e.g. rajesh@hospital.org" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="contactSubject">Inquiry Category</label>
+            <select id="contactSubject" class="form-input">
+              <option value="Hospital & OPD Integration">Hospital &amp; OPD Integration</option>
+              <option value="ABDM FHIR Hub Support">ABDM FHIR Hub Support</option>
+              <option value="Feature Request / Feedback">Feature Request / Feedback</option>
+              <option value="Technical Bug Report">Technical Bug Report</option>
+              <option value="General Inquiry">General Inquiry</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="contactMessage">Message <span class="req">*</span></label>
+            <textarea id="contactMessage" class="form-input form-textarea" rows="4" placeholder="Tell us how we can assist you..." required></textarea>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-modal-primary" id="btnSendContact">
+              <span>Send Message</span>
+              <span class="btn-subicon">🚀</span>
+            </button>
+            <a href="mailto:contact@tahseen.co" class="btn-modal-secondary" id="btnNativeMailto" title="Open native email client">Open in Email App</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL 5: INTERACTIVE LIVE AI DEMO SIMULATOR -->
+  <!-- ========================================================================= -->
+  <div class="modal-backdrop" id="demoModal" role="dialog" aria-modal="true" aria-labelledby="demoModalTitle" hidden>
+    <div class="modal-dialog modal-dialog-lg">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <span class="modal-icon">⚡</span>
+          <h3 id="demoModalTitle">Interactive Live AI Feature Simulator</h3>
+        </div>
+        <button type="button" class="modal-close-btn" data-close-modal aria-label="Close modal">&times;</button>
+      </div>
+      
+      <div class="modal-body">
+        <p class="demo-instructions">Select a clinical case scenario below to simulate instant real-time AI triage, SOCRATES pain analysis, Ayush profiling, and ABDM FHIR generation:</p>
+        
+        <!-- Scenario Selector Pills -->
+        <div class="demo-scenarios">
+          <button type="button" class="scenario-btn active" data-scenario="chest_pain">
+            <span>🚨 Chest Pain (Emergency Triage)</span>
+          </button>
+          <button type="button" class="scenario-btn" data-scenario="gerd_acidity">
+            <span>🔥 Acid Reflux &amp; Gastric Burning (Pitta)</span>
+          </button>
+          <button type="button" class="scenario-btn" data-scenario="joint_stiffness">
+            <span>🦴 Knee Joint Pain &amp; Stiffness (Vata)</span>
+          </button>
+        </div>
+
+        <!-- Live Output Preview Grid -->
+        <div class="demo-output-card" id="demoOutputContainer">
+          <!-- Dynamic Content Rendered by JS -->
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <a href="app.html" class="btn-modal-primary" id="demoLaunchAppBtn">Launch Full Platform with This Case &rarr;</a>
+        <button type="button" class="btn-modal-secondary" data-close-modal>Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- FLOATING SCROLL-TO-TOP BUTTON -->
+  <!-- ========================================================================= -->
+  <button type="button" class="back-to-top-btn" id="backToTopBtn" aria-label="Scroll to top of page" title="Back to top">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="12" y1="19" x2="12" y2="5"></line>
+      <polyline points="5 12 12 5 19 12"></polyline>
+    </svg>
+  </button>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- ========================================================================= -->
+  <!-- CLIENT-SIDE INTERACTIVITY SCRIPT -->
+  <!-- ========================================================================= -->
+  <script>
+    // 1. Mobile Navigation Toggle
+    const menuBtn = document.getElementById('menuToggleBtn');
+    const navLinks = document.getElementById('navLinks');
+
+    if (menuBtn && navLinks) {
+      menuBtn.addEventListener('click', () => {
+        const isExpanded = menuBtn.getAttribute('aria-expanded') === 'true';
+        menuBtn.setAttribute('aria-expanded', !isExpanded);
+        menuBtn.classList.toggle('active');
+        navLinks.classList.toggle('active');
+      });
+
+      // Close menu on link click
+      navLinks.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+          menuBtn.classList.remove('active');
+          navLinks.classList.remove('active');
+          menuBtn.setAttribute('aria-expanded', 'false');
+        });
+      });
+    }
+
+    // 2. Toast Notification Helper
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      if (!container) return;
+
+      const toast = document.createElement('div');
+      toast.className = `toast-item toast-${type}`;
+      
+      const icons = {
+        success: '✅',
+        error: '⚠️',
+        info: 'ℹ️'
+      };
+
+      toast.innerHTML = `
+        <span class="toast-icon">${icons[type] || 'ℹ️'}</span>
+        <span class="toast-msg">${message}</span>
+      `;
+
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.classList.add('toast-fadeout');
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    // 3. Modal Manager (Open / Close / Escape Key / Backdrop Click)
+    function openModal(modalId) {
+      const modal = document.getElementById(modalId);
+      if (!modal) return;
+      modal.removeAttribute('hidden');
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+
+      // Focus first actionable element inside modal
+      const focusable = modal.querySelector('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+      if (focusable) focusable.focus();
+    }
+
+    function closeModal(modal) {
+      if (!modal) return;
+      modal.classList.remove('active');
+      modal.setAttribute('hidden', '');
+      document.body.style.overflow = '';
+    }
+
+    // Wire up all close buttons & backdrop click
+    document.querySelectorAll('.modal-backdrop').forEach(modal => {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal || e.target.closest('[data-close-modal]')) {
+          closeModal(modal);
+        }
+      });
+    });
+
+    // Escape Key Listener
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.modal-backdrop.active').forEach(modal => {
+          closeModal(modal);
+        });
+      }
+    });
+
+    // 4. Modal Triggers
+    const btnPrivacy = document.getElementById('footerPrivacyBtn');
+    if (btnPrivacy) btnPrivacy.addEventListener('click', () => openModal('privacyModal'));
+
+    const btnTerms = document.getElementById('footerTermsBtn');
+    if (btnTerms) btnTerms.addEventListener('click', () => openModal('termsModal'));
+
+    const btnAbout = document.getElementById('footerAboutBtn');
+    if (btnAbout) btnAbout.addEventListener('click', () => openModal('aboutModal'));
+
+    const btnContact = document.getElementById('footerContactBtn');
+    if (btnContact) btnContact.addEventListener('click', () => openModal('contactModal'));
+
+    // 5. Copy Email Action
+    const btnCopyEmail = document.getElementById('btnCopyEmail');
+    if (btnCopyEmail) {
+      btnCopyEmail.addEventListener('click', async () => {
+        const email = 'contact@tahseen.co';
+        try {
+          if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(email);
+          } else {
+            // Fallback for non-https/older browsers
+            const textArea = document.createElement("textarea");
+            textArea.value = email;
+            textArea.style.position = "fixed";
+            textArea.style.left = "-9999px";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+          }
+          const label = document.getElementById('copyEmailLabel');
+          const icon = document.getElementById('copyEmailIcon');
+          if (label) label.textContent = 'Copied!';
+          if (icon) icon.textContent = '✅';
+          showToast('Email address copied to clipboard (contact@tahseen.co)', 'success');
+          
+          setTimeout(() => {
+            if (label) label.textContent = 'Copy Email';
+            if (icon) icon.textContent = '📋';
+          }, 3000);
+        } catch (err) {
+          showToast('Email: contact@tahseen.co', 'info');
+        }
+      });
+    }
+
+    // 6. Contact Form Submission Simulation
+    const contactForm = document.getElementById('contactForm');
+    if (contactForm) {
+      contactForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const name = document.getElementById('contactName').value.trim();
+        const email = document.getElementById('contactEmail').value.trim();
+        const subject = document.getElementById('contactSubject').value;
+        const msg = document.getElementById('contactMessage').value.trim();
+
+        if (!name || !email || !msg) {
+          showToast('Please fill out all required fields.', 'error');
+          return;
+        }
+
+        const btnSend = document.getElementById('btnSendContact');
+        btnSend.disabled = true;
+        btnSend.innerHTML = `<span>Sending...</span> <span class="btn-subicon">⏳</span>`;
+
+        setTimeout(() => {
+          btnSend.disabled = false;
+          btnSend.innerHTML = `<span>Send Message</span> <span class="btn-subicon">🚀</span>`;
+          showToast(`Thank you, ${name}! Your inquiry regarding "${subject}" has been received.`, 'success');
+          contactForm.reset();
+          closeModal(document.getElementById('contactModal'));
+        }, 800);
+      });
+    }
+
+    // 7. Live Interactive AI Demo Simulator
+    const demoScenarios = {
+      chest_pain: {
+        title: "🚨 Severe Retrosternal Chest Pain (Emergency Triage Intercepted)",
+        triageStatus: "CRITICAL RED-FLAG (Immediate Doctor Attention Required)",
+        triageClass: "triage-critical",
+        socrates: {
+          site: "Retrosternal (Substernal Chest)",
+          onset: "Sudden onset, 45 minutes duration",
+          character: "Crushing, heavy pressure (like a weight on chest)",
+          radiation: "Radiating to left arm, jaw, and interscapular region",
+          associations: "Diaphoresis (cold sweats), nausea, shortness of breath",
+          timing: "Continuous, non-remitting",
+          exacerbating: "Worse on physical exertion",
+          severity: "9 / 10 Intensity"
+        },
+        ayushPrakriti: "Severe Pitta-Vata aggravated state (Uras Kshata / Hridroga lakshana)",
+        fhirBundle: {
+          resourceType: "Bundle",
+          type: "document",
+          id: "bundle-aiims-crit-0914",
+          entry: [
+            { resource: { resourceType: "Encounter", status: "in-progress", class: "EMER" } },
+            { resource: { resourceType: "Condition", code: { text: "Acute Coronary Syndrome / Angina Pectoris" }, severity: "Critical" } }
+          ]
+        },
+        targetRole: "doctor"
+      },
+      gerd_acidity: {
+        title: "🔥 Burning Epigastric Pain & Acid Reflux (Amlapitta)",
+        triageStatus: "ROUTINE OPD TRIAGE (Stable)",
+        triageClass: "triage-routine",
+        socrates: {
+          site: "Epigastrium & Retrosternal retro-esophageal tract",
+          onset: "Gradual, recurrent over 3 weeks",
+          character: "Burning sensation (Daha)",
+          radiation: "Ascending into throat with sour eructations (Tikta Amlodgara)",
+          associations: "Nausea after spicy food, disturbed sleep",
+          timing: "Peaks 30-45 mins post-meals and nocturnal recumbency",
+          exacerbating: "Oily/spicy food, skipped meals, stress",
+          severity: "5 / 10 Intensity"
+        },
+        ayushPrakriti: "Prakriti: Pitta-Pradhana (Amlapitta / Vidagdha Ajirna)",
+        fhirBundle: {
+          resourceType: "Bundle",
+          type: "document",
+          id: "bundle-aiims-opd-2088",
+          entry: [
+            { resource: { resourceType: "Condition", code: { text: "Gastroesophageal Reflux Disease (GERD) / K21.9" } } }
+          ]
+        },
+        targetRole: "kiosk"
+      },
+      joint_stiffness: {
+        title: "🦴 Bilateral Knee Joint Stiffness & Crepitus (Sandhigata Vata)",
+        triageStatus: "PRIORITY CHRONIC OPD TRIAGE",
+        triageClass: "triage-priority",
+        socrates: {
+          site: "Bilateral Knees (Janu Sandhi), Left > Right",
+          onset: "Insidious onset over 6 months",
+          character: "Dull aching pain with cracking sounds on flexion",
+          radiation: "Localized around joint capsule and patella",
+          associations: "Morning stiffness lasting < 30 minutes, difficulty climbing stairs",
+          timing: "Worse in the morning and after prolonged sitting",
+          exacerbating: "Cold weather, stair climbing, squatting",
+          severity: "6 / 10 Intensity"
+        },
+        ayushPrakriti: "Prakriti: Vata-Kapha (Sandhigata Vata / Osteoarthritis M17.9)",
+        fhirBundle: {
+          resourceType: "Bundle",
+          type: "document",
+          id: "bundle-aiims-opd-3142",
+          entry: [
+            { resource: { resourceType: "Condition", code: { text: "Primary Osteoarthritis of Knee / M17.0" } } }
+          ]
+        },
+        targetRole: "fhir"
+      }
+    };
+
+    function renderDemoScenario(scenarioKey) {
+      const data = demoScenarios[scenarioKey];
+      const container = document.getElementById('demoOutputContainer');
+      const launchBtn = document.getElementById('demoLaunchAppBtn');
+      if (!data || !container) return;
+
+      if (launchBtn) {
+        launchBtn.href = `app.html?role=${data.targetRole}`;
+        launchBtn.innerHTML = `Launch in ${data.targetRole.toUpperCase()} Portal &rarr;`;
+      }
+
+      container.innerHTML = `
+        <div class="demo-result-header">
+          <h4>${data.title}</h4>
+          <span class="triage-badge ${data.triageClass}">${data.triageStatus}</span>
+        </div>
+
+        <div class="demo-grid">
+          <div class="demo-col">
+            <h5 class="demo-col-heading">📋 SOCRATES Structured Pain Profile</h5>
+            <ul class="socrates-list">
+              <li><strong>Site:</strong> ${data.socrates.site}</li>
+              <li><strong>Onset:</strong> ${data.socrates.onset}</li>
+              <li><strong>Character:</strong> ${data.socrates.character}</li>
+              <li><strong>Radiation:</strong> ${data.socrates.radiation}</li>
+              <li><strong>Associations:</strong> ${data.socrates.associations}</li>
+              <li><strong>Timing:</strong> ${data.socrates.timing}</li>
+              <li><strong>Exacerbating:</strong> ${data.socrates.exacerbating}</li>
+              <li><strong>Severity:</strong> <span class="sev-tag">${data.socrates.severity}</span></li>
+            </ul>
+          </div>
+
+          <div class="demo-col">
+            <h5 class="demo-col-heading">🌿 AYUSH Prakriti &amp; ABDM FHIR</h5>
+            <div class="ayush-box">
+              <strong>AYUSH Diagnostic Correlation:</strong>
+              <p>${data.ayushPrakriti}</p>
+            </div>
+            
+            <div class="fhir-box">
+              <div class="fhir-box-title">Generated ABDM FHIR R4 Preview:</div>
+              <pre class="fhir-code-preview"><code>${JSON.stringify(data.fhirBundle, null, 2)}</code></pre>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Initialize Demo Scenario Buttons
+    document.querySelectorAll('.scenario-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.scenario-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const scenario = btn.getAttribute('data-scenario');
+        renderDemoScenario(scenario);
+      });
+    });
+
+    // Wire up feature demo buttons on feature cards and hero pill
+    const heroLiveDemoBtn = document.getElementById('pillLiveDemo');
+    if (heroLiveDemoBtn) {
+      heroLiveDemoBtn.addEventListener('click', () => {
+        openModal('demoModal');
+        renderDemoScenario('chest_pain');
+      });
+    }
+
+    document.querySelectorAll('.feature-demo-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const feature = btn.getAttribute('data-feature');
+        openModal('demoModal');
+        if (feature === 'analyze') renderDemoScenario('chest_pain');
+        else if (feature === 'store') renderDemoScenario('joint_stiffness');
+        else if (feature === 'summarize') renderDemoScenario('gerd_acidity');
+      });
+    });
+
+    // Render initial scenario in demo modal
+    renderDemoScenario('chest_pain');
+
+    // 8. Floating Back To Top Button
+    const backToTopBtn = document.getElementById('backToTopBtn');
+    if (backToTopBtn) {
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 280) {
+          backToTopBtn.classList.add('visible');
+        } else {
+          backToTopBtn.classList.remove('visible');
+        }
+      });
+
+      backToTopBtn.addEventListener('click', () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    }
+  </script>
+
+</body>
+</html>
