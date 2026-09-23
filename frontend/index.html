@@ -1,784 +1,869 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi" data-theme="light">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Medify.AI - AI Powered Patient Medical History & Clinical Intake</title>
-  <meta name="description" content="One stop solution for all your medical history. AI powered patient medical history, prescriptions storage, ABDM FHIR records, and clinical analysis.">
+  <title>Swasthya Sathi | Caring Digital Clinical Intake & AYUSH Care Desk</title>
+
+  <!-- Modern Typography (Plus Jakarta Sans & Fira Code) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap"
+    rel="stylesheet">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css">
 </head>
+
 <body>
 
-  <!-- ========================================================================= -->
-  <!-- NAVBAR -->
-  <!-- ========================================================================= -->
-  <header class="navbar" id="siteNavbar">
-    <a href="index.html" class="logo" id="navLogo" aria-label="Medify.AI Home">MEDIFY.AI</a>
-    <nav class="nav-links" id="navLinks">
-      <a href="index.html" class="nav-link-item" id="navHome">Home</a>
-      <a href="app.html?role=doctor" class="nav-link-item" id="navHistory" title="View Patient Medical History & OPD Records">History</a>
-      <a href="#features" class="nav-link-item" id="navFeatures">Features</a>
-      <a href="#about" class="nav-link-item" id="navAbout">About</a>
-      <a href="app.html" class="nav-cta-btn" id="navLaunchAppBtn" title="Launch Medify.AI Clinical Platform">
-        <span>Launch App</span>
-        <span class="nav-arrow" aria-hidden="true">
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
-        </span>
-      </a>
-    </nav>
-    <button class="menu-btn" id="menuToggleBtn" aria-label="Open mobile menu" aria-expanded="false" aria-controls="navLinks">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
-  </header>
+  <div class="app-container">
 
-  <!-- ========================================================================= -->
-  <!-- HERO SECTION -->
-  <!-- ========================================================================= -->
-  <section class="hero" id="hero">
-    <div class="hero-content">
-      <div class="hero-badge">
-        <span class="badge-dot"></span>
-        <span>SIH26047 &bull; ABDM FHIR Compliant Care Desk</span>
+    <!-- Top Navigation & Header -->
+    <header class="header-bar">
+      <div class="brand-section">
+        <a href="index.html" class="logo-link">MEDIFY.AI</a>
+        <div class="brand-info">
+          <h1 data-i18n="appTitle">Swasthya Sathi Care Desk</h1>
+          <div class="sub-tag">
+            <span data-i18n="appSub">SIH26047: Digital Clinical Intake & AYUSH OPD Desk</span>
+            <span class="abdm-badge">🏥 ABDM: IN-AIIMS-DELHI-0012</span>
+            <span class="dpdp-badge">🛡️ DPDP 2023 Compliant</span>
+          </div>
+        </div>
       </div>
 
-      <h1>One stop solution for all your<br>medical history</h1>
-      <p>All your medical needs in one go. AI-powered Patient medical history, multilingual clinical intake, and instant ABDM FHIR interoperability.<br>Click below to access the platform or jump directly to any portal.</p>
-      
-      <div class="hero-actions-wrapper">
-        <a href="app.html" class="hero-btn" id="heroCtaBtn" title="Launch Full Medify.AI Application">
-          <span>Explore MEDIFY.AI</span>
-          <span class="hero-arrow-circle" aria-hidden="true">
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+      <!-- Role Nav Tabs -->
+      <nav class="nav-tabs-wrapper">
+        <button type="button" class="nav-tab-btn active" data-target="kiosk">
+          <span>🩺</span> <span data-i18n="tabKiosk">Patient Intake Kiosk</span>
+        </button>
+        <button type="button" class="nav-tab-btn" data-target="doctor">
+          <span>👨‍⚕️</span> <span data-i18n="tabDoctor">Doctor OPD Desk</span>
+        </button>
+        <button type="button" class="nav-tab-btn" data-target="analytics">
+          <span>📊</span> <span data-i18n="tabAnalytics">OPD Analytics</span>
+        </button>
+        <button type="button" class="nav-tab-btn" data-target="fhir">
+          <span>📄</span> <span data-i18n="tabFhir">ABDM FHIR Hub</span>
+        </button>
+      </nav>
+
+      <!-- Header Actions -->
+      <div class="header-actions">
+        <select id="globalLangSelect" class="lang-selector" aria-label="Select Language">
+          <option value="en">English</option>
+          <option value="hi" selected>हिन्दी (Hindi)</option>
+          <option value="mr">मराठी (Marathi)</option>
+          <option value="ta">தமிழ் (Tamil)</option>
+          <option value="te">తెలుగు (Telugu)</option>
+          <option value="bn">বাংলা (Bengali)</option>
+          <option value="gu">ગુજરાતી (Gujarati)</option>
+          <option value="kn">ಕನ್ನಡ (Kannada)</option>
+        </select>
+
+        <a href="index.html" class="btn btn-home-cta" title="Back to Landing Page">
+          <span>Home</span>
+          <span class="home-arrow" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.6"
+              stroke-linecap="round" stroke-linejoin="round">
+              <line x1="7" y1="17" x2="17" y2="7"></line>
+              <polyline points="7 7 17 7 17 17"></polyline>
+            </svg>
           </span>
         </a>
-      </div>
 
-      <!-- Quick Access Portal Launchers -->
-      <div class="hero-portals">
-        <span class="portals-label">Instant Portal Access:</span>
-        <div class="portal-pills-grid">
-          <a href="app.html?role=kiosk" class="portal-pill" id="pillKiosk" title="Launch Patient Intake Kiosk">
-            <span class="pill-emoji">🩺</span>
-            <span class="pill-text">Patient Intake</span>
-          </a>
-          <a href="app.html?role=doctor" class="portal-pill" id="pillDoctor" title="Launch Doctor OPD Desk">
-            <span class="pill-emoji">👨‍⚕️</span>
-            <span class="pill-text">Doctor OPD Desk</span>
-          </a>
-          <a href="app.html?role=analytics" class="portal-pill" id="pillAnalytics" title="Launch OPD Analytics">
-            <span class="pill-emoji">📊</span>
-            <span class="pill-text">OPD Analytics</span>
-          </a>
-          <a href="app.html?role=fhir" class="portal-pill" id="pillFhir" title="Launch ABDM FHIR Hub">
-            <span class="pill-emoji">📄</span>
-            <span class="pill-text">ABDM FHIR Hub</span>
-          </a>
-          <button type="button" class="portal-pill pill-demo" id="pillLiveDemo" title="Try Live AI Symptom Simulator">
-            <span class="pill-emoji">⚡</span>
-            <span class="pill-text">Try Live AI Demo</span>
-          </button>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========================================================================= -->
-  <!-- FEATURES SECTION -->
-  <!-- ========================================================================= -->
-  <section class="features" id="features">
-    <div class="features-header">
-      <h2 class="section-title">Core Intelligence Modules</h2>
-      <p class="section-subtitle">Engineered for seamless clinical intake, standardized storage, and real-time AI diagnostic insights.</p>
-    </div>
-
-    <!-- Feature 1: Analyze -->
-    <div class="feature-row" id="featureAnalyze">
-      <div class="feature-icon" aria-hidden="true">
-        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M8 30 L16 20 L22 26 L32 14" stroke="#ffffff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
-          <circle cx="30" cy="30" r="9" stroke="#ffffff" stroke-width="2.8"/>
-          <line x1="36.5" y1="36.5" x2="42" y2="42" stroke="#ffffff" stroke-width="2.8" stroke-linecap="round"/>
-        </svg>
-      </div>
-      <h2>Analyze</h2>
-      <p>Analyze all of the patient's medical history with AI powered mechanism, real-time emergency triage interception, and disease pattern tracking.</p>
-      
-      <div class="feature-buttons-group">
-        <a href="app.html?role=analytics" class="feature-action-btn" id="btnFeatureAnalyzeApp" title="Open OPD Analytics Portal">
-          <span>Launch AI Analytics</span>
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-        </a>
-        <button type="button" class="feature-demo-btn" id="btnFeatureAnalyzeDemo" data-feature="analyze" title="Preview AI Analytics & Triage Demo">
-          <span>Preview Analysis Demo</span>
-          <span class="btn-subicon">🔍</span>
+        <button type="button" id="themeToggleBtn" class="icon-btn" title="Switch to Dark Mode"
+          aria-label="Switch to Dark Mode" aria-pressed="false">
+          <span class="theme-toggle-icon" aria-hidden="true">🌙</span>
         </button>
       </div>
+    </header>
+
+    <!-- Emergency Triage Red-Flag Alert Ticker -->
+    <div id="emergencyTicker" class="emergency-ticker">
+      <div class="content">
+        <span class="pulse-badge">CRITICAL TRIAGE</span>
+        <span id="emergencyTickerText">EMERGENCY RED-FLAG INTERCEPTED: Severe symptoms requiring immediate physician
+          attention!</span>
+      </div>
+      <button type="button" class="btn btn-secondary btn-sm" onclick="window.app.switchRole('doctor')">View in OPD Desk
+        →</button>
     </div>
 
-    <!-- Feature 2: Store -->
-    <div class="feature-row" id="featureStore">
-      <div class="feature-icon" aria-hidden="true">
-        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="8" y="12" width="32" height="7" rx="1.5" stroke="#ffffff" stroke-width="2.8" stroke-linejoin="round"/>
-          <path d="M10 19 L10 34 A2 2 0 0 0 12 36 L36 36 A2 2 0 0 0 38 34 L38 19" stroke="#ffffff" stroke-width="2.8" stroke-linejoin="round"/>
-          <line x1="20" y1="25" x2="28" y2="25" stroke="#ffffff" stroke-width="2.8" stroke-linecap="round"/>
-        </svg>
-      </div>
-      <h2>Store</h2>
-      <p>Store all prescriptions and medicines (ongoing/completed) in one place with ABDM FHIR R4 interoperability and cryptographic health vault encryption.</p>
-      
-      <div class="feature-buttons-group">
-        <a href="app.html?role=fhir" class="feature-action-btn" id="btnFeatureStoreApp" title="Open ABDM FHIR Records Hub">
-          <span>View ABDM Records</span>
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-        </a>
-        <button type="button" class="feature-demo-btn" id="btnFeatureStoreDemo" data-feature="store" title="Explore ABDM FHIR Payload Storage">
-          <span>Explore FHIR Vault</span>
-          <span class="btn-subicon">📁</span>
-        </button>
-      </div>
-    </div>
+    <!-- ========================================================================= -->
+    <!-- VIEW 1: PATIENT INTAKE KIOSK -->
+    <!-- ========================================================================= -->
+    <main id="kioskSection" class="view-section active">
+      <div class="kiosk-container">
 
-    <!-- Feature 3: Summarize -->
-    <div class="feature-row" id="featureSummarize">
-      <div class="feature-icon" aria-hidden="true">
-        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M24 16 C21 13.5 15 12.5 10 13.5 L10 33 C15 32 21 33 24 35.5 C27 33 33 32 38 33 L38 13.5 C33 12.5 27 13.5 24 16 Z" stroke="#ffffff" stroke-width="2.8" stroke-linejoin="round"/>
-          <line x1="24" y1="16" x2="24" y2="35.5" stroke="#ffffff" stroke-width="2.8"/>
-        </svg>
-      </div>
-      <h2>Summarize</h2>
-      <p>Summarize all of the patient's medical history and diseases with integrated clinical AI chat support, SOCRATES pain mapping, and AYUSH Prakriti profiling.</p>
-      
-      <div class="feature-buttons-group">
-        <a href="app.html?role=doctor" class="feature-action-btn" id="btnFeatureSummarizeApp" title="Open Doctor OPD Clinical Desk">
-          <span>Open Doctor OPD Desk</span>
-          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-        </a>
-        <button type="button" class="feature-demo-btn" id="btnFeatureSummarizeDemo" data-feature="summarize" title="Preview Doctor AI Summary & SOCRATES Chat">
-          <span>View AI Summary Demo</span>
-          <span class="btn-subicon">💬</span>
-        </button>
-      </div>
-    </div>
-
-  </section>
-
-  <!-- ========================================================================= -->
-  <!-- FOOTER -->
-  <!-- ========================================================================= -->
-  <footer class="site-footer" id="about">
-    <div class="footer-links">
-      <div class="footer-col">
-        <h4 class="footer-col-title">Platform &amp; Portals</h4>
-        <a href="#features" id="footerServicesLink">Services</a>
-        <a href="app.html?role=kiosk" id="footerKioskLink">Patient Intake</a>
-        <a href="app.html?role=doctor" id="footerDoctorLink">Doctor OPD Desk</a>
-        <button type="button" class="footer-link-btn" id="footerPrivacyBtn" aria-label="Read Privacy Policy">Privacy Policy</button>
-        <button type="button" class="footer-link-btn" id="footerTermsBtn" aria-label="Read Terms and Conditions">Terms &amp; Conditions</button>
-      </div>
-      <div class="footer-col">
-        <h4 class="footer-col-title">Company &amp; Compliance</h4>
-        <button type="button" class="footer-link-btn" id="footerAboutBtn" aria-label="About Medify.AI">About us</button>
-        <button type="button" class="footer-link-btn" id="footerContactBtn" aria-label="Contact Medify.AI Team">Contact Us</button>
-        <a href="app.html?role=fhir" id="footerFhirLink">ABDM FHIR Hub</a>
-        <a href="app.html?role=analytics" id="footerAnalyticsLink">OPD Analytics</a>
-      </div>
-    </div>
-
-    <div class="footer-bottom">
-      <span class="footer-credit">&copy; 2026 Tahseen Pvt Limited.Co &bull; All Rights Reserved.</span>
-      <span class="footer-logo">MEDIFY.AI</span>
-    </div>
-  </footer>
-
-  <!-- ========================================================================= -->
-  <!-- MODAL 1: PRIVACY POLICY (DPDP ACT 2023) -->
-  <!-- ========================================================================= -->
-  <div class="modal-backdrop" id="privacyModal" role="dialog" aria-modal="true" aria-labelledby="privacyModalTitle" hidden>
-    <div class="modal-dialog">
-      <div class="modal-header">
-        <div class="modal-title-group">
-          <span class="modal-icon">🛡️</span>
-          <h3 id="privacyModalTitle">Privacy Policy &amp; Data Protection</h3>
-        </div>
-        <button type="button" class="modal-close-btn" data-close-modal aria-label="Close modal">&times;</button>
-      </div>
-      
-      <div class="modal-body">
-        <div class="modal-tags">
-          <span class="tag-badge">DPDP Act 2023 Compliant</span>
-          <span class="tag-badge">ABDM Milestone-M1/M2/M3</span>
-          <span class="tag-badge">AES-256 GCM Encrypted</span>
-        </div>
-
-        <h4>1. Patient Data Sovereignty &amp; Consent</h4>
-        <p>Medify.AI operates under strict patient-first consent models conforming to India's <strong>Digital Personal Data Protection (DPDP) Act 2023</strong> and the <strong>Ayushman Bharat Digital Mission (ABDM)</strong> framework. No protected health information (PHI) is shared without explicit digital authorization.</p>
-
-        <h4>2. Zero Unencrypted Storage</h4>
-        <p>All demographic data, chief complaints, SOCRATES symptom logs, and AYUSH Prakriti assessments are stored with client-side and server-side encryption. Clinical notes are accessible strictly by authorized OPD physicians.</p>
-
-        <h4>3. ABHA Identity &amp; Health Locker Interoperability</h4>
-        <p>When you link your 14-digit ABHA ID, records are encrypted using ABDM-compliant RSA public-key exchange protocols. Patients retain full rights to revoke consent, request record erasure, or transfer their clinical summaries to any ABDM-certified personal health record (PHR) app.</p>
-
-        <h4>4. Data Protection Officer (DPO) Contact</h4>
-        <p>For any queries regarding medical privacy, data rectification, or grievance redressal, contact our designated Data Protection Officer at: <a href="mailto:contact@tahseen.co" class="modal-inline-link">contact@tahseen.co</a>.</p>
-      </div>
-
-      <div class="modal-footer">
-        <button type="button" class="btn-modal-primary" data-close-modal>I Understand &amp; Agree</button>
-        <button type="button" class="btn-modal-secondary" data-close-modal>Close</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ========================================================================= -->
-  <!-- MODAL 2: TERMS & CONDITIONS -->
-  <!-- ========================================================================= -->
-  <div class="modal-backdrop" id="termsModal" role="dialog" aria-modal="true" aria-labelledby="termsModalTitle" hidden>
-    <div class="modal-dialog">
-      <div class="modal-header">
-        <div class="modal-title-group">
-          <span class="modal-icon">⚖️</span>
-          <h3 id="termsModalTitle">Terms of Service &amp; Clinical Disclaimer</h3>
-        </div>
-        <button type="button" class="modal-close-btn" data-close-modal aria-label="Close modal">&times;</button>
-      </div>
-      
-      <div class="modal-body">
-        <div class="modal-tags">
-          <span class="tag-badge">Clinical Decision Support (CDSS)</span>
-          <span class="tag-badge">Telemedicine Practice Guidelines 2020</span>
-        </div>
-
-        <h4>1. Clinical Decision Support Scope</h4>
-        <p>Medify.AI is an AI-powered digital intake, clinical history summarization, and AYUSH triage platform. <strong>It assists registered medical practitioners (RMPs) and does NOT replace licensed physician judgment.</strong> Final diagnoses, prescriptions, and treatment plans must always be validated by an attending doctor.</p>
-
-        <h4>2. Emergency Care &amp; Red-Flag Triage Protocol</h4>
-        <p>If a patient presents with severe emergency symptoms (e.g., crushing chest pain, sudden unilateral numbness, severe breathing difficulty, profuse hemorrhaging), our automated triage triggers a Red-Flag alert. In such cases, patients must immediately report to an in-person emergency department (ED/Casualty).</p>
-
-        <h4>3. Permitted Usage</h4>
-        <p>By accessing Medify.AI, healthcare providers agree to use the software in compliance with the NMC Act, Ayush Code of Ethics, and National Health Authority standards.</p>
-      </div>
-
-      <div class="modal-footer">
-        <button type="button" class="btn-modal-primary" data-close-modal>Accept &amp; Acknowledge</button>
-        <button type="button" class="btn-modal-secondary" data-close-modal>Close</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ========================================================================= -->
-  <!-- MODAL 3: ABOUT MEDIFY.AI -->
-  <!-- ========================================================================= -->
-  <div class="modal-backdrop" id="aboutModal" role="dialog" aria-modal="true" aria-labelledby="aboutModalTitle" hidden>
-    <div class="modal-dialog">
-      <div class="modal-header">
-        <div class="modal-title-group">
-          <span class="modal-icon">🏥</span>
-          <h3 id="aboutModalTitle">About Medify.AI</h3>
-        </div>
-        <button type="button" class="modal-close-btn" data-close-modal aria-label="Close modal">&times;</button>
-      </div>
-      
-      <div class="modal-body">
-        <div class="modal-tags">
-          <span class="tag-badge">SIH26047 Innovation</span>
-          <span class="tag-badge">Tahseen Pvt Limited.Co</span>
-          <span class="tag-badge">8 Indian Languages</span>
-        </div>
-
-        <h4>Revolutionizing Healthcare Case-Taking</h4>
-        <p><strong>Medify.AI</strong> was engineered to solve high OPD wait-times and fragmented patient case-taking across Indian clinical environments. By pairing multilingual speech recognition with clinical SOCRATES dialogue analysis and AYUSH Prakriti profiling, Medify.AI condenses 15-minute intake workflows into under 2 minutes.</p>
-
-        <h4>Key Platform Capabilities:</h4>
-        <ul class="modal-feature-list">
-          <li><strong>Multilingual Voice Intake:</strong> Real-time voice transcription in Hindi, Marathi, Tamil, Telugu, Bengali, Gujarati, Kannada, and English.</li>
-          <li><strong>Standardized SOCRATES History:</strong> Systematic mapping of Site, Onset, Character, Radiation, Associations, Time, Exacerbating factors, and Severity.</li>
-          <li><strong>Integrated AYUSH Pariksha:</strong> Deep dual assessment of Ayurvedic Prakriti (Vata, Pitta, Kapha) alongside allopathic clinical triage.</li>
-          <li><strong>Native ABDM FHIR R4 Bundle Generator:</strong> Automated creation of standard HL7/FHIR Encounter, Condition, and DiagnosticReport bundles.</li>
-        </ul>
-      </div>
-
-      <div class="modal-footer">
-        <a href="app.html" class="btn-modal-primary">Launch Full Platform &rarr;</a>
-        <button type="button" class="btn-modal-secondary" data-close-modal>Close</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ========================================================================= -->
-  <!-- MODAL 4: CONTACT US & SUPPORT -->
-  <!-- ========================================================================= -->
-  <div class="modal-backdrop" id="contactModal" role="dialog" aria-modal="true" aria-labelledby="contactModalTitle" hidden>
-    <div class="modal-dialog">
-      <div class="modal-header">
-        <div class="modal-title-group">
-          <span class="modal-icon">✉️</span>
-          <h3 id="contactModalTitle">Contact Medify.AI Support</h3>
-        </div>
-        <button type="button" class="modal-close-btn" data-close-modal aria-label="Close modal">&times;</button>
-      </div>
-      
-      <div class="modal-body">
-        <!-- 1-Click Copy Support Email -->
-        <div class="contact-email-card">
-          <div>
-            <div class="contact-label">Official Support &amp; Integration Email:</div>
-            <div class="contact-email-val" id="supportEmailText">contact@tahseen.co</div>
+        <!-- Stepper Sidebar -->
+        <aside class="kiosk-stepper-card">
+          <div class="kiosk-stepper-title">
+            <span>📋</span> <span>Clinical Intake Flow</span>
           </div>
-          <button type="button" class="btn-copy-email" id="btnCopyEmail" title="Copy email to clipboard">
-            <span id="copyEmailIcon">📋</span>
-            <span id="copyEmailLabel">Copy Email</span>
-          </button>
-        </div>
 
-        <!-- Interactive Contact Form -->
-        <form class="contact-form" id="contactForm">
-          <div class="form-row">
-            <div class="form-group">
-              <label for="contactName">Your Name <span class="req">*</span></label>
-              <input type="text" id="contactName" class="form-input" placeholder="e.g. Dr. Rajesh Sharma" required>
-            </div>
-            <div class="form-group">
-              <label for="contactEmail">Your Email <span class="req">*</span></label>
-              <input type="email" id="contactEmail" class="form-input" placeholder="e.g. rajesh@hospital.org" required>
+          <div class="kiosk-step-item active" data-step="1">
+            <div class="step-num-badge">1</div>
+            <div>
+              <div style="font-weight:600;">Patient & ABHA</div>
+              <div style="font-size:0.75rem;">Identity & DPDP Consent</div>
             </div>
           </div>
 
-          <div class="form-group">
-            <label for="contactSubject">Inquiry Category</label>
-            <select id="contactSubject" class="form-input">
-              <option value="Hospital & OPD Integration">Hospital &amp; OPD Integration</option>
-              <option value="ABDM FHIR Hub Support">ABDM FHIR Hub Support</option>
-              <option value="Feature Request / Feedback">Feature Request / Feedback</option>
-              <option value="Technical Bug Report">Technical Bug Report</option>
-              <option value="General Inquiry">General Inquiry</option>
-            </select>
+          <div class="kiosk-step-item" data-step="2">
+            <div class="step-num-badge">2</div>
+            <div>
+              <div style="font-weight:600;">Body Map & Complaint</div>
+              <div style="font-size:0.75rem;">Anatomy & Chief Concern</div>
+            </div>
           </div>
 
-          <div class="form-group">
-            <label for="contactMessage">Message <span class="req">*</span></label>
-            <textarea id="contactMessage" class="form-input form-textarea" rows="4" placeholder="Tell us how we can assist you..." required></textarea>
+          <div class="kiosk-step-item" data-step="3">
+            <div class="step-num-badge">3</div>
+            <div>
+              <div style="font-weight:600;">SOCRATES Dialogue</div>
+              <div style="font-size:0.75rem;">Guided Symptom History</div>
+            </div>
           </div>
 
-          <div class="form-actions">
-            <button type="submit" class="btn-modal-primary" id="btnSendContact">
-              <span>Send Message</span>
-              <span class="btn-subicon">🚀</span>
+          <div class="kiosk-step-item" data-step="4" style="display:none;">
+            <div class="step-num-badge">4</div>
+            <div>
+              <div style="font-weight:600;">AYUSH Pariksha</div>
+              <div style="font-size:0.75rem;">Prakriti & Agni Assessment</div>
+            </div>
+          </div>
+
+          <div class="kiosk-step-item" data-step="5">
+            <div class="step-num-badge">5</div>
+            <div>
+              <div style="font-weight:600;">Document OCR</div>
+              <div style="font-size:0.75rem;">Prescriptions & Lab Reports</div>
+            </div>
+          </div>
+
+          <div class="kiosk-step-item" data-step="6">
+            <div class="step-num-badge">6</div>
+            <div>
+              <div style="font-weight:600;">OPD Token & Triage</div>
+              <div style="font-size:0.75rem;">Queue Routing & Summary</div>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Main Kiosk Panel -->
+        <div class="kiosk-main-panel">
+
+          <!-- STEP 1: Patient Identity, ABHA & DPDP Consent -->
+          <div id="kioskStep1" class="kiosk-step-content active">
+            <div class="step-header">
+              <h2><span>👤</span> <span>Patient Registration & ABHA Verification</span></h2>
+              <p>Enter your patient details or ABHA (Ayushman Bharat Health Account) credentials for automated KYC.</p>
+            </div>
+
+            <!-- Clinical Stream Selector -->
+            <div class="form-group" style="margin-bottom:18px;">
+              <label class="form-label">Select Medical System / Care Stream</label>
+              <div class="stream-toggle-box">
+                <button type="button" class="stream-option-btn active allopathy" data-stream="allopathy">
+                  💊 Modern Medicine (Allopathy OPD)
+                </button>
+                <button type="button" class="stream-option-btn ayush" data-stream="ayush">
+                  🌿 AYUSH (Ayurveda / Panchakarma OPD)
+                </button>
+              </div>
+            </div>
+
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label class="form-label">Patient Full Name</label>
+                <input type="text" id="patientNameInput" class="form-input" value="Ramesh Kumar"
+                  placeholder="e.g. Ramesh Kumar">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">ABHA ID / ABHA Number / Mobile</label>
+                <div class="input-with-action">
+                  <input type="text" id="patientAbhaInput" class="form-input" value="ramesh.kumar58@abdm"
+                    placeholder="e.g. 91-4829-1029-4412">
+                  <button type="button" id="verifyAbhaBtn" class="btn btn-secondary btn-sm">Verify ABHA</button>
+                </div>
+                <div id="abhaVerifyStatus" style="margin-top:4px;"></div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Age (Years)</label>
+                <input type="number" id="patientAgeInput" class="form-input" value="58" min="1" max="120">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Gender</label>
+                <select id="patientGenderSelect" class="form-select">
+                  <option value="Male" selected>Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Mobile Number</label>
+                <input type="tel" id="patientPhoneInput" class="form-input" value="9876543210"
+                  placeholder="10-digit mobile number">
+              </div>
+            </div>
+
+            <!-- DPDP 2023 Granular Consent Box -->
+            <div class="dpdp-consent-box">
+              <div class="dpdp-consent-title">
+                <span>🛡️</span> <span>Digital Personal Data Protection (DPDP Act 2023) Consent Agreement</span>
+              </div>
+              <label class="consent-checkbox-item">
+                <input type="checkbox" id="consentVoiceCheck" checked>
+                <span>I consent to voice recording and clinical symptom transcription for intake history
+                  synthesis.</span>
+              </label>
+              <label class="consent-checkbox-item">
+                <input type="checkbox" id="consentOcrCheck" checked>
+                <span>I consent to OCR processing and digitizing of my previous medical records and lab reports.</span>
+              </label>
+              <label class="consent-checkbox-item">
+                <input type="checkbox" id="consentAbhaCheck" checked>
+                <span>I authorize secure encrypted transmission of this consultation to my ABDM Health Record.</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- STEP 2: Anatomical Body Map & Chief Complaints -->
+          <div id="kioskStep2" class="kiosk-step-content">
+            <div class="step-header">
+              <h2><span>🗺️</span> <span>Select Anatomical Region & Chief Concern</span></h2>
+              <p>Tap on the human body diagram or select from common complaints below.</p>
+            </div>
+
+            <div class="body-map-layout">
+              <!-- SVG Interactive Body Map -->
+              <div class="body-map-card">
+                <div class="body-svg-container">
+                  <svg viewBox="0 0 200 320" style="width:100%;height:100%;">
+                    <!-- Head -->
+                    <circle cx="100" cy="35" r="22" class="body-region-target" data-region="head" />
+                    <text x="100" y="38" text-anchor="middle" font-size="9" font-weight="700"
+                      pointer-events="none">Head</text>
+
+                    <!-- Neck -->
+                    <rect x="94" y="58" width="12" height="12" class="body-region-target" data-region="throat" />
+
+                    <!-- Chest -->
+                    <path d="M72 72 L128 72 L120 135 L80 135 Z" class="body-region-target active" data-region="chest" />
+                    <text x="100" y="105" text-anchor="middle" font-size="10" font-weight="700"
+                      pointer-events="none">Chest</text>
+
+                    <!-- Abdomen -->
+                    <path d="M80 138 L120 138 L115 185 L85 185 Z" class="body-region-target" data-region="abdomen" />
+                    <text x="100" y="162" text-anchor="middle" font-size="10" font-weight="700"
+                      pointer-events="none">Abdomen</text>
+
+                    <!-- Arms -->
+                    <path d="M68 76 L45 155 L55 160 L72 90 Z" class="body-region-target" data-region="joints" />
+                    <path d="M132 76 L155 155 L145 160 L128 90 Z" class="body-region-target" data-region="joints" />
+
+                    <!-- Pelvis -->
+                    <path d="M85 188 L115 188 L118 215 L82 215 Z" class="body-region-target" data-region="pelvis" />
+
+                    <!-- Legs & Knees -->
+                    <path d="M82 218 L76 300 L90 300 L97 218 Z" class="body-region-target" data-region="joints" />
+                    <path d="M118 218 L124 300 L110 300 L103 218 Z" class="body-region-target" data-region="joints" />
+                    <text x="100" y="260" text-anchor="middle" font-size="10" font-weight="700"
+                      pointer-events="none">Joints</text>
+                  </svg>
+                </div>
+
+                <div class="body-quick-pills">
+                  <button type="button" class="body-pill-btn active" data-region="chest">Chest</button>
+                  <button type="button" class="body-pill-btn" data-region="head">Head</button>
+                  <button type="button" class="body-pill-btn" data-region="abdomen">Abdomen</button>
+                  <button type="button" class="body-pill-btn" data-region="joints">Joints</button>
+                  <button type="button" class="body-pill-btn" data-region="skin">Skin</button>
+                  <button type="button" class="body-pill-btn" data-region="whole_body">Full Body</button>
+                </div>
+              </div>
+
+              <!-- Complaints Grid -->
+              <div>
+                <div id="complaintsGrid" class="complaints-grid">
+                  <!-- Dynamically Populated -->
+                </div>
+
+                <!-- Voice Input Bar -->
+                <div class="voice-intake-bar">
+                  <button type="button" id="voiceMicBtn" class="voice-mic-btn" title="Tap to Speak">
+                    🎤
+                  </button>
+                  <div class="voice-status-text">
+                    <div id="voiceStatusLabel" class="status-label" data-i18n="voicePrompt">Tap Mic to Speak in Your
+                      Language</div>
+                    <div id="voiceTranscriptPreview" class="transcript-preview">Hindi, English, Marathi, Tamil, Telugu,
+                      Bengali supported.</div>
+                  </div>
+                  <div class="audio-waveform">
+                    <div class="waveform-bar"></div>
+                    <div class="waveform-bar"></div>
+                    <div class="waveform-bar"></div>
+                    <div class="waveform-bar"></div>
+                    <div class="waveform-bar"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 3: SOCRATES Guided Dialogue -->
+          <div id="kioskStep3" class="kiosk-step-content">
+            <div class="step-header">
+              <h2><span>🩺</span> <span>Clinical Symptom Exploration (SOCRATES Engine)</span></h2>
+              <p>Our intelligent assistant asks targeted clinical questions to build your comprehensive case history.
+              </p>
+            </div>
+
+            <div class="socrates-card">
+              <div style="display:flex;align-items:center;justify-content:space-between;">
+                <span id="socratesFieldBadge" class="socrates-field-badge">SOCRATES: CHARACTER</span>
+                <span id="socratesStepNum" style="font-size:0.8rem;color:var(--text-muted);">Step 1 of 8</span>
+              </div>
+
+              <div id="socratesQuestionHeading" class="socrates-question-heading">
+                How would you describe the sensation or type of pain?
+              </div>
+              <div id="socratesQuestionVernacular" class="socrates-question-vernacular">
+                आप दर्द या परेशानी की प्रकृति को कैसा महसूस करते हैं?
+              </div>
+
+              <div id="socratesOptionsGrid" class="socrates-options-grid">
+                <!-- Dynamically Populated -->
+              </div>
+            </div>
+
+            <!-- Visual VAS Pain Severity Slider -->
+            <div class="severity-slider-box">
+              <div class="slider-labels-row">
+                <span>Mild Discomfort (1)</span>
+                <span data-i18n="severityLabel">Pain / Discomfort Intensity (1 to 10)</span>
+                <span>Severe / Unbearable (10)</span>
+              </div>
+              <input type="range" id="severitySlider" class="severity-slider" min="1" max="10" value="8">
+              <div class="severity-display-row">
+                <span id="severityEmoji" class="severity-emoji">😣</span>
+                <span id="severityScoreBadge" class="severity-score-badge">8/10</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 4: AYUSH Pariksha & Prakriti Calculation -->
+          <div id="kioskStep4" class="kiosk-step-content">
+            <div class="step-header">
+              <h2><span>🌿</span> <span>AYUSH Ashtavidha & Dashavidha Pariksha</span></h2>
+              <p>Ayurvedic constitutional Prakriti analysis, Agni (digestive capacity) and Koshtha assessment.</p>
+            </div>
+
+            <div id="ayushPrakritiResultBox" class="dpdp-consent-box"
+              style="display:none;margin-bottom:20px;border-color:var(--ayush-primary);">
+              <!-- Populated on calculation -->
+            </div>
+
+            <div id="ayushQuestionsGrid" class="ayush-pariksha-grid">
+              <!-- Dynamically Populated -->
+            </div>
+
+            <div class="form-group" style="margin-top:16px;">
+              <label class="form-label">Ahara & Vihara (Dietary habits, routine and sleep patterns)</label>
+              <input type="text" id="ayushLifestyleNotes" class="form-input"
+                value="Sour and fermented diet, tea 4x/day, sleeping after 12:30 AM.">
+            </div>
+          </div>
+
+          <!-- STEP 5: Medical Document Digitizer & OCR -->
+          <div id="kioskStep5" class="kiosk-step-content">
+            <div class="step-header">
+              <h2><span>📄</span> <span>Medical Record Digitizer & OCR Engine</span></h2>
+              <p>Upload previous doctor prescriptions or pathology lab reports for instant AI extraction.</p>
+            </div>
+
+            <div class="ocr-layout">
+              <div>
+                <div class="dropzone-box" onclick="document.getElementById('docFileInput').click()">
+                  <div class="dropzone-icon">📤</div>
+                  <div style="font-weight:600;">Drag & drop prescription/lab report</div>
+                  <div style="font-size:0.8rem;color:var(--text-muted);">Supports PNG, JPG, PDF or Text files</div>
+                  <input type="file" id="docFileInput" style="display:none;"
+                    onchange="window.kioskModule.handleCustomDocumentUpload()">
+                </div>
+
+                <!-- 1-Click Sample Medical Records -->
+                <div style="margin-top:16px;">
+                  <div style="font-weight:700;font-size:0.9rem;margin-bottom:8px;color:var(--text-main);"
+                    data-i18n="sampleDocsTitle">
+                    Load Realistic Sample Records (1-Click)
+                  </div>
+                  <div id="sampleDocsList" class="sample-docs-list">
+                    <!-- Dynamically Populated -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- OCR Extracted Results Panel -->
+              <div class="ocr-results-panel">
+                <div
+                  style="font-weight:700;font-size:0.95rem;margin-bottom:12px;display:flex;align-items:center;gap:6px;">
+                  <span>⚡</span> <span>Extracted Clinical Data (Medications & Labs)</span>
+                </div>
+                <div id="ocrExtractedResults">
+                  <div style="font-size:0.85rem;color:var(--text-muted);text-align:center;padding:40px 0;">
+                    Click any sample document above or upload a prescription to extract structured medications and
+                    abnormal lab values.
+                  </div>
+                </div>
+
+                <div class="form-group" style="margin-top:14px;">
+                  <label class="form-label">Or Paste Prescription / Lab Text Directly</label>
+                  <textarea id="customDocTextInput" class="form-textarea" rows="2"
+                    placeholder="e.g. Tab Telma 40mg 1-0-0, HbA1c 9.2%, Serum Creatinine 1.9 mg/dL"></textarea>
+                  <button type="button" id="processCustomDocBtn" class="btn btn-secondary btn-sm"
+                    style="margin-top:6px;align-self:flex-end;">Digitize Text</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- STEP 6: OPD Token & Final Summary -->
+          <div id="kioskStep6" class="kiosk-step-content">
+            <div class="step-header" style="text-align:center;">
+              <h2><span>✅</span> <span>Clinical Intake Complete!</span></h2>
+              <p>Your structured clinical case summary has been sent directly to the attending OPD Physician.</p>
+            </div>
+
+            <div class="token-card">
+              <span id="kioskTokenTriageBadge" class="dpdp-badge">ROUTINE OPD QUEUE</span>
+              <div class="token-number-large" id="kioskTokenNumberDisplay">OPD-03</div>
+              <div id="kioskTokenPatientName" style="font-weight:700;font-size:1.1rem;">Ramesh Kumar (58 Y / Male)</div>
+              <div id="kioskTokenWaitTime" style="color:var(--cyan-accent);font-size:0.9rem;margin-top:4px;">Estimated
+                Wait: ~8 Minutes (Room 104)</div>
+
+              <div class="token-qr-mock">
+                <svg viewBox="0 0 100 100">
+                  <rect width="100" height="100" fill="white" />
+                  <rect x="10" y="10" width="25" height="25" fill="#0f172a" />
+                  <rect x="65" y="10" width="25" height="25" fill="#0f172a" />
+                  <rect x="10" y="65" width="25" height="25" fill="#0f172a" />
+                  <rect x="15" y="15" width="15" height="15" fill="white" />
+                  <rect x="70" y="15" width="15" height="15" fill="white" />
+                  <rect x="15" y="70" width="15" height="15" fill="white" />
+                  <rect x="18" y="18" width="9" height="9" fill="#0f172a" />
+                  <rect x="73" y="18" width="9" height="9" fill="#0f172a" />
+                  <rect x="18" y="73" width="9" height="9" fill="#0f172a" />
+                  <rect x="42" y="15" width="10" height="10" fill="#0f172a" />
+                  <rect x="42" y="40" width="16" height="16" fill="#164234" />
+                  <rect x="65" y="65" width="12" height="12" fill="#0f172a" />
+                  <rect x="80" y="80" width="10" height="10" fill="#0f172a" />
+                </svg>
+              </div>
+
+              <div style="font-size:0.8rem;color:var(--text-muted);margin-top:10px;">
+                Scan QR at Doctor Desk for Instant Profile Loading | ABHA Verified
+              </div>
+            </div>
+
+            <div
+              style="margin-top:24px;background:var(--bg-secondary);padding:18px;border-radius:var(--radius-md);border:1px solid var(--border-color);box-shadow:var(--shadow-sm);">
+              <div style="font-weight:700;font-size:0.95rem;margin-bottom:6px;color:var(--primary);">
+                Clinical Intake Summary & Doctor Care Notes
+              </div>
+              <div id="kioskSummaryNarrative" class="hpi-narrative-text">
+                Patient presenting with intermittent retrosternal chest heaviness for 3 days. Known hypertensive and
+                diabetic.
+              </div>
+            </div>
+          </div>
+
+          <!-- Footer Actions -->
+          <footer class="kiosk-footer-actions">
+            <button type="button" id="kioskPrevBtn" class="btn btn-secondary" style="display:none;"
+              data-i18n="prevStep">
+              ← Previous
             </button>
-            <a href="mailto:contact@tahseen.co" class="btn-modal-secondary" id="btnNativeMailto" title="Open native email client">Open in Email App</a>
+            <div style="font-size:0.8rem;color:var(--text-dim);">
+              ABDM & DPDP Act 2023 Compliant • AIIMS Digital Health Initiative
+            </div>
+            <button type="button" id="kioskNextBtn" class="btn btn-primary" data-i18n="nextStep">
+              Next Step →
+            </button>
+          </footer>
+
+        </div>
+      </div>
+    </main>
+
+    <!-- ========================================================================= -->
+    <!-- VIEW 2: DOCTOR OPD CONSULTATION DESK -->
+    <!-- ========================================================================= -->
+    <main id="doctorSection" class="view-section">
+      <div class="doctor-desk-layout">
+
+        <!-- OPD Live Queue Column -->
+        <aside class="opd-queue-card">
+          <div class="queue-header">
+            <div>
+              <div style="font-weight:700;font-size:1.05rem;">Live OPD Queue</div>
+              <div id="opdQueueCount" style="font-size:0.8rem;color:var(--text-muted);">2 Waiting</div>
+            </div>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="window.doctorModule.refreshQueue()">🔄
+              Refresh</button>
           </div>
-        </form>
+
+          <div id="opdQueueItems" class="queue-items-scroll">
+            <!-- Dynamically Populated -->
+          </div>
+        </aside>
+
+        <!-- Deep Clinical Case Sheet Workspace -->
+        <div class="patient-case-workspace">
+
+          <!-- Patient Banner -->
+          <div class="patient-header-banner">
+            <div style="display:flex;align-items:center;gap:16px;">
+              <div class="patient-avatar-box">RK</div>
+              <div>
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <h2 id="docPatientName" style="font-size:1.4rem;font-weight:700;">Ramesh Kumar</h2>
+                  <span id="docTriageBadge" class="dpdp-badge">ROUTINE OPD</span>
+                </div>
+                <div id="docPatientMeta" style="font-size:0.85rem;color:var(--text-muted);margin-top:2px;">
+                  58 Years / Male | Token: OPD-A04 | Phone: 9876543210
+                </div>
+              </div>
+            </div>
+            <div style="text-align:right;">
+              <span class="abdm-badge" id="docPatientAbha">ramesh.kumar58@abdm</span>
+              <div style="font-size:0.75rem;color:var(--triage-green);margin-top:4px;">✓ ABDM KYC Verified</div>
+            </div>
+          </div>
+
+          <!-- Case Sections Grid -->
+          <div class="case-section-box">
+            <div class="case-section-title">
+              <span>🩺</span> <span>Chief Concern & Comprehensive History of Present Illness (HPI)</span>
+            </div>
+            <div style="font-weight:700;font-size:0.95rem;color:var(--primary);margin-bottom:6px;">
+              Chief Concern: <span id="docChiefComplaint">Chest Heaviness & Diabetes Routine Review</span>
+            </div>
+            <div id="docHpiNarrative" class="hpi-narrative-text">
+              58M presenting with intermittent dull chest pressure for 3 days on walking. Denies radiation, acute
+              diaphoresis, or syncope. Known diabetic on oral hypoglycemic agents.
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <!-- Past History & Allergies -->
+            <div class="case-section-box">
+              <div class="case-section-title">
+                <span>📋</span> <span>Past History & Allergies</span>
+              </div>
+              <div style="margin-bottom:10px;">
+                <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:4px;">Past Medical History:</div>
+                <div id="docPastHistoryTags" class="tag-list">
+                  <span class="tag-item">Type 2 Diabetes Mellitus</span>
+                  <span class="tag-item">Essential Hypertension</span>
+                </div>
+              </div>
+              <div>
+                <div style="font-size:0.8rem;color:var(--text-muted);margin-bottom:4px;">Drug Allergies:</div>
+                <div id="docAllergiesTags" class="tag-list">
+                  <span class="tag-item allergy">NKDA (No Known Drug Allergies)</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Reconciled Medications & Labs -->
+            <div class="case-section-box">
+              <div class="case-section-title">
+                <span>💊</span> <span>Scanned Meds & Abnormal Lab Badges</span>
+              </div>
+              <div id="docReconciledMeds" style="margin-bottom:10px;">
+                <!-- Extracted Meds -->
+              </div>
+              <div id="docInvestigationBadges">
+                <!-- Abnormal Labs -->
+              </div>
+            </div>
+          </div>
+
+          <!-- AYUSH Assessment Card (Visible if AYUSH stream) -->
+          <div id="docAyushAssessmentPanel" class="case-section-box"
+            style="display:none;border-color:var(--ayush-primary);">
+            <div class="case-section-title" style="color:var(--ayush-primary);">
+              <span>🌿</span> <span>AYUSH Prakriti & Nidana Assessment</span>
+            </div>
+            <div class="form-grid-2">
+              <div>
+                <div style="font-size:0.85rem;"><strong>Dominant Prakriti:</strong> <span id="docAyushPrakriti">Vata
+                    Dominant</span></div>
+                <div style="font-size:0.85rem;margin-top:4px;"><strong>Agni:</strong> <span id="docAyushAgni">Manda
+                    Agni</span></div>
+                <div style="font-size:0.85rem;margin-top:4px;"><strong>Koshtha:</strong> <span
+                    id="docAyushKoshtha">Krura Koshtha</span></div>
+              </div>
+              <div>
+                <div style="font-size:0.85rem;"><strong>Nidana (Causative factors):</strong></div>
+                <div id="docAyushNidana" style="font-size:0.8rem;color:var(--text-muted);">Vidahi Ahara Sevana</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Diagnostic Assistant: ICD-10 & NAMASTE AYUSH Suggestions -->
+          <div class="case-section-box">
+            <div class="case-section-title">
+              <span>🏷️</span> <span>Doctor's Diagnostic Impressions & Codes (1-Click Apply)</span>
+            </div>
+            <div id="docIcdSuggestions" class="tag-list" style="margin-bottom:12px;">
+              <!-- ICD-10 & NAMASTE Chips -->
+            </div>
+            <div class="form-group">
+              <label class="form-label">Final Clinical Diagnosis</label>
+              <input type="text" id="docDiagnosisInput" class="form-input"
+                value="E11.65 - Type 2 diabetes mellitus with hyperglycemia; I20.9 - Angina pectoris">
+            </div>
+          </div>
+
+          <!-- Physician Notes -->
+          <div class="case-section-box">
+            <div class="case-section-title">
+              <span>📝</span> <span>Physician Clinical Notes & Observations</span>
+            </div>
+            <textarea id="docClinicalNotesInput" class="form-textarea" rows="3"
+              placeholder="Add doctor observations, examination notes or clinical advice..."></textarea>
+            <button type="button" id="saveDoctorNotesBtn" class="btn btn-secondary btn-sm" style="margin-top:8px;">Save
+              Notes</button>
+          </div>
+
+          <!-- Smart E-Prescription Builder -->
+          <div class="case-section-box">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+              <div class="case-section-title" style="margin-bottom:0;border-bottom:none;">
+                <span>💊</span> <span>E-Prescription & Treatment Orders</span>
+              </div>
+              <button type="button" id="doctorAddRxBtn" class="btn btn-secondary btn-sm">+ Add Medicine</button>
+            </div>
+
+            <table class="prescription-table">
+              <thead>
+                <tr>
+                  <th>Medicine / Formulation</th>
+                  <th>Strength</th>
+                  <th>Frequency</th>
+                  <th>Duration</th>
+                  <th>Instructions</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="doctorPrescriptionTbody">
+                <!-- Dynamically Populated -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Action Bar -->
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:24px;">
+            <div style="font-size:0.85rem;color:var(--text-muted);">
+              Completing consultation will sign the record, generate ABDM FHIR R4 Bundle, and notify patient PHR.
+            </div>
+            <button type="button" id="completeConsultBtn" class="btn btn-success"
+              style="padding:14px 28px;font-size:1.05rem;" data-i18n="saveAndPrescribe">
+              ✓ Complete Consultation & ABDM Sync
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </main>
+
+    <!-- ========================================================================= -->
+    <!-- VIEW 3: OPD QUEUE & HOSPITAL ANALYTICS -->
+    <!-- ========================================================================= -->
+    <main id="analyticsSection" class="view-section">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+        <div>
+          <h2 style="font-size:1.6rem;font-weight:700;">Hospital OPD Throughput & Clinical Analytics</h2>
+          <p style="color:var(--text-muted);font-size:0.95rem;">Real-time measurement of pre-consultation time savings,
+            triage interceptions, and intake volume.</p>
+        </div>
+        <button type="button" id="refreshAnalyticsBtn" class="btn btn-secondary">🔄 Refresh Metrics</button>
+      </div>
+
+      <!-- Stat Metric Cards -->
+      <div class="stats-grid-4">
+        <div class="stat-metric-card">
+          <div class="stat-icon-wrapper green">⚡</div>
+          <div>
+            <div class="stat-val" id="statTimeSavedPct">82.5%</div>
+            <div class="stat-desc">Clinical Time Saved per Patient</div>
+          </div>
+        </div>
+
+        <div class="stat-metric-card">
+          <div class="stat-icon-wrapper blue">👥</div>
+          <div>
+            <div class="stat-val" id="statDailyIntakeVolume">4,252</div>
+            <div class="stat-desc">Daily OPD Patients Handled</div>
+          </div>
+        </div>
+
+        <div class="stat-metric-card">
+          <div class="stat-icon-wrapper red">🚨</div>
+          <div>
+            <div class="stat-val" id="statRedFlagsCount">15</div>
+            <div class="stat-desc">Emergency Triage Red Flags Intercepted</div>
+          </div>
+        </div>
+
+        <div class="stat-metric-card">
+          <div class="stat-icon-wrapper amber">📄</div>
+          <div>
+            <div class="stat-val" id="statDocsDigitized">1,842</div>
+            <div class="stat-desc">Prescriptions & Labs Digitized (OCR)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Time Comparison & Savings Breakdown -->
+      <div class="form-grid-2" style="margin-top:20px;">
+        <div class="case-section-box">
+          <div class="case-section-title">
+            <span>⏱️</span> <span>Pre-Consultation Intake Speed Comparison</span>
+          </div>
+          <div style="display:flex;align-items:center;justify-content:space-around;padding:24px 0;">
+            <div style="text-align:center;">
+              <div style="font-size:2.4rem;font-weight:900;color:var(--primary);" id="statPreConsultTime">48s</div>
+              <div style="font-size:0.85rem;color:var(--text-muted);">MediKiosk AI Average</div>
+            </div>
+            <div style="font-size:2rem;color:var(--text-dim);">vs</div>
+            <div style="text-align:center;">
+              <div style="font-size:2.4rem;font-weight:900;color:var(--text-dim);" id="statBaselineTime">240s</div>
+              <div style="font-size:0.85rem;color:var(--text-muted);">Traditional Manual Intake</div>
+            </div>
+          </div>
+          <div style="font-size:0.85rem;color:var(--text-muted);text-align:center;">
+            Physicians receive fully structured SOCRATES narrative, saving over 3 minutes per consultation.
+          </div>
+        </div>
+
+        <div class="case-section-box">
+          <div class="case-section-title">
+            <span>🛡️</span> <span>Standards & Ecosystem Compliance</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px;margin-top:10px;">
+            <div class="extracted-item-pill">
+              <span>🏛️ ABDM Health Information Exchange (HIE-CM)</span>
+              <span class="dpdp-badge">VERIFIED 100%</span>
+            </div>
+            <div class="extracted-item-pill">
+              <span>📜 HL7 FHIR R4 Bundle Standard (NRCES Certified)</span>
+              <span class="dpdp-badge">COMPLIANT</span>
+            </div>
+            <div class="extracted-item-pill">
+              <span>🔒 Digital Personal Data Protection Act 2023 (DPDP)</span>
+              <span class="dpdp-badge">ENCRYPTED</span>
+            </div>
+            <div class="extracted-item-pill">
+              <span>🌿 National AYUSH Morbidity Electronic (NAMASTE)</span>
+              <span class="dpdp-badge">SUPPORTED</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- ========================================================================= -->
+    <!-- VIEW 4: ABDM FHIR R4 & DPDP COMPLIANCE HUB -->
+    <!-- ========================================================================= -->
+    <main id="fhirSection" class="view-section">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;">
+        <div>
+          <h2 style="font-size:1.6rem;font-weight:700;">ABDM FHIR R4 Ecosystem & DPDP Compliance Hub</h2>
+          <p style="color:var(--text-muted);font-size:0.95rem;">Interactive HL7 FHIR R4 JSON Inspector and DPDP Act 2023
+            Cryptographic Audit Trail.</p>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button type="button" id="viewDpdpAuditBtn" class="btn btn-secondary">📜 DPDP Audit Certificate</button>
+          <button type="button" id="copyFhirJsonBtn" class="btn btn-secondary">📋 Copy JSON</button>
+          <button type="button" id="pushAbdmHieBtn" class="btn btn-primary">🚀 Push to ABDM HIE-CM</button>
+        </div>
+      </div>
+
+      <div class="form-grid-2">
+        <!-- FHIR Resource Explorer -->
+        <div class="case-section-box">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <div class="case-section-title" style="margin-bottom:0;border-bottom:none;">
+              <span>📦</span> <span>FHIR R4 Bundle Resources</span>
+            </div>
+            <span id="fhirTotalEntriesCount" class="abdm-badge">7 Resources</span>
+          </div>
+          <div id="fhirResourceList" style="max-height:450px;overflow-y:auto;">
+            <!-- Resource Cards -->
+          </div>
+        </div>
+
+        <!-- JSON Code Inspector -->
+        <div class="case-section-box">
+          <div class="case-section-title">
+            <span>💻</span> <span>Raw FHIR R4 JSON Schema (NRCES ABDM Validated)</span>
+          </div>
+          <pre id="fhirJsonViewerCode" class="json-viewer-box">Loading FHIR Bundle...</pre>
+        </div>
+      </div>
+    </main>
+
+  </div>
+
+  <!-- DPDP Cryptographic Audit Certificate Modal -->
+  <div id="dpdpModal" class="modal-backdrop">
+    <div class="modal-dialog">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <h3 style="font-size:1.2rem;font-weight:700;color:var(--triage-green);">🛡️ DPDP Act 2023 Consent Audit
+          Certificate</h3>
+        <button type="button" class="icon-btn"
+          onclick="document.getElementById('dpdpModal').classList.remove('active')">✕</button>
+      </div>
+      <div style="font-size:0.9rem;line-height:1.6;color:var(--text-muted);">
+        <p id="dpdpCertPatient" style="font-weight:600;color:var(--text-main);margin-bottom:8px;">Patient ID: P-101</p>
+        <p style="margin-bottom:8px;">Compliance Standard: <strong>Digital Personal Data Protection Act 2023
+            (India)</strong></p>
+        <p style="margin-bottom:8px;">Consent Timestamp: <span id="dpdpCertTime">2026-09-11T22:42:00</span></p>
+        <p style="margin-bottom:8px;">Cryptographic Integrity Hash (SHA-256):</p>
+        <div id="dpdpCertHash"
+          style="background:var(--bg-tertiary);border:1px solid var(--border-color);padding:10px;border-radius:6px;font-family:monospace;font-size:0.75rem;color:var(--primary);word-break:break-all;margin-bottom:12px;">
+          9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08
+        </div>
+        <p style="font-size:0.8rem;color:var(--text-dim);">
+          Data retention policy: Session data purged from terminal post-HIS sync. Encrypted record retained in ABDM PHR.
+        </p>
+      </div>
+      <div style="text-align:right;margin-top:20px;">
+        <button type="button" class="btn btn-primary btn-sm"
+          onclick="document.getElementById('dpdpModal').classList.remove('active')">Close</button>
       </div>
     </div>
   </div>
 
-  <!-- ========================================================================= -->
-  <!-- MODAL 5: INTERACTIVE LIVE AI DEMO SIMULATOR -->
-  <!-- ========================================================================= -->
-  <div class="modal-backdrop" id="demoModal" role="dialog" aria-modal="true" aria-labelledby="demoModalTitle" hidden>
-    <div class="modal-dialog modal-dialog-lg">
-      <div class="modal-header">
-        <div class="modal-title-group">
-          <span class="modal-icon">⚡</span>
-          <h3 id="demoModalTitle">Interactive Live AI Feature Simulator</h3>
-        </div>
-        <button type="button" class="modal-close-btn" data-close-modal aria-label="Close modal">&times;</button>
-      </div>
-      
-      <div class="modal-body">
-        <p class="demo-instructions">Select a clinical case scenario below to simulate instant real-time AI triage, SOCRATES pain analysis, Ayush profiling, and ABDM FHIR generation:</p>
-        
-        <!-- Scenario Selector Pills -->
-        <div class="demo-scenarios">
-          <button type="button" class="scenario-btn active" data-scenario="chest_pain">
-            <span>🚨 Chest Pain (Emergency Triage)</span>
-          </button>
-          <button type="button" class="scenario-btn" data-scenario="gerd_acidity">
-            <span>🔥 Acid Reflux &amp; Gastric Burning (Pitta)</span>
-          </button>
-          <button type="button" class="scenario-btn" data-scenario="joint_stiffness">
-            <span>🦴 Knee Joint Pain &amp; Stiffness (Vata)</span>
-          </button>
-        </div>
-
-        <!-- Live Output Preview Grid -->
-        <div class="demo-output-card" id="demoOutputContainer">
-          <!-- Dynamic Content Rendered by JS -->
-        </div>
-      </div>
-
-      <div class="modal-footer">
-        <a href="app.html" class="btn-modal-primary" id="demoLaunchAppBtn">Launch Full Platform with This Case &rarr;</a>
-        <button type="button" class="btn-modal-secondary" data-close-modal>Close</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ========================================================================= -->
-  <!-- FLOATING SCROLL-TO-TOP BUTTON -->
-  <!-- ========================================================================= -->
-  <button type="button" class="back-to-top-btn" id="backToTopBtn" aria-label="Scroll to top of page" title="Back to top">
-    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
-      <line x1="12" y1="19" x2="12" y2="5"></line>
-      <polyline points="5 12 12 5 19 12"></polyline>
-    </svg>
-  </button>
-
-  <!-- Toast Notification Container -->
-  <div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="true"></div>
-
-  <!-- ========================================================================= -->
-  <!-- CLIENT-SIDE INTERACTIVITY SCRIPT -->
-  <!-- ========================================================================= -->
-  <script>
-    // 1. Mobile Navigation Toggle
-    const menuBtn = document.getElementById('menuToggleBtn');
-    const navLinks = document.getElementById('navLinks');
-
-    if (menuBtn && navLinks) {
-      menuBtn.addEventListener('click', () => {
-        const isExpanded = menuBtn.getAttribute('aria-expanded') === 'true';
-        menuBtn.setAttribute('aria-expanded', !isExpanded);
-        menuBtn.classList.toggle('active');
-        navLinks.classList.toggle('active');
-      });
-
-      // Close menu on link click
-      navLinks.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => {
-          menuBtn.classList.remove('active');
-          navLinks.classList.remove('active');
-          menuBtn.setAttribute('aria-expanded', 'false');
-        });
-      });
-    }
-
-    // 2. Toast Notification Helper
-    function showToast(message, type = 'info') {
-      const container = document.getElementById('toastContainer');
-      if (!container) return;
-
-      const toast = document.createElement('div');
-      toast.className = `toast-item toast-${type}`;
-      
-      const icons = {
-        success: '✅',
-        error: '⚠️',
-        info: 'ℹ️'
-      };
-
-      toast.innerHTML = `
-        <span class="toast-icon">${icons[type] || 'ℹ️'}</span>
-        <span class="toast-msg">${message}</span>
-      `;
-
-      container.appendChild(toast);
-
-      setTimeout(() => {
-        toast.classList.add('toast-fadeout');
-        setTimeout(() => toast.remove(), 300);
-      }, 3500);
-    }
-
-    // 3. Modal Manager (Open / Close / Escape Key / Backdrop Click)
-    function openModal(modalId) {
-      const modal = document.getElementById(modalId);
-      if (!modal) return;
-      modal.removeAttribute('hidden');
-      modal.classList.add('active');
-      document.body.style.overflow = 'hidden';
-
-      // Focus first actionable element inside modal
-      const focusable = modal.querySelector('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
-      if (focusable) focusable.focus();
-    }
-
-    function closeModal(modal) {
-      if (!modal) return;
-      modal.classList.remove('active');
-      modal.setAttribute('hidden', '');
-      document.body.style.overflow = '';
-    }
-
-    // Wire up all close buttons & backdrop click
-    document.querySelectorAll('.modal-backdrop').forEach(modal => {
-      modal.addEventListener('click', (e) => {
-        if (e.target === modal || e.target.closest('[data-close-modal]')) {
-          closeModal(modal);
-        }
-      });
-    });
-
-    // Escape Key Listener
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        document.querySelectorAll('.modal-backdrop.active').forEach(modal => {
-          closeModal(modal);
-        });
-      }
-    });
-
-    // 4. Modal Triggers
-    const btnPrivacy = document.getElementById('footerPrivacyBtn');
-    if (btnPrivacy) btnPrivacy.addEventListener('click', () => openModal('privacyModal'));
-
-    const btnTerms = document.getElementById('footerTermsBtn');
-    if (btnTerms) btnTerms.addEventListener('click', () => openModal('termsModal'));
-
-    const btnAbout = document.getElementById('footerAboutBtn');
-    if (btnAbout) btnAbout.addEventListener('click', () => openModal('aboutModal'));
-
-    const btnContact = document.getElementById('footerContactBtn');
-    if (btnContact) btnContact.addEventListener('click', () => openModal('contactModal'));
-
-    // 5. Copy Email Action
-    const btnCopyEmail = document.getElementById('btnCopyEmail');
-    if (btnCopyEmail) {
-      btnCopyEmail.addEventListener('click', async () => {
-        const email = 'contact@tahseen.co';
-        try {
-          if (navigator.clipboard && window.isSecureContext) {
-            await navigator.clipboard.writeText(email);
-          } else {
-            // Fallback for non-https/older browsers
-            const textArea = document.createElement("textarea");
-            textArea.value = email;
-            textArea.style.position = "fixed";
-            textArea.style.left = "-9999px";
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textArea);
-          }
-          const label = document.getElementById('copyEmailLabel');
-          const icon = document.getElementById('copyEmailIcon');
-          if (label) label.textContent = 'Copied!';
-          if (icon) icon.textContent = '✅';
-          showToast('Email address copied to clipboard (contact@tahseen.co)', 'success');
-          
-          setTimeout(() => {
-            if (label) label.textContent = 'Copy Email';
-            if (icon) icon.textContent = '📋';
-          }, 3000);
-        } catch (err) {
-          showToast('Email: contact@tahseen.co', 'info');
-        }
-      });
-    }
-
-    // 6. Contact Form Submission Simulation
-    const contactForm = document.getElementById('contactForm');
-    if (contactForm) {
-      contactForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const name = document.getElementById('contactName').value.trim();
-        const email = document.getElementById('contactEmail').value.trim();
-        const subject = document.getElementById('contactSubject').value;
-        const msg = document.getElementById('contactMessage').value.trim();
-
-        if (!name || !email || !msg) {
-          showToast('Please fill out all required fields.', 'error');
-          return;
-        }
-
-        const btnSend = document.getElementById('btnSendContact');
-        btnSend.disabled = true;
-        btnSend.innerHTML = `<span>Sending...</span> <span class="btn-subicon">⏳</span>`;
-
-        setTimeout(() => {
-          btnSend.disabled = false;
-          btnSend.innerHTML = `<span>Send Message</span> <span class="btn-subicon">🚀</span>`;
-          showToast(`Thank you, ${name}! Your inquiry regarding "${subject}" has been received.`, 'success');
-          contactForm.reset();
-          closeModal(document.getElementById('contactModal'));
-        }, 800);
-      });
-    }
-
-    // 7. Live Interactive AI Demo Simulator
-    const demoScenarios = {
-      chest_pain: {
-        title: "🚨 Severe Retrosternal Chest Pain (Emergency Triage Intercepted)",
-        triageStatus: "CRITICAL RED-FLAG (Immediate Doctor Attention Required)",
-        triageClass: "triage-critical",
-        socrates: {
-          site: "Retrosternal (Substernal Chest)",
-          onset: "Sudden onset, 45 minutes duration",
-          character: "Crushing, heavy pressure (like a weight on chest)",
-          radiation: "Radiating to left arm, jaw, and interscapular region",
-          associations: "Diaphoresis (cold sweats), nausea, shortness of breath",
-          timing: "Continuous, non-remitting",
-          exacerbating: "Worse on physical exertion",
-          severity: "9 / 10 Intensity"
-        },
-        ayushPrakriti: "Severe Pitta-Vata aggravated state (Uras Kshata / Hridroga lakshana)",
-        fhirBundle: {
-          resourceType: "Bundle",
-          type: "document",
-          id: "bundle-aiims-crit-0914",
-          entry: [
-            { resource: { resourceType: "Encounter", status: "in-progress", class: "EMER" } },
-            { resource: { resourceType: "Condition", code: { text: "Acute Coronary Syndrome / Angina Pectoris" }, severity: "Critical" } }
-          ]
-        },
-        targetRole: "doctor"
-      },
-      gerd_acidity: {
-        title: "🔥 Burning Epigastric Pain & Acid Reflux (Amlapitta)",
-        triageStatus: "ROUTINE OPD TRIAGE (Stable)",
-        triageClass: "triage-routine",
-        socrates: {
-          site: "Epigastrium & Retrosternal retro-esophageal tract",
-          onset: "Gradual, recurrent over 3 weeks",
-          character: "Burning sensation (Daha)",
-          radiation: "Ascending into throat with sour eructations (Tikta Amlodgara)",
-          associations: "Nausea after spicy food, disturbed sleep",
-          timing: "Peaks 30-45 mins post-meals and nocturnal recumbency",
-          exacerbating: "Oily/spicy food, skipped meals, stress",
-          severity: "5 / 10 Intensity"
-        },
-        ayushPrakriti: "Prakriti: Pitta-Pradhana (Amlapitta / Vidagdha Ajirna)",
-        fhirBundle: {
-          resourceType: "Bundle",
-          type: "document",
-          id: "bundle-aiims-opd-2088",
-          entry: [
-            { resource: { resourceType: "Condition", code: { text: "Gastroesophageal Reflux Disease (GERD) / K21.9" } } }
-          ]
-        },
-        targetRole: "kiosk"
-      },
-      joint_stiffness: {
-        title: "🦴 Bilateral Knee Joint Stiffness & Crepitus (Sandhigata Vata)",
-        triageStatus: "PRIORITY CHRONIC OPD TRIAGE",
-        triageClass: "triage-priority",
-        socrates: {
-          site: "Bilateral Knees (Janu Sandhi), Left > Right",
-          onset: "Insidious onset over 6 months",
-          character: "Dull aching pain with cracking sounds on flexion",
-          radiation: "Localized around joint capsule and patella",
-          associations: "Morning stiffness lasting < 30 minutes, difficulty climbing stairs",
-          timing: "Worse in the morning and after prolonged sitting",
-          exacerbating: "Cold weather, stair climbing, squatting",
-          severity: "6 / 10 Intensity"
-        },
-        ayushPrakriti: "Prakriti: Vata-Kapha (Sandhigata Vata / Osteoarthritis M17.9)",
-        fhirBundle: {
-          resourceType: "Bundle",
-          type: "document",
-          id: "bundle-aiims-opd-3142",
-          entry: [
-            { resource: { resourceType: "Condition", code: { text: "Primary Osteoarthritis of Knee / M17.0" } } }
-          ]
-        },
-        targetRole: "fhir"
-      }
-    };
-
-    function renderDemoScenario(scenarioKey) {
-      const data = demoScenarios[scenarioKey];
-      const container = document.getElementById('demoOutputContainer');
-      const launchBtn = document.getElementById('demoLaunchAppBtn');
-      if (!data || !container) return;
-
-      if (launchBtn) {
-        launchBtn.href = `app.html?role=${data.targetRole}`;
-        launchBtn.innerHTML = `Launch in ${data.targetRole.toUpperCase()} Portal &rarr;`;
-      }
-
-      container.innerHTML = `
-        <div class="demo-result-header">
-          <h4>${data.title}</h4>
-          <span class="triage-badge ${data.triageClass}">${data.triageStatus}</span>
-        </div>
-
-        <div class="demo-grid">
-          <div class="demo-col">
-            <h5 class="demo-col-heading">📋 SOCRATES Structured Pain Profile</h5>
-            <ul class="socrates-list">
-              <li><strong>Site:</strong> ${data.socrates.site}</li>
-              <li><strong>Onset:</strong> ${data.socrates.onset}</li>
-              <li><strong>Character:</strong> ${data.socrates.character}</li>
-              <li><strong>Radiation:</strong> ${data.socrates.radiation}</li>
-              <li><strong>Associations:</strong> ${data.socrates.associations}</li>
-              <li><strong>Timing:</strong> ${data.socrates.timing}</li>
-              <li><strong>Exacerbating:</strong> ${data.socrates.exacerbating}</li>
-              <li><strong>Severity:</strong> <span class="sev-tag">${data.socrates.severity}</span></li>
-            </ul>
-          </div>
-
-          <div class="demo-col">
-            <h5 class="demo-col-heading">🌿 AYUSH Prakriti &amp; ABDM FHIR</h5>
-            <div class="ayush-box">
-              <strong>AYUSH Diagnostic Correlation:</strong>
-              <p>${data.ayushPrakriti}</p>
-            </div>
-            
-            <div class="fhir-box">
-              <div class="fhir-box-title">Generated ABDM FHIR R4 Preview:</div>
-              <pre class="fhir-code-preview"><code>${JSON.stringify(data.fhirBundle, null, 2)}</code></pre>
-            </div>
-          </div>
-        </div>
-      `;
-    }
-
-    // Initialize Demo Scenario Buttons
-    document.querySelectorAll('.scenario-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.scenario-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        const scenario = btn.getAttribute('data-scenario');
-        renderDemoScenario(scenario);
-      });
-    });
-
-    // Wire up feature demo buttons on feature cards and hero pill
-    const heroLiveDemoBtn = document.getElementById('pillLiveDemo');
-    if (heroLiveDemoBtn) {
-      heroLiveDemoBtn.addEventListener('click', () => {
-        openModal('demoModal');
-        renderDemoScenario('chest_pain');
-      });
-    }
-
-    document.querySelectorAll('.feature-demo-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const feature = btn.getAttribute('data-feature');
-        openModal('demoModal');
-        if (feature === 'analyze') renderDemoScenario('chest_pain');
-        else if (feature === 'store') renderDemoScenario('joint_stiffness');
-        else if (feature === 'summarize') renderDemoScenario('gerd_acidity');
-      });
-    });
-
-    // Render initial scenario in demo modal
-    renderDemoScenario('chest_pain');
-
-    // 8. Floating Back To Top Button
-    const backToTopBtn = document.getElementById('backToTopBtn');
-    if (backToTopBtn) {
-      window.addEventListener('scroll', () => {
-        if (window.scrollY > 280) {
-          backToTopBtn.classList.add('visible');
-        } else {
-          backToTopBtn.classList.remove('visible');
-        }
-      });
-
-      backToTopBtn.addEventListener('click', () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      });
-    }
-  </script>
+  <!-- Scripts -->
+  <script src="js/app.js"></script>
+  <script src="js/kiosk.js"></script>
+  <script src="js/doctor.js"></script>
+  <script src="js/analytics.js"></script>
+  <script src="js/fhir_viewer.js"></script>
 
 </body>
+
 </html>
