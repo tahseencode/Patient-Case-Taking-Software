@@ -38,7 +38,7 @@ Real‑time updates (queue changes, triage alerts) are broadcast over a WebSocke
 
 - **Backend:** Python, [FastAPI](https://fastapi.tiangolo.com/), served by `uvicorn`. All business logic lives in rule‑based/offline "engines" (no LLM required to function).
 - **Frontend:** Static HTML/CSS/vanilla JS (no build step, no framework/bundler).
-- **Data storage:** In‑memory Python dictionaries (`backend/app/database/db.py`) — **nothing persists across server restarts**, and there is no external database to install.
+- **Data storage:** Persistent SQLite relational database (`backend/app/database/patient_intake.db`) with Write-Ahead Logging (WAL), foreign key constraints, DPDP audit trails, and ANSI SQL schema (`schema.sql`). All data persists across server restarts.
 - **Serving model:** The FastAPI app itself mounts the `frontend/` folder as static files, so one process serves both the API and the UI.
 
 ```
@@ -79,7 +79,12 @@ Patient-Case-Taking-Software/
 │       │   ├── summarizer.py        # Builds the structured clinical summary + ICD-10/NAMASTE mapping
 │       │   └── fhir_builder.py      # Builds ABDM-style FHIR R4 bundles
 │       ├── database/
-│       │   └── db.py            # In-memory store, seeded with 2 demo patients on startup
+│       │   ├── patient_intake.db    # Persistent SQLite database file
+│       │   ├── schema.sql           # ANSI SQL DDL schema (9 tables, constraints, indexes)
+│       │   ├── seed.sql             # SQL seed script with initial demo records
+│       │   ├── sql_db.py            # SQLite database engine, persistence layer & proxies
+│       │   ├── init_db.py           # CLI database management & inspection utility
+│       │   └── db.py                # Database access singleton
 │       ├── models/
 │       │   └── schemas.py       # Pydantic models (Patient, Consent, SOCRATES, Summary, etc.)
 │       └── sample_data/
@@ -244,9 +249,51 @@ These live under `backend/app/core/` and contain all the "intelligence" — all 
 
 Defined in `backend/app/models/schemas.py` as Pydantic models, including `PatientDemographics`, `DPDP2023Consent`, `SocratesResponse`, `AyushPariksha`, `TriageAlert`/`TriageLevel`, `DocumentDigitization` (+ `ExtractedMedication`, `ExtractedLabInvestigation`), `StructuredClinicalSummary`, `DoctorConsultationRecord`/`DoctorPrescriptionItem`, and `IntakeSession` (the top-level object tying a patient's whole journey together).
 
+## Relational SQL Database & Schema
+
+All clinical intake records, patient profiles, consents, documents, and consultations persist in a real **SQLite relational database** (`backend/app/database/patient_intake.db`) with:
+- **Write-Ahead Logging (WAL mode)** for high concurrency across kiosk terminals and doctor desks.
+- **Foreign Key Enforcement (`PRAGMA foreign_keys = ON`)** for strict referential integrity.
+- **ANSI SQL DDL (`backend/app/database/schema.sql`)** with 9 normalized tables:
+
+| Table | Purpose | Primary Key | Foreign Keys |
+|---|---|---|---|
+| `patients` | Patient demographics, contact info, ABHA IDs, stream | `patient_id` | - |
+| `consents` | DPDP 2023 digital consent artifacts, SHA-256 hashes | `consent_id` | `patient_id` → `patients` |
+| `intake_sessions` | Clinical encounters, SOCRATES data, AYUSH, triage | `session_id` | `patient_id`, `consent_id` |
+| `clinical_summaries` | Synthesized clinical narratives, ICD-10, NAMASTE | `summary_id` | `session_id`, `patient_id` |
+| `documents` | Digitized OCR prescriptions & lab reports | `document_id` | `session_id`, `patient_id` |
+| `consultations` | Doctor diagnoses, prescriptions, ABDM FHIR bundle IDs | `consultation_id` | `session_id`, `patient_id` |
+| `opd_queue` | Active waiting line with triage priority and token | `id` (Auto) | `session_id` → `intake_sessions` |
+| `triage_alerts` | Real-time red flag emergency notifications | `id` (Auto) | - |
+| `audit_logs` | Immutable ABDM / DPDP compliance audit trails | `log_id` (Auto) | `patient_id`, `session_id` |
+
+### Database CLI Utility
+
+A command-line administration tool is provided in `backend/app/database/init_db.py`:
+
+```bash
+# Check database health, size, and table row counts:
+python -m backend.app.database.init_db --status
+
+# Re-initialize schema from schema.sql:
+python -m backend.app.database.init_db --init
+
+# Seed initial demo patients (Ramesh Kumar & Shanti Devi):
+python -m backend.app.database.init_db --seed
+
+# Drop and reset tables with fresh seed data:
+python -m backend.app.database.init_db --reset
+```
+
+### Database Diagnostics API
+
+- **`GET /api/v1/database/status`** — Returns real-time health, disk usage, SQLite engine version, and table record counts.
+- **`GET /api/v1/database/tables`** — Lists all relational tables and their current record counts.
+
 ## Running the test suite
 
-`test_platform_api.py` uses `unittest` + FastAPI's `TestClient` to exercise the health check, multilingual complaint listing, SOCRATES flow, OCR/document digitization, AYUSH Prakriti calculation, OPD queue, and ABDM FHIR bundle generation.
+`test_platform_api.py` uses `unittest` + FastAPI's `TestClient` to exercise the health check, multilingual complaint listing, SOCRATES flow, OCR/document digitization, AYUSH Prakriti calculation, OPD queue, ABDM FHIR bundle generation, and SQL database disk persistence.
 
 ```bash
 # From the project root, with dependencies installed
@@ -265,7 +312,6 @@ Do not treat this as production-ready clinical or compliance software without a 
 
 ## Known limitations
 
-- **No persistence:** all data (sessions, queue, consultations) lives in memory and is lost on restart.
 - **No authentication/authorization:** any client can call any endpoint (CORS is wide open, `allow_origins=["*"]`).
 - **No real OCR:** document "digitization" processes text you already provide (or a bundled sample) rather than reading an actual scanned image/PDF.
-- **Single-process:** the in-memory DB and WebSocket connection manager assume a single running instance; it won't scale horizontally without a real datastore/message broker.
+- **Single-node deployment:** SQLite is optimized for single-server or edge kiosk hardware; multi-node clusters can point `DATABASE_URL` to PostgreSQL.

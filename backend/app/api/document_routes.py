@@ -44,6 +44,7 @@ async def load_sample_document(req: LoadSampleRequest):
     )
 
     session.documents.append(digitized)
+    db.save_document(session.session_id, digitized)
 
     return {
         "success": True,
@@ -72,6 +73,7 @@ async def upload_and_process_document(
     )
 
     session.documents.append(digitized)
+    db.save_document(session.session_id, digitized)
 
     return {
         "success": True,

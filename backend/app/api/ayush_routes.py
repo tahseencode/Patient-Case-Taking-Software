@@ -31,6 +31,7 @@ async def calculate_ayush_pariksha(req: ParikshaCalculationRequest):
 
     if req.session_id and req.session_id in db.sessions:
         db.sessions[req.session_id].ayush = pariksha_result
+        db.save_session(db.sessions[req.session_id])
 
     return {
         "success": True,

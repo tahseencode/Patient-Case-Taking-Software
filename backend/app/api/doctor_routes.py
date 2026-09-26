@@ -82,6 +82,7 @@ async def update_patient_summary(req: UpdateSummaryRequest):
         session.summary.past_medical_history = req.past_medical_history
 
     session.summary.physician_reviewed = True
+    db.save_clinical_summary(session.session_id, session.summary)
 
     return {
         "success": True,
@@ -101,6 +102,7 @@ async def complete_consultation(req: CompleteConsultationRequest):
     if session.summary:
         session.summary.physician_reviewed = True
         session.summary.physician_notes = req.clinical_notes
+        db.save_clinical_summary(session.session_id, session.summary)
 
     record = DoctorConsultationRecord(
         consultation_id=consultation_id,

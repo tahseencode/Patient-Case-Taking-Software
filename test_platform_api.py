@@ -240,6 +240,50 @@ class TestMediKioskPlatform(unittest.TestCase):
         self.assertGreater(len(doc_data["document"]["extracted_investigations"]), 0)
         print("[OK] Custom Document Upload & OCR Extraction Passed")
 
+    def test_10_sql_relational_database_persistence(self):
+        # 1. Test database diagnostics endpoint
+        status_res = client.get("/api/v1/database/status")
+        self.assertEqual(status_res.status_code, 200)
+        status_data = status_res.json()
+        self.assertTrue(status_data["success"])
+        db_info = status_data["database"]
+        self.assertEqual(db_info["engine"], "SQLite Relational Database")
+        self.assertIn("patients", db_info["table_counts"])
+        self.assertGreater(db_info["table_counts"]["patients"], 0)
+        self.assertGreater(db_info["file_size_bytes"], 0)
+
+        # 2. Test tables listing endpoint
+        tables_res = client.get("/api/v1/database/tables")
+        self.assertEqual(tables_res.status_code, 200)
+        tables_data = tables_res.json()
+        self.assertTrue(tables_data["success"])
+        self.assertIn("intake_sessions", tables_data["tables"])
+
+        # 3. Direct independent SQLite connection to verify disk file persistence
+        import sqlite3
+        from backend.app.core.config import settings
+
+        conn = sqlite3.connect(settings.DATABASE_PATH)
+        conn.row_factory = sqlite3.Row
+        cur = conn.cursor()
+
+        # Verify tables and rows exist on disk
+        cur.execute("SELECT COUNT(*) as cnt FROM patients")
+        self.assertGreater(cur.fetchone()["cnt"], 0)
+
+        cur.execute("SELECT COUNT(*) as cnt FROM intake_sessions")
+        self.assertGreater(cur.fetchone()["cnt"], 0)
+
+        cur.execute("SELECT COUNT(*) as cnt FROM opd_queue")
+        self.assertGreater(cur.fetchone()["cnt"], 0)
+
+        # Verify audit logs were written
+        cur.execute("SELECT COUNT(*) as cnt FROM audit_logs")
+        self.assertGreater(cur.fetchone()["cnt"], 0)
+
+        conn.close()
+        print("[OK] Relational SQL Database Persistence & Disk Integrity Passed")
+
 
 if __name__ == "__main__":
     unittest.main()

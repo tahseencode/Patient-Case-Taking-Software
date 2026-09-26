@@ -129,6 +129,7 @@ async def submit_socrates_data(req: SubmitSocratesRequest):
         age=session.patient.age
     )
     session.triage = triage_result
+    db.save_session(session)
 
     return {
         "success": True,
@@ -154,6 +155,7 @@ async def finalize_intake_session(req: FinalizeIntakeRequest):
     )
     session.summary = summary
     session.is_completed = True
+    db.save_session(session)
 
     # Add to OPD Queue
     queue_item = {

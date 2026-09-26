@@ -11,6 +11,13 @@ class Settings(BaseModel):
     DEFAULT_LANGUAGE: str = "hi"
     EMERGENCY_DESK_ID: str = "TRIAGE-DESK-OPD-01"
     
+    # Database configuration (defaults to persistent SQLite database)
+    DATABASE_PATH: str = os.getenv(
+        "DATABASE_PATH",
+        os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "database", "patient_intake.db"))
+    )
+    DATABASE_URL: str = os.getenv("DATABASE_URL", f"sqlite:///{os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'database', 'patient_intake.db'))}")
+
     # LLM Settings (optional keys - offline rule/NLP engine works 100% reliably out of the box)
     GEMINI_API_KEY: str = os.getenv("GEMINI_API_KEY", "")
     OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")

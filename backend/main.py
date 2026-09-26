@@ -11,6 +11,7 @@ from backend.app.api.ayush_routes import router as ayush_router
 from backend.app.api.document_routes import router as doc_router
 from backend.app.api.doctor_routes import router as doctor_router
 from backend.app.api.abdm_routes import router as abdm_router
+from backend.app.api.database_routes import router as database_router
 
 app = FastAPI(
     title=settings.APP_NAME,
@@ -33,6 +34,7 @@ app.include_router(ayush_router, prefix=settings.API_PREFIX)
 app.include_router(doc_router, prefix=settings.API_PREFIX)
 app.include_router(doctor_router, prefix=settings.API_PREFIX)
 app.include_router(abdm_router, prefix=settings.API_PREFIX)
+app.include_router(database_router, prefix=settings.API_PREFIX)
 
 # WebSocket Connection Manager for Real-Time OPD Queue and Emergency Triage Alerts
 class ConnectionManager:
