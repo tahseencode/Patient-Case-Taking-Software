@@ -6,22 +6,35 @@ from pydantic import BaseModel
 def _resolve_db_path() -> str:
     """Return a writable SQLite path.
 
-    Locally the bundled DB file is used directly. On Vercel the deployment
-    filesystem is read-only (only /tmp is writable), so the bundled DB is
-    copied to /tmp on cold start and used from there. Data written there is
-    ephemeral - use a hosted database for real persistence.
+    Locally the bundled DB file is used directly if writable. On Vercel / serverless
+    environments where the deployment root is read-only (only /tmp is writable),
+    the bundled DB is copied to /tmp on cold start (or fresh DB initialized there).
     """
-    bundled = os.path.abspath(
-        os.path.join(os.path.dirname(__file__), "..", "database", "patient_intake.db")
-    )
     explicit = os.getenv("DATABASE_PATH")
     if explicit:
         return explicit
-    if os.getenv("VERCEL"):
+
+    bundled = os.path.abspath(
+        os.path.join(os.path.dirname(__file__), "..", "database", "patient_intake.db")
+    )
+
+    is_serverless = (
+        bool(os.getenv("VERCEL"))
+        or bool(os.getenv("VERCEL_ENV"))
+        or bool(os.getenv("AWS_LAMBDA_FUNCTION_NAME"))
+        or bool(os.getenv("LAMBDA_TASK_ROOT"))
+        or not os.access(os.path.dirname(bundled) if os.path.exists(os.path.dirname(bundled)) else ".", os.W_OK)
+    )
+
+    if is_serverless:
         tmp_path = "/tmp/patient_intake.db"
         if not os.path.exists(tmp_path) and os.path.exists(bundled):
-            shutil.copyfile(bundled, tmp_path)
+            try:
+                shutil.copyfile(bundled, tmp_path)
+            except Exception:
+                pass
         return tmp_path
+
     return bundled
 
 

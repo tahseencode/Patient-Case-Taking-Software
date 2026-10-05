@@ -62,6 +62,187 @@ def _json_loads(data: Optional[str], default: Any = None) -> Any:
         return default
 
 
+DEFAULT_SCHEMA_SQL = """
+PRAGMA foreign_keys = ON;
+
+CREATE TABLE IF NOT EXISTS patients (
+    patient_id VARCHAR(64) PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    age INTEGER NOT NULL,
+    gender VARCHAR(32) NOT NULL,
+    phone VARCHAR(32) NOT NULL,
+    abha_id VARCHAR(255),
+    abha_number VARCHAR(64),
+    language VARCHAR(16) DEFAULT 'hi',
+    stream VARCHAR(32) DEFAULT 'allopathy',
+    token_number VARCHAR(32),
+    created_at TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_patients_phone ON patients(phone);
+CREATE INDEX IF NOT EXISTS idx_patients_abha_id ON patients(abha_id);
+CREATE INDEX IF NOT EXISTS idx_patients_token ON patients(token_number);
+
+CREATE TABLE IF NOT EXISTS consents (
+    consent_id VARCHAR(64) PRIMARY KEY,
+    patient_id VARCHAR(64) NOT NULL,
+    timestamp TEXT NOT NULL,
+    voice_capture_allowed BOOLEAN DEFAULT 1,
+    ocr_processing_allowed BOOLEAN DEFAULT 1,
+    abha_data_sharing_allowed BOOLEAN DEFAULT 1,
+    anonymized_research_allowed BOOLEAN DEFAULT 0,
+    consent_version VARCHAR(32) DEFAULT 'DPDP-2023-V1.2',
+    audio_consent_verified BOOLEAN DEFAULT 1,
+    consent_hash VARCHAR(128) NOT NULL,
+    FOREIGN KEY (patient_id) REFERENCES patients(patient_id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_consents_patient_id ON consents(patient_id);
+CREATE INDEX IF NOT EXISTS idx_consents_hash ON consents(consent_hash);
+
+CREATE TABLE IF NOT EXISTS intake_sessions (
+    session_id VARCHAR(64) PRIMARY KEY,
+    patient_id VARCHAR(64) NOT NULL,
+    consent_id VARCHAR(64) NOT NULL,
+    chief_complaint TEXT,
+    affected_body_part VARCHAR(64),
+    socrates_data TEXT,
+    ayush_data TEXT,
+    triage_data TEXT,
+    is_completed BOOLEAN DEFAULT 0,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    FOREIGN KEY (patient_id) REFERENCES patients(patient_id) ON DELETE CASCADE,
+    FOREIGN KEY (consent_id) REFERENCES consents(consent_id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_sessions_patient_id ON intake_sessions(patient_id);
+CREATE INDEX IF NOT EXISTS idx_sessions_is_completed ON intake_sessions(is_completed);
+CREATE INDEX IF NOT EXISTS idx_sessions_created_at ON intake_sessions(created_at);
+
+CREATE TABLE IF NOT EXISTS clinical_summaries (
+    summary_id VARCHAR(64) PRIMARY KEY,
+    session_id VARCHAR(64) NOT NULL UNIQUE,
+    patient_id VARCHAR(64) NOT NULL,
+    chief_complaint TEXT NOT NULL,
+    duration_of_complaint VARCHAR(128),
+    history_of_present_illness TEXT,
+    past_medical_history TEXT,
+    past_surgical_history TEXT,
+    drug_allergies TEXT,
+    current_medications TEXT,
+    family_history TEXT,
+    personal_and_social_history TEXT,
+    review_of_systems TEXT,
+    ayush_assessment TEXT,
+    investigation_summary TEXT,
+    triage TEXT,
+    icd10_suggestions TEXT,
+    namaste_suggestions TEXT,
+    summary_generated_at TEXT NOT NULL,
+    physician_reviewed BOOLEAN DEFAULT 0,
+    physician_notes TEXT,
+    FOREIGN KEY (session_id) REFERENCES intake_sessions(session_id) ON DELETE CASCADE,
+    FOREIGN KEY (patient_id) REFERENCES patients(patient_id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_summaries_session_id ON clinical_summaries(session_id);
+CREATE INDEX IF NOT EXISTS idx_summaries_patient_id ON clinical_summaries(patient_id);
+
+CREATE TABLE IF NOT EXISTS documents (
+    document_id VARCHAR(64) PRIMARY KEY,
+    session_id VARCHAR(64) NOT NULL,
+    patient_id VARCHAR(64) NOT NULL,
+    document_type VARCHAR(64) NOT NULL,
+    original_filename VARCHAR(255) NOT NULL,
+    upload_timestamp TEXT NOT NULL,
+    ocr_raw_text TEXT,
+    extracted_diagnoses TEXT,
+    extracted_medications TEXT,
+    extracted_investigations TEXT,
+    historical_date VARCHAR(64),
+    doctor_or_facility VARCHAR(255),
+    FOREIGN KEY (session_id) REFERENCES intake_sessions(session_id) ON DELETE CASCADE,
+    FOREIGN KEY (patient_id) REFERENCES patients(patient_id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_documents_session_id ON documents(session_id);
+CREATE INDEX IF NOT EXISTS idx_documents_patient_id ON documents(patient_id);
+
+CREATE TABLE IF NOT EXISTS consultations (
+    consultation_id VARCHAR(64) PRIMARY KEY,
+    session_id VARCHAR(64) NOT NULL UNIQUE,
+    patient_id VARCHAR(64) NOT NULL,
+    doctor_name VARCHAR(255) NOT NULL,
+    doctor_department VARCHAR(255) NOT NULL,
+    diagnosis TEXT NOT NULL,
+    icd10_code VARCHAR(64),
+    ayush_namaste_code VARCHAR(64),
+    clinical_notes TEXT,
+    prescriptions TEXT,
+    ordered_investigations TEXT,
+    follow_up_date VARCHAR(128),
+    consultation_timestamp TEXT NOT NULL,
+    fhir_bundle_id VARCHAR(128),
+    FOREIGN KEY (session_id) REFERENCES intake_sessions(session_id) ON DELETE CASCADE,
+    FOREIGN KEY (patient_id) REFERENCES patients(patient_id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_consultations_session_id ON consultations(session_id);
+CREATE INDEX IF NOT EXISTS idx_consultations_patient_id ON consultations(patient_id);
+
+CREATE TABLE IF NOT EXISTS opd_queue (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    token VARCHAR(32) NOT NULL,
+    session_id VARCHAR(64) NOT NULL UNIQUE,
+    patient_id VARCHAR(64) NOT NULL,
+    patient_name VARCHAR(255) NOT NULL,
+    age INTEGER NOT NULL,
+    gender VARCHAR(32) NOT NULL,
+    chief_complaint TEXT,
+    stream VARCHAR(32) DEFAULT 'allopathy',
+    triage_level VARCHAR(32) DEFAULT 'routine',
+    is_red_flag BOOLEAN DEFAULT 0,
+    waiting_minutes INTEGER DEFAULT 0,
+    summary_id VARCHAR(64),
+    has_scanned_docs BOOLEAN DEFAULT 0,
+    status VARCHAR(32) DEFAULT 'waiting',
+    created_at TEXT NOT NULL,
+    FOREIGN KEY (session_id) REFERENCES intake_sessions(session_id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_queue_status ON opd_queue(status);
+CREATE INDEX IF NOT EXISTS idx_queue_session_id ON opd_queue(session_id);
+CREATE INDEX IF NOT EXISTS idx_queue_token ON opd_queue(token);
+
+CREATE TABLE IF NOT EXISTS triage_alerts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    token VARCHAR(32) NOT NULL,
+    patient_name VARCHAR(255) NOT NULL,
+    rationale TEXT NOT NULL,
+    action TEXT NOT NULL,
+    is_resolved BOOLEAN DEFAULT 0,
+    timestamp TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_triage_resolved ON triage_alerts(is_resolved);
+CREATE INDEX IF NOT EXISTS idx_triage_token ON triage_alerts(token);
+
+CREATE TABLE IF NOT EXISTS audit_logs (
+    log_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    event_type VARCHAR(64) NOT NULL,
+    patient_id VARCHAR(64),
+    session_id VARCHAR(64),
+    facility_id VARCHAR(64),
+    details TEXT,
+    timestamp TEXT NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_audit_event ON audit_logs(event_type);
+CREATE INDEX IF NOT EXISTS idx_audit_patient ON audit_logs(patient_id);
+"""
+
+
 class SQLDatabase:
     """
     High-level, thread-safe relational database manager.
@@ -72,9 +253,13 @@ class SQLDatabase:
         self.db_path = db_path or settings.DATABASE_PATH
         self._lock = threading.RLock()
         
-        # Ensure database directory exists
+        # Ensure database directory exists safely
         db_dir = os.path.dirname(os.path.abspath(self.db_path))
-        os.makedirs(db_dir, exist_ok=True)
+        if db_dir:
+            try:
+                os.makedirs(db_dir, exist_ok=True)
+            except Exception:
+                pass
 
         # Initialize schema and seed demo data if fresh
         self.init_schema()
@@ -102,11 +287,20 @@ class SQLDatabase:
 
     @contextmanager
     def get_connection(self):
-        """Context manager providing thread-safe, WAL-enabled SQLite connection."""
+        """Context manager providing thread-safe, resilient SQLite connection."""
         conn = sqlite3.connect(self.db_path, check_same_thread=False, timeout=30.0)
         conn.row_factory = sqlite3.Row
-        conn.execute("PRAGMA foreign_keys = ON;")
-        conn.execute("PRAGMA journal_mode = WAL;")
+        try:
+            conn.execute("PRAGMA foreign_keys = ON;")
+        except Exception:
+            pass
+        try:
+            conn.execute("PRAGMA journal_mode = WAL;")
+        except Exception:
+            try:
+                conn.execute("PRAGMA journal_mode = MEMORY;")
+            except Exception:
+                pass
         try:
             yield conn
             conn.commit()
@@ -117,13 +311,16 @@ class SQLDatabase:
             conn.close()
 
     def init_schema(self):
-        """Executes the DDL statements from schema.sql to ensure all tables exist."""
+        """Executes DDL statements to ensure all tables exist."""
         schema_path = os.path.join(os.path.dirname(__file__), "schema.sql")
-        if not os.path.exists(schema_path):
-            raise FileNotFoundError(f"schema.sql not found at {schema_path}")
-
-        with open(schema_path, "r", encoding="utf-8") as f:
-            schema_sql = f.read()
+        if os.path.exists(schema_path):
+            try:
+                with open(schema_path, "r", encoding="utf-8") as f:
+                    schema_sql = f.read()
+            except Exception:
+                schema_sql = DEFAULT_SCHEMA_SQL
+        else:
+            schema_sql = DEFAULT_SCHEMA_SQL
 
         with self._lock:
             with self.get_connection() as conn:

@@ -1,7 +1,17 @@
 import os
+import sys
 from datetime import datetime, timezone
+from typing import List
 
-from fastapi import FastAPI
+# Ensure project root is in sys.path so 'backend' is importable regardless of invocation directory
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+if parent_dir not in sys.path:
+    sys.path.insert(0, parent_dir)
+if current_dir not in sys.path:
+    sys.path.insert(0, current_dir)
+
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse
@@ -31,17 +41,20 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ── Register API routers under /api/v1 ────────────────────────────────
-app.include_router(kiosk_router, prefix=settings.API_PREFIX)
-app.include_router(doctor_router, prefix=settings.API_PREFIX)
-app.include_router(document_router, prefix=settings.API_PREFIX)
-app.include_router(ayush_router, prefix=settings.API_PREFIX)
-app.include_router(abdm_router, prefix=settings.API_PREFIX)
-app.include_router(database_router, prefix=settings.API_PREFIX)
+# ── Register API routers under /api/v1 and /v1 (dual mounting for serverless proxy safety) ──
+for prefix in [settings.API_PREFIX, "/v1"]:
+    app.include_router(kiosk_router, prefix=prefix)
+    app.include_router(doctor_router, prefix=prefix)
+    app.include_router(document_router, prefix=prefix)
+    app.include_router(ayush_router, prefix=prefix)
+    app.include_router(abdm_router, prefix=prefix)
+    app.include_router(database_router, prefix=prefix)
 
 
 # ── Health endpoints ──────────────────────────────────────────────────
 @app.get("/api/health")
+@app.get("/health")
+@app.get("/api/v1/health")
 async def health_check():
     return {
         "status": "online",
@@ -98,4 +111,44 @@ else:
             "docs": "/docs",
             "health": "/api/health",
         }
+
+
+# ── WebSocket Connection Manager for Real-Time OPD Queue & Emergency Triage ──
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections: List[WebSocket] = []
+
+    async def connect(self, websocket: WebSocket):
+        await websocket.accept()
+        self.active_connections.append(websocket)
+
+    def disconnect(self, websocket: WebSocket):
+        if websocket in self.active_connections:
+            self.active_connections.remove(websocket)
+
+    async def broadcast(self, message: dict):
+        for connection in list(self.active_connections):
+            try:
+                await connection.send_json(message)
+            except Exception:
+                pass
+
+manager = ConnectionManager()
+
+@app.websocket("/ws/live-feed")
+async def websocket_endpoint(websocket: WebSocket):
+    await manager.connect(websocket)
+    try:
+        while True:
+            data = await websocket.receive_json()
+            await manager.broadcast(data)
+    except WebSocketDisconnect:
+        manager.disconnect(websocket)
+    except Exception:
+        manager.disconnect(websocket)
+
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("backend.main:app", host="0.0.0.0", port=8000, reload=True)
 

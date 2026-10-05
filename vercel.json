@@ -1,8 +1,24 @@
 {
   "version": 2,
+  "functions": {
+    "api/index.py": {
+      "includeFiles": "backend/**"
+    },
+    "main.py": {
+      "includeFiles": "backend/**"
+    }
+  },
   "rewrites": [
     {
+      "source": "/api",
+      "destination": "/api/index.py"
+    },
+    {
       "source": "/api/(.*)",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/health",
       "destination": "/api/index.py"
     },
     {
