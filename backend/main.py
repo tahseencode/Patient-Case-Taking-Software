@@ -97,6 +97,7 @@ if os.path.exists(_FRONTEND_DIR):
         return FileResponse(os.path.join(_FRONTEND_DIR, "index.html"))
 
     @app.get("/app.html", include_in_schema=False)
+    @app.get("/app", include_in_schema=False)
     async def serve_app():
         return FileResponse(os.path.join(_FRONTEND_DIR, "app.html"))
 

@@ -3,9 +3,6 @@
   "functions": {
     "api/index.py": {
       "includeFiles": "backend/**"
-    },
-    "main.py": {
-      "includeFiles": "backend/**"
     }
   },
   "rewrites": [
@@ -48,6 +45,10 @@
     {
       "source": "/style.css",
       "destination": "/frontend/style.css"
+    },
+    {
+      "source": "/app",
+      "destination": "/frontend/app.html"
     },
     {
       "source": "/app.html",
