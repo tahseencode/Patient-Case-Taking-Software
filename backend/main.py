@@ -69,17 +69,28 @@ async def health_check():
 _BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 _FRONTEND_DIR = os.path.join(_BASE_DIR, "frontend")
 
-if os.path.exists(_FRONTEND_DIR):
+_IS_SERVERLESS = bool(os.getenv("VERCEL") or os.getenv("VERCEL_ENV") or os.getenv("AWS_LAMBDA_FUNCTION_NAME"))
+
+if os.path.exists(_FRONTEND_DIR) and not _IS_SERVERLESS:
     css_dir = os.path.join(_FRONTEND_DIR, "css")
     js_dir = os.path.join(_FRONTEND_DIR, "js")
     assets_dir = os.path.join(_FRONTEND_DIR, "assets")
 
     if os.path.exists(css_dir):
-        app.mount("/css", StaticFiles(directory=css_dir), name="css")
+        try:
+            app.mount("/css", StaticFiles(directory=css_dir), name="css")
+        except Exception:
+            pass
     if os.path.exists(js_dir):
-        app.mount("/js", StaticFiles(directory=js_dir), name="js")
+        try:
+            app.mount("/js", StaticFiles(directory=js_dir), name="js")
+        except Exception:
+            pass
     if os.path.exists(assets_dir):
-        app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
+        try:
+            app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
+        except Exception:
+            pass
 
     @app.get("/", include_in_schema=False)
     async def serve_root():
