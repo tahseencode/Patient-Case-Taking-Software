@@ -1,7 +1,6 @@
 import os
 import sys
 from datetime import datetime, timezone
-from typing import List
 
 # Ensure project root is in sys.path so 'backend' is importable regardless of invocation directory
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -11,12 +10,14 @@ if parent_dir not in sys.path:
 if current_dir not in sys.path:
     sys.path.insert(0, current_dir)
 
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import Depends, FastAPI, Request, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse
 
 from backend.app.core.config import settings
+from backend.app.core.security import require_staff, verify_key
+from backend.app.core.realtime import manager
 from backend.app.api.kiosk_routes import router as kiosk_router
 from backend.app.api.doctor_routes import router as doctor_router
 from backend.app.api.document_routes import router as document_router
@@ -32,23 +33,49 @@ app = FastAPI(
 )
 
 
-# CORS - allow all origins for development / Vercel preview deployments
+# ── CORS ──────────────────────────────────────────────────────────────
+# The frontend is served from the same origin, so no cross-origin access is
+# needed by default. Set ALLOWED_ORIGINS="https://a.com,https://b.com" to add some.
+_ALLOWED_ORIGINS = [o.strip() for o in os.getenv("ALLOWED_ORIGINS", "").split(",") if o.strip()]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=_ALLOWED_ORIGINS,
+    allow_credentials=False,
+    allow_methods=["GET", "POST"],
+    allow_headers=["Content-Type", "X-API-Key"],
 )
 
+
+# ── Security headers ──────────────────────────────────────────────────
+@app.middleware("http")
+async def security_headers(request: Request, call_next):
+    response = await call_next(request)
+    response.headers.setdefault("X-Content-Type-Options", "nosniff")
+    response.headers.setdefault("X-Frame-Options", "DENY")
+    response.headers.setdefault("Referrer-Policy", "no-referrer")
+    response.headers.setdefault("Permissions-Policy", "camera=(), geolocation=()")
+    if request.url.path.startswith(("/api", "/v1", "/ws")):
+        response.headers["Cache-Control"] = "no-store"  # never cache patient data
+    return response
+
+
+# ── Never leak stack traces to clients ────────────────────────────────
+@app.exception_handler(Exception)
+async def unhandled_exception_handler(request: Request, exc: Exception):
+    import logging
+    logging.getLogger("medikiosk").exception("Unhandled error on %s", request.url.path)
+    return JSONResponse(status_code=500, content={"detail": "Internal server error"})
+
+
 # ── Register API routers under /api/v1 and /v1 (dual mounting for serverless proxy safety) ──
+_staff = [Depends(require_staff)]
 for prefix in [settings.API_PREFIX, "/v1"]:
     app.include_router(kiosk_router, prefix=prefix)
-    app.include_router(doctor_router, prefix=prefix)
-    app.include_router(document_router, prefix=prefix)
+    app.include_router(doctor_router, prefix=prefix, dependencies=_staff)     # PII + clinical data
+    app.include_router(document_router, prefix=prefix)                         # per-route auth inside
     app.include_router(ayush_router, prefix=prefix)
-    app.include_router(abdm_router, prefix=prefix)
-    app.include_router(database_router, prefix=prefix)
+    app.include_router(abdm_router, prefix=prefix)                             # per-route auth inside
+    app.include_router(database_router, prefix=prefix, dependencies=_staff)   # diagnostics
 
 
 # ── Health endpoints ──────────────────────────────────────────────────
@@ -125,42 +152,37 @@ else:
         }
 
 
-# ── WebSocket Connection Manager for Real-Time OPD Queue & Emergency Triage ──
-class ConnectionManager:
-    def __init__(self):
-        self.active_connections: List[WebSocket] = []
+# ── Live feed (staff-only, server-broadcast, clients are listen-only) ──
+_WS_MAX_MESSAGE_BYTES = 4096
 
-    async def connect(self, websocket: WebSocket):
-        await websocket.accept()
-        self.active_connections.append(websocket)
-
-    def disconnect(self, websocket: WebSocket):
-        if websocket in self.active_connections:
-            self.active_connections.remove(websocket)
-
-    async def broadcast(self, message: dict):
-        for connection in list(self.active_connections):
-            try:
-                await connection.send_json(message)
-            except Exception:
-                pass
-
-manager = ConnectionManager()
 
 @app.websocket("/ws/live-feed")
 async def websocket_endpoint(websocket: WebSocket):
+    # Browsers cannot set headers on WebSockets, so the key comes via query param.
+    # Origin must match Host (blocks cross-site WebSocket hijacking).
+    origin = websocket.headers.get("origin")
+    host = websocket.headers.get("host")
+    if origin and host and origin.split("://", 1)[-1] != host and origin not in _ALLOWED_ORIGINS:
+        await websocket.close(code=1008)
+        return
+    if not verify_key(websocket.query_params.get("key")):
+        await websocket.close(code=1008)
+        return
     await manager.connect(websocket)
     try:
         while True:
-            data = await websocket.receive_json()
-            await manager.broadcast(data)
+            msg = await websocket.receive_text()  # read only to detect disconnects; never rebroadcast
+            if len(msg) > _WS_MAX_MESSAGE_BYTES:
+                await websocket.close(code=1009)
+                break
     except WebSocketDisconnect:
-        manager.disconnect(websocket)
+        pass
     except Exception:
+        pass
+    finally:
         manager.disconnect(websocket)
 
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("backend.main:app", host="0.0.0.0", port=8000, reload=True)
-
+    uvicorn.run("backend.main:app", host="127.0.0.1", port=8000, reload=True)
