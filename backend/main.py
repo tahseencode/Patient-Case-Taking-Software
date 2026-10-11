@@ -17,7 +17,6 @@ from fastapi.responses import FileResponse, JSONResponse
 
 from backend.app.core.config import settings
 from backend.app.core.security import require_staff, verify_key
-from backend.app.core.realtime import manager
 from backend.app.api.kiosk_routes import router as kiosk_router
 from backend.app.api.doctor_routes import router as doctor_router
 from backend.app.api.document_routes import router as document_router
@@ -33,9 +32,8 @@ app = FastAPI(
 )
 
 
-# ── CORS ──────────────────────────────────────────────────────────────
-# The frontend is served from the same origin, so no cross-origin access is
-# needed by default. Set ALLOWED_ORIGINS="https://a.com,https://b.com" to add some.
+# CORS - the frontend is served from the same origin, so no cross-origin access
+# is needed by default. Set ALLOWED_ORIGINS="https://a.com,https://b.com" to add some.
 _ALLOWED_ORIGINS = [o.strip() for o in os.getenv("ALLOWED_ORIGINS", "").split(",") if o.strip()]
 app.add_middleware(
     CORSMiddleware,
@@ -46,7 +44,6 @@ app.add_middleware(
 )
 
 
-# ── Security headers ──────────────────────────────────────────────────
 @app.middleware("http")
 async def security_headers(request: Request, call_next):
     response = await call_next(request)
@@ -59,23 +56,22 @@ async def security_headers(request: Request, call_next):
     return response
 
 
-# ── Never leak stack traces to clients ────────────────────────────────
 @app.exception_handler(Exception)
 async def unhandled_exception_handler(request: Request, exc: Exception):
+    # Log server-side; never leak stack traces / internals to clients.
     import logging
     logging.getLogger("medikiosk").exception("Unhandled error on %s", request.url.path)
     return JSONResponse(status_code=500, content={"detail": "Internal server error"})
-
 
 # ── Register API routers under /api/v1 and /v1 (dual mounting for serverless proxy safety) ──
 _staff = [Depends(require_staff)]
 for prefix in [settings.API_PREFIX, "/v1"]:
     app.include_router(kiosk_router, prefix=prefix)
-    app.include_router(doctor_router, prefix=prefix, dependencies=_staff)     # PII + clinical data
-    app.include_router(document_router, prefix=prefix)                         # per-route auth inside
+    app.include_router(doctor_router, prefix=prefix, dependencies=_staff)      # PII + clinical data
+    app.include_router(document_router, prefix=prefix)                          # per-route auth inside
     app.include_router(ayush_router, prefix=prefix)
-    app.include_router(abdm_router, prefix=prefix)                             # per-route auth inside
-    app.include_router(database_router, prefix=prefix, dependencies=_staff)   # diagnostics
+    app.include_router(abdm_router, prefix=prefix)                              # per-route auth inside
+    app.include_router(database_router, prefix=prefix, dependencies=_staff)    # diagnostics
 
 
 # ── Health endpoints ──────────────────────────────────────────────────
@@ -152,14 +148,15 @@ else:
         }
 
 
-# ── Live feed (staff-only, server-broadcast, clients are listen-only) ──
+from backend.app.core.realtime import manager  # noqa: E402
+
 _WS_MAX_MESSAGE_BYTES = 4096
 
 
 @app.websocket("/ws/live-feed")
 async def websocket_endpoint(websocket: WebSocket):
-    # Browsers cannot set headers on WebSockets, so the key comes via query param.
-    # Origin must match Host (blocks cross-site WebSocket hijacking).
+    # Staff-only feed: key via query param (browsers cannot set WS headers).
+    # Also reject cross-site WebSocket hijacking by checking Origin == Host.
     origin = websocket.headers.get("origin")
     host = websocket.headers.get("host")
     if origin and host and origin.split("://", 1)[-1] != host and origin not in _ALLOWED_ORIGINS:
@@ -171,7 +168,9 @@ async def websocket_endpoint(websocket: WebSocket):
     await manager.connect(websocket)
     try:
         while True:
-            msg = await websocket.receive_text()  # read only to detect disconnects; never rebroadcast
+            # Clients are listen-only; incoming data is read (to detect
+            # disconnects) but never rebroadcast.
+            msg = await websocket.receive_text()
             if len(msg) > _WS_MAX_MESSAGE_BYTES:
                 await websocket.close(code=1009)
                 break

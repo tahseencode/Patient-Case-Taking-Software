@@ -1,16 +1,18 @@
-import random
+import re
+import secrets
 from typing import Dict, Any, Optional
-from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
+from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel, Field
 
 from backend.app.core.fhir_builder import abdm_fhir_builder
 from backend.app.database.db import db
 from backend.app.core.config import settings
+from backend.app.core.security import require_staff
 
 router = APIRouter(prefix="/abdm", tags=["ABDM Ecosystem & DPDP Compliance"])
 
 class ABHAVerifyRequest(BaseModel):
-    abha_input: str  # Can be ABHA ID (e.g. name@abdm) or 14-digit ABHA Number or Mobile number
+    abha_input: str = Field(min_length=1, max_length=100)  # Can be ABHA ID (e.g. name@abdm) or 14-digit ABHA Number or Mobile number
 
 @router.post("/verify-abha")
 async def verify_or_create_abha(req: ABHAVerifyRequest):
@@ -19,15 +21,15 @@ async def verify_or_create_abha(req: ABHAVerifyRequest):
     # Simulate ABHA network lookup
     if "@" in val:
         abha_id = val
-        abha_num = f"91-{random.randint(1000,9999)}-{random.randint(1000,9999)}-{random.randint(1000,9999)}"
+        abha_num = f"91-{secrets.randbelow(9000)+1000}-{secrets.randbelow(9000)+1000}-{secrets.randbelow(9000)+1000}"
     elif val.replace("-", "").isdigit() and len(val.replace("-", "")) == 14:
         abha_num = val
-        abha_id = f"user.{random.randint(100,999)}@abdm"
+        abha_id = f"user.{secrets.randbelow(900)+100}@abdm"
     else:
         # Fallback generated provisional ABHA
-        clean_name = val.lower().replace(" ", "") if val else "patient"
-        abha_id = f"{clean_name}.{random.randint(10,99)}@abdm"
-        abha_num = f"91-{random.randint(1000,9999)}-{random.randint(1000,9999)}-{random.randint(1000,9999)}"
+        clean_name = re.sub(r"[^a-z0-9]", "", val.lower()) or "patient"
+        abha_id = f"{clean_name}.{secrets.randbelow(90)+10}@abdm"
+        abha_num = f"91-{secrets.randbelow(9000)+1000}-{secrets.randbelow(9000)+1000}-{secrets.randbelow(9000)+1000}"
 
     return {
         "success": True,
@@ -39,7 +41,7 @@ async def verify_or_create_abha(req: ABHAVerifyRequest):
         "message": "ABHA credentials successfully verified against ABDM registry."
     }
 
-@router.get("/fhir-bundle/{session_id}")
+@router.get("/fhir-bundle/{session_id}", dependencies=[Depends(require_staff)])
 async def get_fhir_bundle(session_id: str):
     session = db.sessions.get(session_id)
     if not session or not session.summary:
@@ -60,7 +62,7 @@ async def get_fhir_bundle(session_id: str):
         "bundle": bundle
     }
 
-@router.get("/dpdp-audit/{session_id}")
+@router.get("/dpdp-audit/{session_id}", dependencies=[Depends(require_staff)])
 async def get_dpdp_consent_audit(session_id: str):
     session = db.sessions.get(session_id)
     if not session:

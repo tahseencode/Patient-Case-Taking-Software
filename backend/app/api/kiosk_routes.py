@@ -1,8 +1,8 @@
 import uuid
-from typing import Dict, Any, Optional
+from typing import Any, Dict, Literal, Optional
 from datetime import datetime
 from fastapi import APIRouter, HTTPException, BackgroundTasks
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from backend.app.models.schemas import (
     PatientDemographics, DPDP2023Consent, SocratesResponse,
@@ -13,25 +13,26 @@ from backend.app.core.triage_detector import triage_detector
 from backend.app.core.summarizer import clinical_summarizer
 from backend.app.core.consent_manager import consent_manager
 from backend.app.database.db import db
+from backend.app.core.realtime import manager
 
 router = APIRouter(prefix="/kiosk", tags=["Kiosk Intake Engine"])
 
 class StartSessionRequest(BaseModel):
-    name: str
-    age: int
-    gender: str
-    phone: str
-    abha_id: Optional[str] = None
+    name: str = Field(min_length=1, max_length=100)
+    age: int = Field(ge=0, le=120)
+    gender: str = Field(min_length=1, max_length=30)
+    phone: str = Field(pattern=r"^[0-9+\-\s]{7,15}$")
+    abha_id: Optional[str] = Field(None, max_length=60)
     language: LanguageEnum = LanguageEnum.HI
-    stream: str = "allopathy"
+    stream: Literal["allopathy", "ayush"] = "allopathy"
     voice_consent: bool = True
     ocr_consent: bool = True
     abha_consent: bool = True
 
 class VoiceParseRequest(BaseModel):
-    transcript: str
-    chief_complaint_id: Optional[str] = None
-    language: str = "hi"
+    transcript: str = Field(max_length=5000)
+    chief_complaint_id: Optional[str] = Field(None, max_length=64)
+    language: str = Field("hi", max_length=10)
 
 class SubmitSocratesRequest(BaseModel):
     session_id: str
@@ -71,8 +72,8 @@ async def parse_voice_transcript(req: VoiceParseRequest):
 
 @router.post("/start-session")
 async def start_kiosk_session(req: StartSessionRequest):
-    sess_id = f"SESS-{uuid.uuid4().hex[:8].upper()}"
-    pat_id = f"P-{uuid.uuid4().hex[:6].upper()}"
+    sess_id = f"SESS-{uuid.uuid4().hex.upper()}"  # 128-bit, unguessable
+    pat_id = f"P-{uuid.uuid4().hex[:12].upper()}"
 
     consent = consent_manager.create_consent_artifact(
         patient_id=pat_id,
@@ -183,6 +184,15 @@ async def finalize_intake_session(req: FinalizeIntakeRequest):
             "rationale": session.triage.clinical_rationale,
             "action": session.triage.recommended_action,
             "timestamp": datetime.now().isoformat()
+        })
+
+    # Notify connected (authenticated) staff screens. No PII beyond what the desk shows.
+    await manager.broadcast({"type": "QUEUE_UPDATE"})
+    if session.triage.is_red_flag:
+        await manager.broadcast({
+            "type": "TRIAGE_EMERGENCY",
+            "patient_name": session.patient.name,
+            "rationale": session.triage.clinical_rationale,
         })
 
     return {

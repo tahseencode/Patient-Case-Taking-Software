@@ -166,7 +166,7 @@ const kioskModule = (() => {
       const data = await res.json();
       if (data.success) {
         document.getElementById("patientAbhaInput").value = data.abha_id;
-        document.getElementById("abhaVerifyStatus").innerHTML = `
+        document.getElementById("abhaVerifyStatus").innerHTML = safeHtml`
           <span style="color:var(--triage-green);font-weight:600;font-size:0.8rem;">
             ✓ ${data.message} (Number: ${data.abha_number})
           </span>
@@ -262,10 +262,10 @@ const kioskModule = (() => {
 
       const card = document.createElement("div");
       card.className = `complaint-card ${isSelected ? 'active' : ''}`;
-      card.innerHTML = `
+      card.innerHTML = safeHtml`
         <div class="title-row">
           <span>${nameEn}</span>
-          ${item.is_high_risk ? '<span class="high-risk-indicator" title="Red-Flag Triage Monitored"></span>' : ''}
+          ${item.is_high_risk ? raw('<span class="high-risk-indicator" title="Red-Flag Triage Monitored"></span>') : ''}
         </div>
         <div class="vernacular-name">${nameVernacular}</div>
         <div class="specialty-tag">🏥 ${item.specialty}</div>
@@ -363,7 +363,7 @@ const kioskModule = (() => {
             const btn = document.createElement("button");
             btn.type = "button";
             btn.className = `socrates-option-btn ${isOptionSelected ? 'selected' : ''}`;
-            btn.innerHTML = `
+            btn.innerHTML = safeHtml`
               <span class="label-primary">${labelEn}</span>
               <span class="label-secondary">${labelVernacular}</span>
             `;
@@ -467,15 +467,15 @@ const kioskModule = (() => {
       const titleMain = q.title || q.question || "Assessment Question";
       const titleVern = q.title_vernacular ? ` (${q.title_vernacular})` : "";
 
-      card.innerHTML = `
+      card.innerHTML = safeHtml`
         <div class="ayush-question-title">🌿 ${titleMain}${titleVern}</div>
         <div class="ayush-radio-group">
-          ${q.options.map(opt => `
+          ${raw(q.options.map(opt => safeHtml`
             <label class="ayush-radio-label">
               <input type="radio" name="${q.id}" value="${opt.value}" ${opt.is_default ? 'checked' : ''}>
               <span>${opt.label || opt.label_en}</span>
             </label>
-          `).join('')}
+          `).join(''))}
         </div>
       `;
       grid.appendChild(card);
@@ -515,7 +515,7 @@ const kioskModule = (() => {
     const box = document.getElementById("ayushPrakritiResultBox");
     if (!box) return;
     box.style.display = "block";
-    box.innerHTML = `
+    box.innerHTML = safeHtml`
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
         <span style="font-weight:700;color:var(--ayush-primary);">Prakriti Constitution: ${pariksha.dominant_prakriti}</span>
         <span style="font-size:0.8rem;color:var(--text-muted);">Agni: ${pariksha.agni}</span>
@@ -549,7 +549,7 @@ const kioskModule = (() => {
     samples.forEach(sample => {
       const item = document.createElement("div");
       item.className = "sample-doc-item";
-      item.innerHTML = `
+      item.innerHTML = safeHtml`
         <div>
           <div class="doc-title">📄 ${sample.title}</div>
           <div class="doc-meta">${sample.doctor} | ${sample.facility}</div>
@@ -676,7 +676,7 @@ const kioskModule = (() => {
     docs.forEach(doc => {
       const block = document.createElement("div");
       block.style.marginBottom = "14px";
-      block.innerHTML = `
+      block.innerHTML = safeHtml`
         <div style="font-weight:700;font-size:0.9rem;margin-bottom:6px;color:var(--primary);">
           ${(doc.document_type || 'DOCUMENT').toUpperCase()}: ${doc.original_filename}
         </div>
@@ -685,7 +685,7 @@ const kioskModule = (() => {
       // Medications
       if (doc.extracted_medications && doc.extracted_medications.length > 0) {
         doc.extracted_medications.forEach(m => {
-          block.innerHTML += `
+          block.innerHTML += safeHtml`
             <div class="extracted-item-pill">
               <span>💊 <strong>${m.drug_name}</strong> (${m.strength || ''}) - ${m.dosage_frequency}</span>
               <span style="font-size:0.75rem;color:var(--text-muted);">${m.timing}</span>
@@ -698,7 +698,7 @@ const kioskModule = (() => {
       if (doc.extracted_investigations && doc.extracted_investigations.length > 0) {
         doc.extracted_investigations.forEach(inv => {
           const flagClass = inv.flag === "CRITICAL" || inv.flag === "CRITICAL HIGH" ? "critical" : inv.flag === "HIGH" ? "high" : "normal";
-          block.innerHTML += `
+          block.innerHTML += safeHtml`
             <div class="extracted-item-pill">
               <span>🧪 ${inv.test_name}: <strong>${inv.measured_value} ${inv.unit}</strong></span>
               <span class="flag-badge ${flagClass}">${inv.flag} (${inv.reference_range})</span>
@@ -860,7 +860,7 @@ const kioskModule = (() => {
     };
     socratesStepIndex = 0;
     const ocrResults = document.getElementById("ocrExtractedResults");
-    if (ocrResults) ocrResults.innerHTML = `<div style="font-size:0.85rem;color:var(--text-muted);text-align:center;padding:40px 0;">Click any sample document above or upload a prescription to extract structured medications and abnormal lab values.</div>`;
+    if (ocrResults) ocrResults.innerHTML = safeHtml`<div style="font-size:0.85rem;color:var(--text-muted);text-align:center;padding:40px 0;">Click any sample document above or upload a prescription to extract structured medications and abnormal lab values.</div>`;
     const abhaStatus = document.getElementById("abhaVerifyStatus");
     if (abhaStatus) abhaStatus.innerHTML = "";
     window.app.showToast("Intake session reset for new patient.", "info");

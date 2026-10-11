@@ -62,7 +62,7 @@ const doctorModule = (() => {
   // Refresh OPD Queue
   async function refreshQueue() {
     try {
-      const res = await fetch(`${API_BASE}/doctor/opd-queue`);
+      const res = await window.app.authFetch(`${API_BASE}/doctor/opd-queue`);
       const data = await res.json();
       if (data.success) {
         queueList = data.queue;
@@ -85,7 +85,7 @@ const doctorModule = (() => {
     listContainer.innerHTML = "";
 
     if (queue.length === 0) {
-      listContainer.innerHTML = `
+      listContainer.innerHTML = safeHtml`
         <div style="text-align:center;padding:30px;color:var(--text-muted);font-size:0.9rem;">
           No patients waiting in OPD queue.
         </div>
@@ -99,7 +99,7 @@ const doctorModule = (() => {
       card.className = `queue-item-card ${triageClass} ${activeSessionId === item.session_id ? 'active' : ''}`;
       card.setAttribute("data-session-id", item.session_id);
       
-      card.innerHTML = `
+      card.innerHTML = safeHtml`
         <div class="queue-top-row">
           <span class="queue-token-badge">${item.token}</span>
           <span class="queue-wait-badge">⏱️ ~${item.waiting_minutes || 5} min</span>
@@ -108,7 +108,7 @@ const doctorModule = (() => {
         <div class="queue-complaint-preview">🩺 ${item.chief_complaint || 'General OPD Consultation'}</div>
         <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px;">
           <span class="abdm-badge" style="font-size:0.65rem;">${item.stream === 'ayush' ? '🌿 AYUSH' : '💊 ALLOPATHY'}</span>
-          ${item.is_red_flag ? '<span class="pulse-badge" style="font-size:0.65rem;">RED-FLAG</span>' : ''}
+          ${item.is_red_flag ? raw('<span class="pulse-badge" style="font-size:0.65rem;">RED-FLAG</span>') : ''}
         </div>
       `;
 
@@ -130,7 +130,7 @@ const doctorModule = (() => {
     });
 
     try {
-      const res = await fetch(`${API_BASE}/doctor/patient-summary/${sessionId}`);
+      const res = await window.app.authFetch(`${API_BASE}/doctor/patient-summary/${sessionId}`);
       const data = await res.json();
       if (data.success) {
         currentPatientData = data;
@@ -176,14 +176,14 @@ const doctorModule = (() => {
       const pastHistContainer = document.getElementById("docPastHistoryTags");
       pastHistContainer.innerHTML = "";
       (sum.past_medical_history || []).forEach(h => {
-        pastHistContainer.innerHTML += `<span class="tag-item">🩺 ${h}</span>`;
+        pastHistContainer.innerHTML += safeHtml`<span class="tag-item">🩺 ${h}</span>`;
       });
 
       // Allergies
       const allergyContainer = document.getElementById("docAllergiesTags");
       allergyContainer.innerHTML = "";
       (sum.drug_allergies || ["NKDA"]).forEach(a => {
-        allergyContainer.innerHTML += `<span class="tag-item allergy">⚠️ ${a}</span>`;
+        allergyContainer.innerHTML += safeHtml`<span class="tag-item allergy">⚠️ ${a}</span>`;
       });
 
       // Reconciled Medications
@@ -191,7 +191,7 @@ const doctorModule = (() => {
       medsContainer.innerHTML = "";
       if (sum.current_medications && sum.current_medications.length > 0) {
         sum.current_medications.forEach(m => {
-          medsContainer.innerHTML += `
+          medsContainer.innerHTML += safeHtml`
             <div class="extracted-item-pill">
               <span>💊 <strong>${m.drug_name}</strong> (${m.strength || ''}) - ${m.dosage_frequency}</span>
               <span style="font-size:0.75rem;color:var(--text-muted);">${m.timing}</span>
@@ -199,7 +199,7 @@ const doctorModule = (() => {
           `;
         });
       } else {
-        medsContainer.innerHTML = `<span style="font-size:0.8rem;color:var(--text-muted);">No current active medications extracted.</span>`;
+        medsContainer.innerHTML = safeHtml`<span style="font-size:0.8rem;color:var(--text-muted);">No current active medications extracted.</span>`;
       }
 
       // Abnormal Lab Investigations
@@ -208,7 +208,7 @@ const doctorModule = (() => {
       if (sum.investigation_summary && sum.investigation_summary.length > 0) {
         sum.investigation_summary.forEach(inv => {
           const flagClass = inv.flag === "CRITICAL" ? "critical" : inv.flag === "HIGH" ? "high" : "normal";
-          labContainer.innerHTML += `
+          labContainer.innerHTML += safeHtml`
             <div class="extracted-item-pill">
               <span>🧪 <strong>${inv.test_name}</strong>: ${inv.measured_value} ${inv.unit}</span>
               <span class="flag-badge ${flagClass}">${inv.flag} (${inv.reference_range})</span>
@@ -216,7 +216,7 @@ const doctorModule = (() => {
           `;
         });
       } else {
-        labContainer.innerHTML = `<span style="font-size:0.8rem;color:var(--text-muted);">No lab test reports attached.</span>`;
+        labContainer.innerHTML = safeHtml`<span style="font-size:0.8rem;color:var(--text-muted);">No lab test reports attached.</span>`;
       }
 
       // Suggested ICD-10 and NAMASTE Codes
@@ -225,7 +225,7 @@ const doctorModule = (() => {
       (sum.icd10_suggestions || []).forEach(code => {
         const chip = document.createElement("div");
         chip.className = "code-suggestion-chip";
-        chip.innerHTML = `<span>+ ${code.code}: ${code.title}</span>`;
+        chip.innerHTML = safeHtml`<span>+ ${code.code}: ${code.title}</span>`;
         chip.addEventListener("click", () => {
           document.getElementById("docDiagnosisInput").value = `${code.code} - ${code.title}`;
           window.app.showToast(`Applied ICD-10 Code: ${code.code}`, "info");
@@ -237,7 +237,7 @@ const doctorModule = (() => {
       (sum.namaste_suggestions || []).forEach(code => {
         const chip = document.createElement("div");
         chip.className = "code-suggestion-chip namaste";
-        chip.innerHTML = `<span>🌿 ${code.code}: ${code.title}</span>`;
+        chip.innerHTML = safeHtml`<span>🌿 ${code.code}: ${code.title}</span>`;
         chip.addEventListener("click", () => {
           document.getElementById("docDiagnosisInput").value = `${code.code} - ${code.title}`;
           window.app.showToast(`Applied NAMASTE AYUSH Code: ${code.code}`, "info");
@@ -269,7 +269,7 @@ const doctorModule = (() => {
 
     prescriptionsList.forEach((item, idx) => {
       const row = document.createElement("tr");
-      row.innerHTML = `
+      row.innerHTML = safeHtml`
         <td><input type="text" class="form-input" style="padding:6px 8px;font-size:0.85rem;" value="${item.medicine_name}" data-idx="${idx}" data-field="medicine_name"></td>
         <td><input type="text" class="form-input" style="padding:6px 8px;font-size:0.85rem;width:80px;" value="${item.dosage}" data-idx="${idx}" data-field="dosage"></td>
         <td><input type="text" class="form-input" style="padding:6px 8px;font-size:0.85rem;width:80px;" value="${item.frequency}" data-idx="${idx}" data-field="frequency"></td>
@@ -308,7 +308,7 @@ const doctorModule = (() => {
     const notes = document.getElementById("docClinicalNotesInput").value.trim();
 
     try {
-      const res = await fetch(`${API_BASE}/doctor/update-summary`, {
+      const res = await window.app.authFetch(`${API_BASE}/doctor/update-summary`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -347,7 +347,7 @@ const doctorModule = (() => {
     };
 
     try {
-      const res = await fetch(`${API_BASE}/doctor/prescribe-and-complete`, {
+      const res = await window.app.authFetch(`${API_BASE}/doctor/prescribe-and-complete`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)

@@ -1,6 +1,9 @@
+import os
 from typing import Dict, Any, List, Optional
-from fastapi import APIRouter, HTTPException, UploadFile, File, Form
-from pydantic import BaseModel
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
+from pydantic import BaseModel, Field
+
+from backend.app.core.security import require_staff
 
 from backend.app.core.ocr_engine import ocr_engine
 from backend.app.sample_data.sample_documents import SAMPLE_DOCUMENTS
@@ -10,14 +13,14 @@ from backend.app.models.schemas import DocumentDigitization
 router = APIRouter(prefix="/documents", tags=["Medical Document Digitization & OCR"])
 
 class LoadSampleRequest(BaseModel):
-    session_id: str
-    sample_id: str
+    session_id: str = Field(max_length=64)
+    sample_id: str = Field(max_length=64)
 
 class TextOCRRequest(BaseModel):
-    session_id: str
-    filename: str
-    raw_text: str
-    doc_type: Optional[str] = "prescription"
+    session_id: str = Field(max_length=64)
+    filename: str = Field(max_length=200)
+    raw_text: str = Field(max_length=20000)
+    doc_type: Optional[str] = Field("prescription", max_length=50)
 
 @router.get("/sample-library")
 async def get_sample_document_library():
@@ -54,15 +57,16 @@ async def load_sample_document(req: LoadSampleRequest):
 
 @router.post("/upload-ocr")
 async def upload_and_process_document(
-    session_id: str = Form(...),
-    doc_type: str = Form("prescription"),
-    filename: Optional[str] = Form("scanned_prescription.txt"),
-    raw_text: Optional[str] = Form(None)
+    session_id: str = Form(..., max_length=64),
+    doc_type: str = Form("prescription", max_length=50),
+    filename: Optional[str] = Form("scanned_prescription.txt", max_length=200),
+    raw_text: Optional[str] = Form(None, max_length=20000)
 ):
     session = db.sessions.get(session_id)
     if not session:
         raise HTTPException(status_code=404, detail="Intake session not found")
 
+    filename = os.path.basename((filename or "scanned_doc.pdf").replace("\\", "/"))
     text_to_process = raw_text or "Rx: Tab Telma-H 40mg 1-0-0, Tab Glycomet 500mg 1-0-1. Diagnosis: Hypertension, T2DM."
     
     digitized = ocr_engine.process_document(
@@ -81,7 +85,7 @@ async def upload_and_process_document(
         "total_documents": len(session.documents)
     }
 
-@router.get("/session-documents/{session_id}")
+@router.get("/session-documents/{session_id}", dependencies=[Depends(require_staff)])
 async def get_session_documents(session_id: str):
     session = db.sessions.get(session_id)
     if not session:

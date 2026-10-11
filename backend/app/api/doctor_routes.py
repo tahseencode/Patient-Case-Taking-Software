@@ -2,7 +2,7 @@ import uuid
 from typing import Dict, Any, List, Optional
 from datetime import datetime
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from backend.app.models.schemas import (
     DoctorConsultationRecord, DoctorPrescriptionItem,
@@ -24,12 +24,12 @@ class CompleteConsultationRequest(BaseModel):
     session_id: str
     doctor_name: str = "Dr. S. K. Mukherjee, MD"
     doctor_department: str = "General Medicine / OPD"
-    diagnosis: str
+    diagnosis: str = Field(max_length=500)
     icd10_code: Optional[str] = None
     ayush_namaste_code: Optional[str] = None
-    clinical_notes: str
-    prescriptions: List[DoctorPrescriptionItem] = []
-    ordered_investigations: List[str] = []
+    clinical_notes: str = Field(max_length=10000)
+    prescriptions: List[DoctorPrescriptionItem] = Field(default=[], max_length=50)
+    ordered_investigations: List[str] = Field(default=[], max_length=50)
     follow_up_date: Optional[str] = "After 2 weeks"
 
 @router.get("/opd-queue")

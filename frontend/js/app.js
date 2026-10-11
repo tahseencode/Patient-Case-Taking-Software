@@ -5,6 +5,45 @@
 
 const API_BASE = "/api/v1";
 
+// ── Security helpers ─────────────────────────────────────────────────
+// Escape untrusted text before it goes into innerHTML (patients control name,
+// complaint text, OCR text, etc. -> stored XSS in the doctor's browser).
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>"'`]/g, (c) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;", "`": "&#96;"
+  }[c]));
+}
+class RawHtml { constructor(v) { this.value = v; } }
+// raw(): mark a string as already-safe, trusted markup (developer-written only).
+function raw(v) { return new RawHtml(v); }
+// safeHtml`...${x}...`: every interpolation is escaped unless wrapped in raw().
+function safeHtml(strings, ...vals) {
+  return strings.reduce((out, s, i) =>
+    out + s + (i < vals.length ? (vals[i] instanceof RawHtml ? vals[i].value : escapeHtml(vals[i])) : ""), "");
+}
+
+// Staff (doctor desk) API key: kept in sessionStorage only, cleared when the tab closes.
+function getStaffKey(promptIfMissing = true) {
+  let key = sessionStorage.getItem("medikiosk_staff_key");
+  if (!key && promptIfMissing) {
+    key = (window.prompt("Staff access key required for the Doctor / FHIR desk:") || "").trim();
+    if (key) {
+      sessionStorage.setItem("medikiosk_staff_key", key);
+      if (typeof appState !== "undefined" && !appState.websocket) initWebSocket();
+    }
+  }
+  return key || "";
+}
+async function authFetch(url, options = {}) {
+  const headers = { ...(options.headers || {}), "X-API-Key": getStaffKey() };
+  const res = await fetch(url, { ...options, headers });
+  if (res.status === 401) {
+    sessionStorage.removeItem("medikiosk_staff_key");
+    showToast("Staff authentication failed. Please re-enter the access key.", "error");
+  }
+  return res;
+}
+
 // Global State
 const appState = {
   currentRole: "kiosk",         // "kiosk" | "doctor" | "analytics" | "fhir"
@@ -413,7 +452,9 @@ function updateVoiceUI(isRecording, message) {
 // WebSocket Live OPD Sync
 function initWebSocket() {
   const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-  const wsUrl = `${protocol}//${window.location.host}/ws/live-feed`;
+  const staffKey = getStaffKey(false);
+  if (!staffKey) return; // live feed is staff-only; connect after the doctor desk is unlocked
+  const wsUrl = `${protocol}//${window.location.host}/ws/live-feed?key=${encodeURIComponent(staffKey)}`;
 
   try {
     appState.websocket = new WebSocket(wsUrl);
@@ -451,7 +492,7 @@ function showToast(message, type = "info") {
   const container = document.getElementById("toastContainer") || createToastContainer();
   const toast = document.createElement("div");
   toast.className = `toast-item toast-${type}`;
-  toast.innerHTML = `
+  toast.innerHTML = safeHtml`
     <div style="display:flex;align-items:center;gap:8px;">
       <span>${type === "error" ? "⚠️" : type === "success" ? "✅" : "ℹ️"}</span>
       <span>${message}</span>
@@ -480,5 +521,10 @@ window.app = {
   toggleVoiceRecording,
   speakText,
   showToast,
-  showEmergencyBanner
+  showEmergencyBanner,
+  authFetch,
+  initWebSocket,
+  escapeHtml,
+  safeHtml,
+  raw
 };

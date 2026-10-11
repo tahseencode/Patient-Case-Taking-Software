@@ -18,3 +18,9 @@ backend/venv/
 # OS
 .DS_Store
 Thumbs.db
+
+# Local databases (may contain patient data)
+*.db
+*.db-wal
+*.db-shm
+*.sqlite3

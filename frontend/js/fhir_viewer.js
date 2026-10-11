@@ -39,7 +39,7 @@ const fhirModule = (() => {
   async function loadFhirBundle(sessionId = "SESS-101") {
     currentSessionId = sessionId;
     try {
-      const res = await fetch(`${API_BASE}/abdm/fhir-bundle/${sessionId}`);
+      const res = await window.app.authFetch(`${API_BASE}/abdm/fhir-bundle/${sessionId}`);
       const data = await res.json();
       if (data.success && data.bundle) {
         currentBundle = data.bundle;
@@ -73,7 +73,7 @@ const fhirModule = (() => {
       else if (res.resourceType === "Consent") resDesc = "DPDP Act 2023 Digital Consent";
       else resDesc = `${res.resourceType} Record`;
 
-      card.innerHTML = `
+      card.innerHTML = safeHtml`
         <div>
           <div class="doc-title"><span class="abdm-badge" style="font-size:0.7rem;">${res.resourceType}</span> ${resDesc}</div>
           <div class="doc-meta">ID: ${res.id || `urn:uuid:${idx}`} | Standard: HL7 FHIR R4</div>
@@ -112,7 +112,7 @@ const fhirModule = (() => {
 
   async function showDpdpCertificateModal() {
     try {
-      const res = await fetch(`${API_BASE}/abdm/dpdp-audit/${currentSessionId}`);
+      const res = await window.app.authFetch(`${API_BASE}/abdm/dpdp-audit/${currentSessionId}`);
       const data = await res.json();
       if (data.success) {
         const modal = document.getElementById("dpdpModal");

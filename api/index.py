@@ -18,22 +18,16 @@ for _p in (ROOT_DIR, BACKEND_DIR):
 try:
     from backend.main import app  # noqa: E402, F401
 except Exception as _import_err:
-    # Fallback: return a clean JSON error instead of a cryptic Vercel
-    # "FUNCTION_INVOCATION_FAILED" page. The full traceback always goes to the
-    # Vercel function logs, and is only shown in the HTTP response if you opt in
-    # by setting DEBUG_STARTUP_ERRORS=1 (use temporarily, then remove it).
+    # Fallback: surface the real error as a JSON response instead of a
+    # cryptic Vercel "FUNCTION_INVOCATION_FAILED" page.
     from fastapi import FastAPI
     from fastapi.responses import JSONResponse
 
     _tb = traceback.format_exc()
-    print(_tb, file=sys.stderr)
+    print(_tb, file=sys.stderr)  # always visible in Vercel function logs
+    # Only expose the traceback if you explicitly opt in (debugging a broken deploy).
     _expose = os.getenv("DEBUG_STARTUP_ERRORS") == "1"
-    app = FastAPI(
-        title="MediKiosk - startup error",
-        docs_url=None,
-        redoc_url=None,
-        openapi_url=None,
-    )
+    app = FastAPI(title="MediKiosk - startup error", docs_url=None, redoc_url=None, openapi_url=None)
 
     @app.get("/{path:path}")
     @app.post("/{path:path}")
