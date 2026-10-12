@@ -16,6 +16,14 @@
       "destination": "/api/index.py"
     },
     {
+      "source": "/v1",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/v1/(.*)",
+      "destination": "/api/index.py"
+    },
+    {
       "source": "/health",
       "destination": "/api/index.py"
     },
@@ -52,8 +60,16 @@
       "destination": "/frontend/app.html"
     },
     {
+      "source": "/app/",
+      "destination": "/frontend/app.html"
+    },
+    {
       "source": "/app.html",
       "destination": "/frontend/app.html"
+    },
+    {
+      "source": "/index",
+      "destination": "/frontend/index.html"
     },
     {
       "source": "/index.html",
@@ -70,7 +86,7 @@
       "headers": [
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' wss:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com data:; img-src 'self' data: blob:; connect-src 'self' ws: wss:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
         },
         {
           "key": "X-Content-Type-Options",
@@ -90,7 +106,7 @@
         },
         {
           "key": "Permissions-Policy",
-          "value": "geolocation=(), camera=()"
+          "value": "geolocation=()"
         }
       ]
     }

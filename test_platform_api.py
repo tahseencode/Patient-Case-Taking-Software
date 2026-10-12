@@ -4,8 +4,12 @@ Validates all API endpoints, models, OCR processing, SOCRATES dialogue,
 Prakriti calculation, OPD queue, and ABDM FHIR R4 Bundle generation.
 """
 
+import os
 import sys
 import unittest
+
+os.environ["APP_ENV"] = "development"
+
 from fastapi.testclient import TestClient
 from backend.main import app
 from backend.app.database.db import db

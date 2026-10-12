@@ -1,5 +1,6 @@
 import os
 import shutil
+import tempfile
 from pydantic import BaseModel
 
 
@@ -27,7 +28,8 @@ def _resolve_db_path() -> str:
     )
 
     if is_serverless:
-        tmp_path = "/tmp/patient_intake.db"
+        tmp_dir = tempfile.gettempdir()
+        tmp_path = os.path.join(tmp_dir, "patient_intake.db")
         if not os.path.exists(tmp_path) and os.path.exists(bundled):
             try:
                 shutil.copyfile(bundled, tmp_path)

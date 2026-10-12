@@ -26,7 +26,7 @@ function safeHtml(strings, ...vals) {
 function getStaffKey(promptIfMissing = true) {
   let key = sessionStorage.getItem("medikiosk_staff_key");
   if (!key && promptIfMissing) {
-    key = (window.prompt("Staff access key required for the Doctor / FHIR desk:") || "").trim();
+    key = (window.prompt("Staff access key required for the Doctor / FHIR desk (demo key: medikiosk-staff-demo):", "medikiosk-staff-demo") || "").trim();
     if (key) {
       sessionStorage.setItem("medikiosk_staff_key", key);
       if (typeof appState !== "undefined" && !appState.websocket) initWebSocket();

@@ -1,6 +1,13 @@
-venv/
-.venv/
+venv*/
+.venv*/
 __pycache__/
 *.pyc
-.env
+.env*
 .git/
+.security-backup/
+.vscode/
+.pytest_cache/
+test_*.py
+*.db-journal
+*.db-wal
+*.db-shm

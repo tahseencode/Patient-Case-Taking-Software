@@ -29,8 +29,7 @@ except Exception as _import_err:
     _expose = os.getenv("DEBUG_STARTUP_ERRORS") == "1"
     app = FastAPI(title="MediKiosk - startup error", docs_url=None, redoc_url=None, openapi_url=None)
 
-    @app.get("/{path:path}")
-    @app.post("/{path:path}")
+    @app.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"])
     async def _error_handler(path: str = ""):
         content = {"error": "App failed to start"}
         if _expose:

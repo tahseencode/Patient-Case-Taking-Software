@@ -74,10 +74,15 @@ for prefix in [settings.API_PREFIX, "/v1"]:
     app.include_router(database_router, prefix=prefix, dependencies=_staff)    # diagnostics
 
 
-# ── Health endpoints ──────────────────────────────────────────────────
+# ── Health & API Root endpoints ───────────────────────────────────────
 @app.get("/api/health")
 @app.get("/health")
 @app.get("/api/v1/health")
+@app.get("/v1/health")
+@app.get("/api")
+@app.get("/api/")
+@app.get("/v1")
+@app.get("/v1/")
 async def health_check():
     return {
         "status": "online",
@@ -85,6 +90,7 @@ async def health_check():
         "version": settings.APP_VERSION,
         "facility_id": settings.ABDM_FACILITY_ID,
         "timestamp": datetime.now(timezone.utc).isoformat(),
+        "docs": "/docs",
     }
 
 
