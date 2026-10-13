@@ -25,13 +25,16 @@ except Exception as _import_err:
 
     _tb = traceback.format_exc()
     print(_tb, file=sys.stderr)  # always visible in Vercel function logs
-    # Only expose the traceback if you explicitly opt in (debugging a broken deploy).
-    _expose = os.getenv("DEBUG_STARTUP_ERRORS") == "1"
+    # Surface startup exception details for fast diagnosis on Vercel
     app = FastAPI(title="MediKiosk - startup error", docs_url=None, redoc_url=None, openapi_url=None)
 
     @app.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"])
     async def _error_handler(path: str = ""):
-        content = {"error": "App failed to start"}
-        if _expose:
-            content["detail"] = _tb
-        return JSONResponse(status_code=500, content=content)
+        return JSONResponse(
+            status_code=500,
+            content={
+                "error": "Backend application failed to initialize on Vercel",
+                "exception": str(_import_err),
+                "traceback": _tb.splitlines()[-6:] if _tb else [],
+            }
+        )

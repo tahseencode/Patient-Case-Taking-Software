@@ -96,14 +96,14 @@ async def health_check():
 
 # ── Frontend static files mounting & routes ───────────────────────────
 _BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-_FRONTEND_DIR = os.path.join(_BASE_DIR, "frontend")
+_STATIC_DIR = os.path.join(_BASE_DIR, "public")
+if not os.path.exists(_STATIC_DIR):
+    _STATIC_DIR = os.path.join(_BASE_DIR, "frontend")
 
-_IS_SERVERLESS = bool(os.getenv("VERCEL") or os.getenv("VERCEL_ENV") or os.getenv("AWS_LAMBDA_FUNCTION_NAME"))
-
-if os.path.exists(_FRONTEND_DIR) and not _IS_SERVERLESS:
-    css_dir = os.path.join(_FRONTEND_DIR, "css")
-    js_dir = os.path.join(_FRONTEND_DIR, "js")
-    assets_dir = os.path.join(_FRONTEND_DIR, "assets")
+if os.path.exists(_STATIC_DIR):
+    css_dir = os.path.join(_STATIC_DIR, "css")
+    js_dir = os.path.join(_STATIC_DIR, "js")
+    assets_dir = os.path.join(_STATIC_DIR, "assets")
 
     if os.path.exists(css_dir):
         try:
@@ -123,7 +123,7 @@ if os.path.exists(_FRONTEND_DIR) and not _IS_SERVERLESS:
 
     @app.get("/", include_in_schema=False)
     async def serve_root():
-        index_file = os.path.join(_FRONTEND_DIR, "index.html")
+        index_file = os.path.join(_STATIC_DIR, "index.html")
         if os.path.exists(index_file):
             return FileResponse(index_file)
         return JSONResponse({
@@ -133,19 +133,30 @@ if os.path.exists(_FRONTEND_DIR) and not _IS_SERVERLESS:
         })
 
     @app.get("/index.html", include_in_schema=False)
+    @app.get("/index", include_in_schema=False)
     async def serve_index():
-        return FileResponse(os.path.join(_FRONTEND_DIR, "index.html"))
+        index_file = os.path.join(_STATIC_DIR, "index.html")
+        if os.path.exists(index_file):
+            return FileResponse(index_file)
+        return JSONResponse({"status": "index not found"}, status_code=404)
 
     @app.get("/app.html", include_in_schema=False)
     @app.get("/app", include_in_schema=False)
+    @app.get("/app/", include_in_schema=False)
     async def serve_app():
-        return FileResponse(os.path.join(_FRONTEND_DIR, "app.html"))
+        app_file = os.path.join(_STATIC_DIR, "app.html")
+        if os.path.exists(app_file):
+            return FileResponse(app_file)
+        return JSONResponse({"status": "app not found"}, status_code=404)
 
     @app.get("/style.css", include_in_schema=False)
     async def serve_style():
-        return FileResponse(os.path.join(_FRONTEND_DIR, "style.css"))
+        style_file = os.path.join(_STATIC_DIR, "style.css")
+        if os.path.exists(style_file):
+            return FileResponse(style_file)
+        return JSONResponse({"status": "style not found"}, status_code=404)
 else:
-    @app.get("/")
+    @app.get("/", include_in_schema=False)
     async def root():
         return {
             "message": f"{settings.APP_NAME} v{settings.APP_VERSION}",

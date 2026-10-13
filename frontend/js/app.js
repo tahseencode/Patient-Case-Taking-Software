@@ -449,7 +449,22 @@ function updateVoiceUI(isRecording, message) {
   }
 }
 
-// WebSocket Live OPD Sync
+// WebSocket Live OPD Sync with HTTP Polling Fallback (for Vercel serverless)
+let _fallbackPollTimer = null;
+
+function startFallbackPolling() {
+  if (_fallbackPollTimer) return;
+  console.log("Active HTTP polling fallback initiated (serverless mode).");
+  _fallbackPollTimer = setInterval(() => {
+    if (window.doctorModule && appState.currentRole === "doctor") {
+      window.doctorModule.refreshQueue();
+    }
+    if (window.analyticsModule && appState.currentRole === "analytics") {
+      window.analyticsModule.loadMetrics();
+    }
+  }, 6000);
+}
+
 function initWebSocket() {
   const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
   const staffKey = getStaffKey(false);
@@ -460,6 +475,10 @@ function initWebSocket() {
     appState.websocket = new WebSocket(wsUrl);
     appState.websocket.onopen = () => {
       console.log("WebSocket Live OPD Feed Connected.");
+      if (_fallbackPollTimer) {
+        clearInterval(_fallbackPollTimer);
+        _fallbackPollTimer = null;
+      }
     };
     appState.websocket.onmessage = (event) => {
       const data = JSON.parse(event.data);
@@ -471,12 +490,18 @@ function initWebSocket() {
       }
     };
     appState.websocket.onerror = () => {
-      console.warn("WebSocket fallback mode active.");
+      console.warn("WebSocket connection unavailable. Switching to polling fallback.");
+      startFallbackPolling();
+    };
+    appState.websocket.onclose = () => {
+      startFallbackPolling();
     };
   } catch (e) {
-    console.warn("WebSocket not supported in current environment.");
+    console.warn("WebSocket not supported in current environment. Using polling fallback.");
+    startFallbackPolling();
   }
 }
+
 
 function showEmergencyBanner(patientName, rationale) {
   const ticker = document.getElementById("emergencyTicker");
