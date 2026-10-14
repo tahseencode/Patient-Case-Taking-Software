@@ -1,40 +1,39 @@
-"""Vercel Serverless Function entrypoint.
+"""Vercel entrypoint: exposes the FastAPI `app` from the project.
 
-This module exposes the FastAPI ASGI `app` instance so Vercel can automatically
-discover and execute it within the serverless Python runtime.
+Put this file at  api/index.py  (repo root / api / index.py).
+It looks for `app` in the root main.py first, then backend/main.py.
 """
-import os
+import importlib.util
 import sys
-import traceback
+from pathlib import Path
 
-# Ensure project root is in sys.path so 'backend' package is importable
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-BACKEND_DIR = os.path.join(ROOT_DIR, "backend")
+ROOT = Path(__file__).resolve().parent.parent
 
-for _p in (ROOT_DIR, BACKEND_DIR):
-    if _p not in sys.path:
-        sys.path.insert(0, _p)
+# Make both the repo root and backend/ importable (root takes priority).
+for p in (ROOT / "backend", ROOT):
+    if str(p) not in sys.path:
+        sys.path.insert(0, str(p))
 
-try:
-    from backend.main import app  # noqa: E402, F401
-except Exception as _import_err:
-    # Fallback: surface the real error as a JSON response instead of a
-    # cryptic Vercel "FUNCTION_INVOCATION_FAILED" page.
-    from fastapi import FastAPI
-    from fastapi.responses import JSONResponse
 
-    _tb = traceback.format_exc()
-    print(_tb, file=sys.stderr)  # always visible in Vercel function logs
-    # Surface startup exception details for fast diagnosis on Vercel
-    app = FastAPI(title="MediKiosk - startup error", docs_url=None, redoc_url=None, openapi_url=None)
+def _load_module(path: Path):
+    """Load a file by path so root main.py and backend/main.py don't clash."""
+    spec = importlib.util.spec_from_file_location("_app_entry", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 
-    @app.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"])
-    async def _error_handler(path: str = ""):
-        return JSONResponse(
-            status_code=500,
-            content={
-                "error": "Backend application failed to initialize on Vercel",
-                "exception": str(_import_err),
-                "traceback": _tb.splitlines()[-6:] if _tb else [],
-            }
-        )
+
+app = None
+_tried = []
+for candidate in (ROOT / "main.py", ROOT / "backend" / "main.py"):
+    _tried.append(str(candidate))
+    if candidate.exists():
+        module = _load_module(candidate)
+        if hasattr(module, "app"):
+            app = module.app
+            break
+
+if app is None:
+    raise RuntimeError(
+        "Could not find a FastAPI `app` object. Looked in: " + ", ".join(_tried)
+    )
