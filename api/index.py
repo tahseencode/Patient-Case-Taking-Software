@@ -1,39 +1,34 @@
-"""Vercel entrypoint: exposes the FastAPI `app` from the project.
+"""Vercel Serverless Function entrypoint (api/index.py).
 
-Put this file at  api/index.py  (repo root / api / index.py).
-It looks for `app` in the root main.py first, then backend/main.py.
+Uses a plain, static import so Vercel's bundler can trace it, and falls back to a
+tiny error app (instead of a cryptic FUNCTION_INVOCATION_FAILED page) if the real
+app cannot be imported. The full traceback always goes to Vercel Logs.
+To also see it in the browser, temporarily set env var DEBUG_STARTUP_ERRORS=1.
 """
-import importlib.util
+import os
 import sys
-from pathlib import Path
+import traceback
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
 
-# Make both the repo root and backend/ importable (root takes priority).
-for p in (ROOT / "backend", ROOT):
-    if str(p) not in sys.path:
-        sys.path.insert(0, str(p))
+try:
+    from backend.main import app  # noqa: E402,F401
+except Exception:  # pragma: no cover
+    from fastapi import FastAPI
+    from fastapi.responses import JSONResponse
 
+    _tb = traceback.format_exc()
+    print(_tb, file=sys.stderr)
+    _expose = os.getenv("DEBUG_STARTUP_ERRORS") == "1"
 
-def _load_module(path: Path):
-    """Load a file by path so root main.py and backend/main.py don't clash."""
-    spec = importlib.util.spec_from_file_location("_app_entry", path)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
+    app = FastAPI(title="Startup error", docs_url=None, redoc_url=None, openapi_url=None)
 
-
-app = None
-_tried = []
-for candidate in (ROOT / "main.py", ROOT / "backend" / "main.py"):
-    _tried.append(str(candidate))
-    if candidate.exists():
-        module = _load_module(candidate)
-        if hasattr(module, "app"):
-            app = module.app
-            break
-
-if app is None:
-    raise RuntimeError(
-        "Could not find a FastAPI `app` object. Looked in: " + ", ".join(_tried)
-    )
+    @app.get("/{path:path}")
+    @app.post("/{path:path}")
+    async def _startup_error(path: str = ""):
+        body = {"error": "App failed to start"}
+        if _expose:
+            body["detail"] = _tb
+        return JSONResponse(status_code=500, content=body)
