@@ -25,10 +25,15 @@ from backend.app.api.abdm_routes import router as abdm_router
 from backend.app.api.database_routes import router as database_router
 
 
+# Disable interactive API docs in production to prevent endpoint enumeration
+_is_dev = os.getenv("APP_ENV", "production").lower() == "development"
 app = FastAPI(
     title=settings.APP_NAME,
     version=settings.APP_VERSION,
     description="AI-Powered Digital Clinical Intake Platform for OPD queues",
+    docs_url="/docs" if _is_dev else None,
+    redoc_url="/redoc" if _is_dev else None,
+    openapi_url="/openapi.json" if _is_dev else None,
 )
 
 
@@ -51,6 +56,15 @@ async def security_headers(request: Request, call_next):
     response.headers.setdefault("X-Frame-Options", "DENY")
     response.headers.setdefault("Referrer-Policy", "no-referrer")
     response.headers.setdefault("Permissions-Policy", "camera=(), geolocation=()")
+    response.headers.setdefault("Strict-Transport-Security", "max-age=63072000; includeSubDomains")
+    response.headers.setdefault(
+        "Content-Security-Policy",
+        "default-src 'self'; script-src 'self' 'unsafe-inline'; "
+        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+        "font-src https://fonts.gstatic.com data:; img-src 'self' data: blob:; "
+        "connect-src 'self' ws: wss:; object-src 'none'; base-uri 'self'; "
+        "form-action 'self'; frame-ancestors 'none'"
+    )
     if request.url.path.startswith(("/api", "/v1", "/ws")):
         response.headers["Cache-Control"] = "no-store"  # never cache patient data
     return response
@@ -88,9 +102,7 @@ async def health_check():
         "status": "online",
         "platform": settings.APP_NAME,
         "version": settings.APP_VERSION,
-        "facility_id": settings.ABDM_FACILITY_ID,
         "timestamp": datetime.now(timezone.utc).isoformat(),
-        "docs": "/docs",
     }
 
 
@@ -182,7 +194,9 @@ async def websocket_endpoint(websocket: WebSocket):
     if not verify_key(websocket.query_params.get("key")):
         await websocket.close(code=1008)
         return
-    await manager.connect(websocket)
+    accepted = await manager.connect(websocket)
+    if not accepted:
+        return
     try:
         while True:
             # Clients are listen-only; incoming data is read (to detect

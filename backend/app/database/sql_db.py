@@ -936,15 +936,16 @@ class SQLDatabase:
 
     def get_database_stats(self) -> Dict[str, Any]:
         """Provides statistics on database tables, row counts, and disk metrics."""
-        tables = [
+        ALLOWED_TABLES = {
             "patients", "consents", "intake_sessions", "clinical_summaries",
             "documents", "consultations", "opd_queue", "triage_alerts", "audit_logs"
-        ]
+        }
         counts = {}
         with self.get_connection() as conn:
             cursor = conn.cursor()
-            for t in tables:
+            for t in ALLOWED_TABLES:
                 try:
+                    # Table name validated against allowlist above (not user-supplied)
                     cursor.execute(f"SELECT COUNT(*) as count FROM {t}")
                     counts[t] = cursor.fetchone()["count"]
                 except Exception:
@@ -964,7 +965,8 @@ class SQLDatabase:
             "engine": "SQLite Relational Database",
             "sqlite_version": sqlite_ver,
             "journal_mode": journal_mode,
-            "database_file": os.path.abspath(self.db_path),
+            # Only expose the filename, never the full server filesystem path
+            "database_file": os.path.basename(self.db_path),
             "file_size_bytes": file_size_bytes,
             "file_size_kb": round(file_size_bytes / 1024, 2),
             "table_counts": counts,

@@ -35,14 +35,14 @@ class VoiceParseRequest(BaseModel):
     language: str = Field("hi", max_length=10)
 
 class SubmitSocratesRequest(BaseModel):
-    session_id: str
-    chief_complaint_id: str
-    chief_complaint_title: str
-    affected_body_part: Optional[str] = None
+    session_id: str = Field(max_length=64)
+    chief_complaint_id: str = Field(max_length=64)
+    chief_complaint_title: str = Field(max_length=200)
+    affected_body_part: Optional[str] = Field(None, max_length=100)
     socrates: SocratesResponse
 
 class FinalizeIntakeRequest(BaseModel):
-    session_id: str
+    session_id: str = Field(max_length=64)
 
 @router.get("/complaints")
 async def get_chief_complaints(language: str = "hi"):

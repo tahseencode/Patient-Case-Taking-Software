@@ -1,6 +1,6 @@
 from typing import Dict, Any, Optional
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from backend.app.core.ayush_engine import ayush_engine
 from backend.app.models.schemas import AyushPariksha
@@ -9,10 +9,10 @@ from backend.app.database.db import db
 router = APIRouter(prefix="/ayush", tags=["AYUSH Ayurvedic Intake"])
 
 class ParikshaCalculationRequest(BaseModel):
-    session_id: Optional[str] = None
+    session_id: Optional[str] = Field(None, max_length=64)
     answers: Dict[str, str]
-    lifestyle_notes: Optional[str] = None
-    language: str = "hi"
+    lifestyle_notes: Optional[str] = Field(None, max_length=5000)
+    language: str = Field("hi", max_length=10)
 
 @router.get("/questions")
 async def get_ayush_questions(language: str = "hi"):

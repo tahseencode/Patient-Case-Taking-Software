@@ -17,17 +17,12 @@ def _is_dev() -> bool:
     return os.getenv("APP_ENV", "production").lower() == "development"
 
 
-DEFAULT_DEMO_KEY = "medikiosk-staff-demo"
-
-
 def verify_key(candidate: str | None) -> bool:
     expected = os.getenv("STAFF_API_KEY", "")
     if not expected:
-        if _is_dev():
-            return True
-        if candidate and hmac.compare_digest(candidate.encode(), DEFAULT_DEMO_KEY.encode()):
-            return True
-        return False
+        # No key configured: allow only in local development mode.
+        # In production, staff endpoints are fully blocked until STAFF_API_KEY is set.
+        return _is_dev()
     if not candidate:
         return False
     return hmac.compare_digest(candidate.encode(), expected.encode())
